@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="$FLUTTER_BASE_HREF" />
+
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="Cartaralho - Flutter version" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cartaralho</title>
+    <link rel="manifest" href="manifest.json" />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script>
+      // Firebase configuration will be added here
+      const firebaseConfig = {
+        apiKey: "AIzaSyBROiETY_cVtpTQkeVcIRjUEHGVqxjHeBQ",
+        authDomain: "cartaralho.firebaseapp.com",
+        projectId: "cartaralho",
+        storageBucket: "cartaralho.firebasestorage.app",
+        messagingSenderId: "629951279943",
+        appId: "1:629951279943:web:a109fd16c592fa1fb49262",
+        measurementId: "G-N30T0BJNTX",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="flutter.js" defer></script>
+  </body>
+</html>

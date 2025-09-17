@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "629951279943",
+    "project_id": "cartaralho",
+    "storage_bucket": "cartaralho.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629951279943:android:0181c7c42105989fb49262",
+        "android_client_info": {
+          "package_name": "com.pedro.cartaralho"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl2v8m8mnis6r4gO2uiuMmfbXtLW9FJVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
