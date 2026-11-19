@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
+import '../game/baralho.dart';
 import '../game/regras.dart' as regras;
-import '../models/card.dart';
 
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,8 +49,8 @@ class FirebaseService {
       final gameRoom = GameRoom(
         roomId: roomId,
         players: [player],
-        blackCards: _getMockBlackCards(),
-        whiteCards: _getMockWhiteCards(),
+        blackCards: cartasPretas(),
+        whiteCards: cartasBrancas(),
         currentJudgeId: user.uid,
       );
 
@@ -151,46 +151,5 @@ class FirebaseService {
       result += chars[(random + i) % chars.length];
     }
     return result;
-  }
-
-  static List<GameCard> _getMockBlackCards() {
-    return [
-      GameCard(
-          id: 'b1',
-          text: '____ é a melhor coisa do mundo.',
-          type: CardType.black),
-      GameCard(
-          id: 'b2', text: 'Não consigo viver sem ____.', type: CardType.black),
-      GameCard(
-          id: 'b3', text: 'Ontem eu vi ____ no mercado.', type: CardType.black),
-      GameCard(
-          id: 'b4',
-          text: 'A razão pela qual eu acordei hoje foi ____.',
-          type: CardType.black),
-      GameCard(
-          id: 'b5',
-          text: '____ é a resposta para todos os problemas.',
-          type: CardType.black),
-    ];
-  }
-
-  static List<GameCard> _getMockWhiteCards() {
-    return [
-      GameCard(id: 'w1', text: 'Cachorros', type: CardType.white),
-      GameCard(id: 'w2', text: 'Pizza', type: CardType.white),
-      GameCard(id: 'w3', text: 'Meu ex', type: CardType.white),
-      GameCard(id: 'w4', text: 'Café', type: CardType.white),
-      GameCard(id: 'w5', text: 'TikTok', type: CardType.white),
-      GameCard(id: 'w6', text: 'Inteligência Artificial', type: CardType.white),
-      GameCard(id: 'w7', text: 'Netflix', type: CardType.white),
-      GameCard(id: 'w8', text: 'Chocolate', type: CardType.white),
-      GameCard(id: 'w9', text: 'Viagem', type: CardType.white),
-      GameCard(id: 'w10', text: 'Música', type: CardType.white),
-      GameCard(id: 'w11', text: 'Futebol', type: CardType.white),
-      GameCard(id: 'w12', text: 'Tecnologia', type: CardType.white),
-      GameCard(id: 'w13', text: 'Família', type: CardType.white),
-      GameCard(id: 'w14', text: 'Dinheiro', type: CardType.white),
-      GameCard(id: 'w15', text: 'Amor', type: CardType.white),
-    ];
   }
 }
