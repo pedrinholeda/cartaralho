@@ -1,0 +1,30 @@
+# Dart e Flutter
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+/build/
+/coverage/
+
+# Arquivos gerados pelo Flutter a cada build (caminhos da máquina de quem rodou)
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/GeneratedPluginRegistrant.*
+
+# IDEs
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Cocoapods
+**/Pods/
+**/Podfile.lock
