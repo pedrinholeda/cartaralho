@@ -75,6 +75,8 @@ flutter build web
 - `flutter test` quebra com `FileSystemException: Cannot resolve symbolic links` no
   Windows → o caminho do SDK ou do projeto tem acento (como `C:\Users\João`). Mapeie uma
   letra com `subst P: <pasta>` e rode a partir dela.
+- Três abas abertas no mesmo endereço viram o mesmo jogador → o login anônimo é guardado
+  por origem. Use `localhost`, `a.localhost` e `b.localhost`, ou uma janela anônima.
 - `flutter analyze` não mostra uso de API obsoleta → o aviso está desligado no
   `analysis_options.yaml` até a migração para `material_ui`; tire a linha para conferir.
 

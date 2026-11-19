@@ -33,8 +33,11 @@ dart format lib test
 flutter test
 ```
 
-Para testar uma partida sozinho, abra três abas do navegador: cada aba faz o próprio login
-anônimo e vira um jogador diferente.
+Para testar uma partida sozinho, abra o app em três origens diferentes, por exemplo
+`http://localhost:PORTA`, `http://a.localhost:PORTA` e `http://b.localhost:PORTA` (o Chrome
+resolve `*.localhost` para a própria máquina). Cada origem guarda o próprio login anônimo e
+vira um jogador. Três abas na mesma origem **não** servem: elas dividem o login e viram o
+mesmo jogador. Uma janela anônima também conta como origem separada.
 
 ### Testes
 
@@ -96,8 +99,7 @@ aplica a regra e grava numa transação; a mudança volta para todos pelo stream
 
 Os principais, todos com item no [roadmap](ROADMAP.md):
 
-- Na web, `DefaultFirebaseOptions` não tem opções e o login falha; no iOS e no macOS as
-  opções são de exemplo, de outro projeto.
+- O macOS não tem app registrado no Firebase e para na inicialização.
 - O projeto iOS não tem `Runner.xcodeproj`, então não compila.
 - O build Android usa o formato antigo do plugin do Flutter e o Gradle 8.10, que não roda
   com JDK 25.
