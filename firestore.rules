@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// Regras do Firestore do Cartaralho. Publique com `firebase deploy --only firestore:rules`.
+//
+// Hoje qualquer usuário logado (o login é anônimo) lê e grava qualquer sala: a regra do
+// jogo roda no app, e o servidor não confere jogada nenhuma. Endurecer isto está no
+// docs/ROADMAP.md.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
