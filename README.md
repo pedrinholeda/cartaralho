@@ -19,7 +19,7 @@ passa a vez de juiz.
 
 1. **Criar sala**: quem cria vira o anfitrião e recebe um código de seis caracteres.
 2. **Entrar**: os outros digitam o código e o nome.
-3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou.
+3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou (de 3 a 8 jogadores).
 4. **Rodada**: o juiz vê a carta preta; cada um dos outros envia uma carta branca; o juiz
    escolhe a combinação mais engraçada e quem a enviou ganha um ponto.
 5. **Fim**: quem chegar a 5 pontos primeiro vence.
@@ -32,7 +32,9 @@ passa a vez de juiz.
 
 **Partida**
 - Lista de jogadores com os pontos e quem é o juiz da vez.
-- Carta preta da rodada, mão de cartas brancas e a tela de escolha do juiz.
+- Cinco cartas brancas na mão, completadas a cada rodada.
+- A vez de juiz passa de jogador em jogador, e a rodada só vai para o juiz quando todos
+  enviaram a carta.
 
 ## Como funciona
 
@@ -98,9 +100,9 @@ O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.
 
 ## Status e roadmap
 
-Em desenvolvimento, ainda não jogável do começo ao fim: a partida trava depois que o
-anfitrião inicia, e a web e o iOS ainda não conectam ao Firebase. As correções vêm primeiro
-no [roadmap](docs/ROADMAP.md).
+Em desenvolvimento. As regras da partida estão completas e testadas, mas a web e o iOS
+ainda não conectam ao Firebase, e as jogadas ainda não são conferidas pelo servidor. O que
+vem agora está no [roadmap](docs/ROADMAP.md).
 
 ## Contribuindo
 

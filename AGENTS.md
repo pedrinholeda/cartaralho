@@ -9,6 +9,7 @@ grupos, em Flutter, com as salas sincronizadas em tempo real pelo Firestore.
 lib/
   main.dart             inicializa o Firebase e abre a HomeScreen dentro do ProviderScope
   firebase_options.dart opções do Firebase por plataforma (gerado pelo FlutterFire CLI)
+  game/                 regras da partida (funções puras) e o baralho inicial
   models/               GameCard, Player, GameRoom: dados e conversão para o Firestore
   services/             FirebaseService: login anônimo e todas as leituras e escritas da sala
   providers/            providers Riverpod: usuário logado, sala atual, jogador atual
@@ -33,7 +34,22 @@ android/ ios/ macos/ web/  projetos de plataforma
   nos três e tem padrão no `fromJson`, porque salas antigas no Firestore não têm o campo.
 - Enum vai para o Firestore pelo nome (`'black'`, `'judgeChoosing'`), nunca pelo índice.
 - Telas não falam com o Firestore direto: chamam o `FirebaseService`.
+- Regra do jogo é função pura em `lib/game/regras.dart`: recebe a `GameRoom`, devolve a
+  `GameRoom` nova ou lança `JogadaInvalida`. Nada de Firebase nem de `DateTime.now()` lá
+  dentro; sorteio recebe um `Random` opcional, para o teste fixar a semente.
+- Quem é o juiz vem de `GameRoom.currentJudgeId` (`room.isJudge(id)`), não de um campo
+  do jogador.
 - Texto de interface em português do Brasil. Comentário explica por quê, não o quê.
+
+## Adicionando uma jogada
+
+1. Escreva a regra em `lib/game/regras.dart`, validando fase e jogador com `JogadaInvalida`.
+2. Teste em `test/game/regras_test.dart`: o caminho certo e cada recusa.
+3. No `FirebaseService`, um método que chama `_alterarSala(roomId, (sala) => regra(...))`.
+4. Na tela, chame o método e mostre o erro num `SnackBar`.
+5. Campo novo na sala? `fromJson` com padrão, `toJson`, `copyWith` e o teste em
+   `test/models/`.
+6. Atualize `docs/DESENVOLVIMENTO.md` e rode `flutter analyze` e `flutter test`.
 
 ## Comandos
 

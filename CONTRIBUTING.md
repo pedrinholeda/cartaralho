@@ -45,6 +45,9 @@ abas do navegador servem) e isso vai descrito no PR.
 ## Estilo
 
 - Siga o código em volta: nomes, estrutura, formatação. O `dart format` decide o resto.
+- **Regra do jogo mora em [`lib/game/regras.dart`](lib/game/regras.dart)**, como função
+  pura que recebe a sala e devolve a sala nova. O `FirebaseService` só lê, chama a regra e
+  grava numa transação. Regra nova vem com teste em `test/game/`.
 - Textos da interface em português do Brasil.
 - Comentário explica **por quê**, não o quê.
 - Sem dependência nova sem motivo, e o motivo no PR.
