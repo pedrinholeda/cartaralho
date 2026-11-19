@@ -1,174 +1,112 @@
-# Cartaralho
+<p align="center"><img src="docs/marca/logo-cartas-confete.png" width="128" alt="Ícone do Cartaralho: uma carta branca sorrindo na frente de uma carta preta, sobre fundo vermelho"></p>
+<h1 align="center">Cartaralho</h1>
+<p align="center"><em>O jogo de completar frases absurdas, para jogar com os amigos, cada um no seu celular.</em></p>
+<p align="center">
+  <a href="https://github.com/pedrinholeda/cartaralho/actions/workflows/ci.yml"><img src="https://github.com/pedrinholeda/cartaralho/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue" alt="Licença MIT"></a>
+  <img src="https://img.shields.io/badge/Flutter-3.50-02569B" alt="Flutter 3.50">
+</p>
 
-Uma versão Flutter do jogo de cartas mais divertido e politicamente incorreto com integração Firebase em tempo real.
+Jogo de cartas de festa precisa de baralho impresso, alguém para embaralhar e uma mesa. E
+na hora de contar os pontos, ninguém lembra quem ganhou a rodada passada.
 
-## 🎮 Funcionalidades
+O Cartaralho leva a mesa para o celular. Alguém cria uma sala, os outros entram com o
+código, e a cada rodada um juiz lê a carta preta, os outros respondem com a carta branca
+mais absurda da mão, e o juiz escolhe a melhor. O app distribui as cartas, conta os pontos e
+passa a vez de juiz.
 
-- **Autenticação anônima** via Firebase Auth
-- **Salas em tempo real** usando Firestore
-- **Multiplataforma**: Android, iOS e Web
-- **Gerenciamento de estado** com Riverpod
-- **Interface moderna** com Material Design 3
+## Como jogar
 
-## 🚀 Como Executar
+1. **Criar sala**: quem cria vira o anfitrião e recebe um código de seis caracteres.
+2. **Entrar**: os outros digitam o código e o nome.
+3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou.
+4. **Rodada**: o juiz vê a carta preta; cada um dos outros envia uma carta branca; o juiz
+   escolhe a combinação mais engraçada e quem a enviou ganha um ponto.
+5. **Fim**: quem chegar a 5 pontos primeiro vence.
 
-### Pré-requisitos
+## O que faz
 
-1. **Flutter SDK** (versão 3.0.0 ou superior)
-2. **Firebase Project** configurado
-3. **Android Studio** (para Android) ou **Xcode** (para iOS)
+**Salas em tempo real**
+- Todos na sala veem a mesma coisa ao mesmo tempo, sincronizado pelo Firestore.
+- Entrada só com o código e um nome: sem cadastro, o login é anônimo.
 
-### 1. Configuração do Firebase
+**Partida**
+- Lista de jogadores com os pontos e quem é o juiz da vez.
+- Carta preta da rodada, mão de cartas brancas e a tela de escolha do juiz.
 
-1. Acesse o [Firebase Console](https://console.firebase.google.com/)
-2. Crie um novo projeto ou use um existente
-3. Ative os seguintes serviços:
-   - **Authentication** (modo anônimo)
-   - **Firestore Database** (modo de teste)
+## Como funciona
 
-### 2. Configuração do Projeto
-
-1. **Clone e instale dependências:**
-
-   ```bash
-   cd cartaralho
-   flutter pub get
-   ```
-
-2. **Configure Firebase para Android:**
-
-   - Baixe o arquivo `google-services.json` do Firebase Console
-   - Coloque em `android/app/google-services.json`
-   - Adicione o plugin no `android/app/build.gradle`:
-     ```gradle
-     apply plugin: 'com.google.gms.google-services'
-     ```
-
-3. **Configure Firebase para iOS:**
-
-   - Baixe o arquivo `GoogleService-Info.plist` do Firebase Console
-   - Adicione ao projeto iOS no Xcode
-   - Ou coloque em `ios/Runner/GoogleService-Info.plist`
-   - Bundle ID: `com.pedro.cartaralho`
-
-4. **Configure Firebase para Web:**
-   - No Firebase Console, vá em "Configurações do projeto" > "Geral"
-   - Na seção "Seus aplicativos", adicione um app Web
-   - Copie a configuração e substitua em `web/index.html`:
-     ```javascript
-     var firebaseConfig = {
-       apiKey: "sua-api-key",
-       authDomain: "seu-projeto.firebaseapp.com",
-       projectId: "seu-projeto-id",
-       storageBucket: "seu-projeto.appspot.com",
-       messagingSenderId: "123456789",
-       appId: "seu-app-id",
-     };
-     ```
-
-### 3. Executar o Projeto
-
-```bash
-# Para Android
-flutter run -d android
-
-# Para iOS
-flutter run -d ios
-
-# Para Web
-flutter run -d web
+```mermaid
+flowchart LR
+  A["Jogador faz uma jogada"] --> B["FirebaseService"]
+  B --> C[("Firestore: documento da sala")]
+  C --> D["Todos os aparelhos na sala"]
+  D --> E["Tela redesenhada pela fase da partida"]
 ```
 
-## 🎯 Como Jogar
+Não há servidor próprio: cada sala é um documento no Firestore, e todos os aparelhos
+escutam esse documento. Detalhes em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md).
 
-1. **Criar Sala**: Um jogador cria uma nova sala e vira o host
-2. **Entrar na Sala**: Outros jogadores entram usando o código da sala
-3. **Iniciar Jogo**: O host inicia o jogo quando todos estiverem prontos
-4. **Rodadas**:
-   - O juiz vê uma carta preta
-   - Outros jogadores escolhem uma carta branca
-   - O juiz escolhe a combinação mais engraçada
-   - O vencedor ganha 1 ponto
-5. **Vitória**: Primeiro jogador a atingir 5 pontos vence!
+## Rodando
 
-## 🏗️ Estrutura do Projeto
+Requisitos: [Flutter 3.50](https://docs.flutter.dev/get-started/install) e um projeto
+Firebase com login anônimo e Firestore ligados. O repositório já aponta para o projeto do
+autor; para usar o seu, siga [docs/FIREBASE.md](docs/FIREBASE.md).
+
+```bash
+flutter pub get
+```
+
+```bash
+flutter run -d chrome
+```
+
+Para testar sozinho, abra três abas: cada uma vira um jogador.
+
+## Perguntas frequentes
+
+**Preciso criar conta?** Não. O app faz login anônimo sozinho ao abrir.
+
+**As chaves do Firebase no repositório são um vazamento?** Não. Chave de cliente do Firebase
+identifica o projeto e vai dentro de qualquer app publicado; quem protege os dados são as
+[regras do Firestore](firestore.rules).
+
+**Dá para jogar com cartas minhas?** Ainda não. O baralho é fixo; baralhos próprios estão no
+[roadmap](docs/ROADMAP.md).
+
+## Solução de problemas
+
+| o que aparece | causa | o que fazer |
+|---|---|---|
+| **Erro ao conectar** na tela inicial | o login anônimo falhou | confira se o login anônimo está ativo no Firebase e se `lib/firebase_options.dart` tem a plataforma em uso ([FIREBASE.md](docs/FIREBASE.md#4-conferir)) |
+| **Sala não encontrada** | código errado ou sala apagada | confira o código com o anfitrião |
+| `flutter test` falha com `Cannot resolve symbolic links` no Windows | caminho com acento | veja as armadilhas no [AGENTS.md](AGENTS.md#armadilhas) |
+
+## Estrutura
 
 ```
 lib/
-├── main.dart                 # Ponto de entrada
-├── models/                   # Modelos de dados
-│   ├── card.dart
-│   ├── player.dart
-│   └── game_room.dart
-├── services/                 # Serviços
-│   └── firebase_service.dart
-├── providers/                # Providers Riverpod
-│   ├── auth_provider.dart
-│   └── game_provider.dart
-├── screens/                  # Telas
-│   ├── home_screen.dart
-│   ├── create_room_screen.dart
-│   ├── join_room_screen.dart
-│   └── game_screen.dart
-└── widgets/                  # Widgets reutilizáveis
-    ├── player_list_widget.dart
-    ├── black_card_widget.dart
-    ├── white_cards_widget.dart
-    └── judge_widget.dart
+  models/      cartas, jogadores e a sala
+  services/    tudo que fala com o Firebase
+  providers/   estado com Riverpod
+  screens/     início, criar, entrar, jogo
+  widgets/     peças da tela de jogo
+docs/          configuração, desenvolvimento, roadmap
 ```
 
-## 🔧 Tecnologias Utilizadas
+O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md#módulos).
 
-- **Flutter** - Framework de desenvolvimento
-- **Riverpod** - Gerenciamento de estado
-- **Firebase Auth** - Autenticação anônima
-- **Cloud Firestore** - Banco de dados em tempo real
-- **Material Design 3** - Design system
+## Status e roadmap
 
-## 📱 Plataformas Suportadas
+Em desenvolvimento, ainda não jogável do começo ao fim: a partida trava depois que o
+anfitrião inicia, e a web e o iOS ainda não conectam ao Firebase. As correções vêm primeiro
+no [roadmap](docs/ROADMAP.md).
 
-- ✅ Android (API 21+)
-- ✅ iOS (iOS 11.0+)
-- ✅ Web (Chrome, Firefox, Safari)
+## Contribuindo
 
-## 🎨 Recursos do Jogo
+Setup, o que rodar antes do PR e o formato dos commits estão no
+[CONTRIBUTING](CONTRIBUTING.md).
 
-- **Cartas Mock**: Baralho inicial com cartas preta e branca
-- **Sincronização em Tempo Real**: Estado do jogo sincronizado via Firestore
-- **Interface Responsiva**: Adapta-se a diferentes tamanhos de tela
-- **Design Moderno**: UI/UX inspirada no Material Design 3
+## Licença
 
-## 🚧 Próximas Funcionalidades
-
-- [ ] Baralhos customizados
-- [ ] Chat em tempo real
-- [ ] Estatísticas de jogo
-- [ ] Modo offline
-- [ ] Notificações push
-- [ ] Temas personalizáveis
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 🐛 Problemas Conhecidos
-
-- As cartas brancas dos jogadores são simuladas (não persistem no Firestore)
-- Não há validação de entrada para códigos de sala
-- Interface pode precisar de ajustes em telas muito pequenas
-
-## 📞 Suporte
-
-Se encontrar algum problema, abra uma issue no GitHub ou entre em contato.
-
----
-
-**Divirta-se jogando Cartaralho! 🎉**
+[MIT](LICENSE).
