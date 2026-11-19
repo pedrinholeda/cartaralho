@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "dart",
+      "package-name": "cartaralho",
+      "include-component-in-tag": false,
+      "bump-minor-pre-major": true,
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "Novidades" },
+        { "type": "fix", "section": "Correções" },
+        { "type": "perf", "section": "Desempenho" },
+        { "type": "docs", "section": "Documentação" },
+        { "type": "refactor", "section": "Refatoração" },
+        { "type": "test", "section": "Testes", "hidden": true },
+        { "type": "build", "section": "Build", "hidden": true },
+        { "type": "chore", "section": "Manutenção", "hidden": true },
+        { "type": "style", "section": "Estilo", "hidden": true },
+        { "type": "ci", "section": "CI", "hidden": true }
+      ]
+    }
+  }
+}
