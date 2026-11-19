@@ -1,21 +1,37 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - macos/**
+    - web/**
+  errors:
+    # O Flutter 3.47 marcou package:flutter/material.dart como obsoleto em favor
+    # do pacote material_ui, e isso gera um aviso por arquivo. A migração está
+    # no docs/ROADMAP.md; até lá o aviso fica desligado para não esconder os
+    # outros. Com isso, outros usos de API obsoleta também deixam de aparecer:
+    # confira com `dart analyze` sem esta linha antes de atualizar o Flutter.
+    deprecated_member_use: ignore
+
 linter:
   rules:
-    prefer_const_constructors: true
-    prefer_const_literals_to_create_immutables: true
+    # print vai para o console do navegador e do logcat, e é o único log que o
+    # app tem hoje. Trocar por um logger está no roadmap.
     avoid_print: false
-    prefer_single_quotes: true
     avoid_unnecessary_containers: true
     avoid_web_libraries_in_flutter: true
+    prefer_const_constructors: true
     prefer_const_constructors_in_immutables: true
     prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
     prefer_final_fields: true
-    prefer_final_locals: true
     prefer_final_in_for_each: true
+    prefer_final_locals: true
     prefer_is_empty: true
     prefer_is_not_empty: true
+    prefer_single_quotes: true
     prefer_typing_uninitialized_variables: true
-    sort_constructors_first: true
-    sort_unnamed_constructors_first: true
-    use_build_context_synchronously: false
+    # sort_constructors_first saiu: o código segue o estilo do próprio Flutter,
+    # com os campos antes do construtor.
