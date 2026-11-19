@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -54,23 +54,22 @@ class DefaultFirebaseOptions {
     storageBucket: 'cartaralho.firebasestorage.app',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBvQvQvQvQvQvQvQvQvQvQvQvQvQvQvQvQ',
-    appId: '1:123456789:ios:abcdef123456789',
-    messagingSenderId: '123456789',
-    projectId: 'cartaralho-app',
-    storageBucket: 'cartaralho-app.appspot.com',
-    iosClientId: '123456789-abcdef123456789.apps.googleusercontent.com',
-    iosBundleId: 'com.pedro.cartaralho',
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBROiETY_cVtpTQkeVcIRjUEHGVqxjHeBQ',
+    appId: '1:629951279943:web:a109fd16c592fa1fb49262',
+    messagingSenderId: '629951279943',
+    projectId: 'cartaralho',
+    authDomain: 'cartaralho.firebaseapp.com',
+    storageBucket: 'cartaralho.firebasestorage.app',
+    measurementId: 'G-N30T0BJNTX',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBvQvQvQvQvQvQvQvQvQvQvQvQvQvQvQvQ',
-    appId: '1:123456789:ios:abcdef123456789',
-    messagingSenderId: '123456789',
-    projectId: 'cartaralho-app',
-    storageBucket: 'cartaralho-app.appspot.com',
-    iosClientId: '123456789-abcdef123456789.apps.googleusercontent.com',
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyA6e2wi9nZIxdiYc2jMZZAIC3hHtmmLrjA',
+    appId: '1:629951279943:ios:e44e335af727ce66b49262',
+    messagingSenderId: '629951279943',
+    projectId: 'cartaralho',
+    storageBucket: 'cartaralho.firebasestorage.app',
     iosBundleId: 'com.pedro.cartaralho',
   );
 }
