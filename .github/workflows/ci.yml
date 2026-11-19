@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Fixado para o lint e o pubspec.lock baterem com o ambiente local.
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      - name: Lint
+        run: flutter analyze
+      - name: Formatação
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Testes
+        run: flutter test
+      - name: Build web
+        run: flutter build web
