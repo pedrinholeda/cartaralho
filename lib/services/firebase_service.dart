@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
+import '../game/regras.dart' as regras;
 import '../models/card.dart';
 
 class FirebaseService {
@@ -43,7 +44,6 @@ class FirebaseService {
         id: user.uid,
         name: playerName,
         isHost: true,
-        isJudge: true,
       );
 
       final gameRoom = GameRoom(
@@ -101,87 +101,45 @@ class FirebaseService {
   }
 
   static Future<void> startGame(String roomId) async {
-    try {
-      final roomDoc = await _firestore.collection('rooms').doc(roomId).get();
-      if (!roomDoc.exists) throw Exception('Sala não encontrada');
-
-      final gameRoom = GameRoom.fromJson(roomDoc.data()!);
-
-      // Escolher primeira carta preta
-      final shuffledBlackCards = List<GameCard>.from(gameRoom.blackCards)
-        ..shuffle();
-      final firstBlackCard = shuffledBlackCards.first;
-
-      await _firestore.collection('rooms').doc(roomId).update({
-        'phase': 'choosingBlackCard',
-        'currentBlackCard': firstBlackCard.toJson(),
-        'blackCards': shuffledBlackCards.map((c) => c.toJson()).toList(),
-      });
-    } catch (e) {
-      throw Exception('Erro ao iniciar jogo: $e');
-    }
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => regras.iniciarJogo(sala, user.uid));
   }
 
-  static Future<void> submitWhiteCard(
-      String roomId, String playerId, GameCard whiteCard) async {
-    try {
-      await _firestore.collection('rooms').doc(roomId).update({
-        'submittedCards.$playerId': whiteCard.toJson(),
-        'phase': 'judgeChoosing',
-      });
-    } catch (e) {
-      throw Exception('Erro ao enviar carta: $e');
-    }
+  static Future<void> submitWhiteCard(String roomId, String cardId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(
+      roomId,
+      (sala) => regras.enviarCarta(sala, user.uid, cardId),
+    );
   }
 
   static Future<void> chooseWinner(String roomId, String winnerId) async {
-    try {
-      final roomDoc = await _firestore.collection('rooms').doc(roomId).get();
-      if (!roomDoc.exists) throw Exception('Sala não encontrada');
+    final user = _usuarioLogado();
+    await _alterarSala(
+      roomId,
+      (sala) => regras.escolherVencedor(sala, user.uid, winnerId),
+    );
+  }
 
-      final gameRoom = GameRoom.fromJson(roomDoc.data()!);
-      final updatedPlayers = gameRoom.players.map((player) {
-        if (player.id == winnerId) {
-          return player.copyWith(points: player.points + 1);
-        }
-        return player;
-      }).toList();
+  static User _usuarioLogado() {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Usuário não autenticado');
+    return user;
+  }
 
-      // Verificar se alguém ganhou o jogo
-      final winner = updatedPlayers.firstWhere(
-        (p) => p.points >= gameRoom.maxPoints,
-        orElse: () => Player(id: '', name: ''),
-      );
-
-      if (winner.id.isNotEmpty) {
-        // Jogo terminou
-        await _firestore.collection('rooms').doc(roomId).update({
-          'players': updatedPlayers.map((p) => p.toJson()).toList(),
-          'phase': 'gameComplete',
-          'winnerId': winner.id,
-        });
-      } else {
-        // Próxima rodada
-        final nextJudgeIndex =
-            (gameRoom.players.indexWhere((p) => p.isJudge) + 1) %
-                gameRoom.players.length;
-        final nextJudge = gameRoom.players[nextJudgeIndex];
-
-        final shuffledBlackCards = List<GameCard>.from(gameRoom.blackCards)
-          ..shuffle();
-        final nextBlackCard = shuffledBlackCards.first;
-
-        await _firestore.collection('rooms').doc(roomId).update({
-          'players': updatedPlayers.map((p) => p.toJson()).toList(),
-          'phase': 'choosingBlackCard',
-          'currentBlackCard': nextBlackCard.toJson(),
-          'currentJudgeId': nextJudge.id,
-          'submittedCards': {},
-        });
-      }
-    } catch (e) {
-      throw Exception('Erro ao escolher vencedor: $e');
-    }
+  /// Lê a sala, aplica [regra] e grava o resultado numa transação. Se outro
+  /// jogador mudar a sala no meio, o Firestore repete a leitura e a regra, e
+  /// nenhuma jogada se perde.
+  static Future<void> _alterarSala(
+    String roomId,
+    GameRoom Function(GameRoom sala) regra,
+  ) async {
+    final ref = _firestore.collection('rooms').doc(roomId);
+    await _firestore.runTransaction((tx) async {
+      final doc = await tx.get(ref);
+      if (!doc.exists) throw Exception('Sala não encontrada');
+      tx.set(ref, regra(GameRoom.fromJson(doc.data()!)).toJson());
+    });
   }
 
   // Helper methods
