@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../models/card.dart';
@@ -8,7 +7,6 @@ import '../models/card.dart';
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static const _uuid = Uuid();
 
   // Authentication
   static Future<User?> signInAnonymously() async {
@@ -108,18 +106,6 @@ class FirebaseService {
       if (!roomDoc.exists) throw Exception('Sala não encontrada');
 
       final gameRoom = GameRoom.fromJson(roomDoc.data()!);
-
-      // Distribuir cartas brancas para todos os jogadores
-      final shuffledWhiteCards = List<GameCard>.from(gameRoom.whiteCards)
-        ..shuffle();
-      final playersWithCards = <Player>[];
-
-      for (int i = 0; i < gameRoom.players.length; i++) {
-        final player = gameRoom.players[i];
-        final playerCards = shuffledWhiteCards.skip(i * 5).take(5).toList();
-        // Aqui você poderia salvar as cartas do jogador em uma subcoleção
-        playersWithCards.add(player);
-      }
 
       // Escolher primeira carta preta
       final shuffledBlackCards = List<GameCard>.from(gameRoom.blackCards)

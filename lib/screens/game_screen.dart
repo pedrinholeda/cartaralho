@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/game_provider.dart';
-import '../providers/auth_provider.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
 import '../widgets/player_list_widget.dart';
@@ -23,7 +22,7 @@ class GameScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sala: ${roomId ?? ''}'),
+        title: Text('Sala: $roomId'),
         backgroundColor: const Color(0xFF6A1B9A),
         foregroundColor: Colors.white,
         actions: [
