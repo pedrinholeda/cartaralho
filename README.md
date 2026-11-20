@@ -21,7 +21,8 @@ passa a vez de juiz.
 2. **Entrar**: os outros digitam o código e o nome.
 3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou (de 3 a 8 jogadores).
 4. **Rodada**: o juiz vê a carta preta; cada um dos outros envia uma carta branca; o juiz
-   escolhe a combinação mais engraçada e quem a enviou ganha um ponto.
+   escolhe a combinação mais engraçada e quem a enviou ganha um ponto. Todos veem as cartas
+   da mesa e, no fim da rodada, quem enviou cada uma.
 5. **Fim**: quem chegar a 5 pontos primeiro vence.
 
 ## O que faz
@@ -35,6 +36,8 @@ passa a vez de juiz.
 - Cinco cartas brancas na mão, completadas a cada rodada.
 - A vez de juiz passa de jogador em jogador, e a rodada só vai para o juiz quando todos
   enviaram a carta.
+- As cartas aparecem já encaixadas na frase, numa ordem sorteada para o juiz não saber quem
+  jogou o quê, e o resultado da rodada mostra a frase vencedora e quem enviou cada carta.
 
 ## Como funciona
 
