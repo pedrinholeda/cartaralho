@@ -27,6 +27,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
   /// Cartas escolhidas, na ordem em que vão preencher as lacunas.
   final List<GameCard> _escolhidas = [];
   bool _isSubmitting = false;
+  bool _trocando = false;
 
   List<GameCard> get _mao =>
       widget.room.hands[widget.currentPlayer.id] ?? const [];
@@ -71,6 +72,22 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  Future<void> _trocarMao() async {
+    setState(() => _trocando = true);
+    try {
+      await FirebaseService.swapHand(widget.room.roomId);
+      _escolhidas.clear();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao trocar: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _trocando = false);
     }
   }
 
@@ -180,6 +197,12 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
               },
             ),
           ),
+          if (!widget.room.handSwapsUsed.contains(widget.currentPlayer.id))
+            TextButton.icon(
+              onPressed: _trocando ? null : _trocarMao,
+              icon: const Icon(Icons.swap_horiz),
+              label: const Text('Trocar minha mão (uma vez por partida)'),
+            ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
