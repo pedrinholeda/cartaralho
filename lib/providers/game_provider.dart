@@ -15,7 +15,9 @@ final gameRoomProvider =
 final currentPlayerProvider = Provider<Player?>((ref) {
   final authState = ref.watch(authProvider);
   final roomId = ref.watch(roomIdProvider);
-  final gameRoom = ref.watch(gameRoomProvider(roomId!));
+  // Ao sair da sala o código vira nulo antes de a tela de jogo sumir.
+  if (roomId == null) return null;
+  final gameRoom = ref.watch(gameRoomProvider(roomId));
 
   return gameRoom.when(
     data: (room) {
@@ -38,13 +40,15 @@ final isHostProvider = Provider<bool>((ref) {
 final isJudgeProvider = Provider<bool>((ref) {
   final uid = ref.watch(authProvider).value?.uid;
   final roomId = ref.watch(roomIdProvider);
-  final room = ref.watch(gameRoomProvider(roomId!)).value;
+  if (roomId == null) return false;
+  final room = ref.watch(gameRoomProvider(roomId)).value;
   return uid != null && room != null && room.isJudge(uid);
 });
 
 final gamePhaseProvider = Provider<GamePhase?>((ref) {
   final roomId = ref.watch(roomIdProvider);
-  final gameRoom = ref.watch(gameRoomProvider(roomId!));
+  if (roomId == null) return null;
+  final gameRoom = ref.watch(gameRoomProvider(roomId));
   return gameRoom.when(
     data: (room) => room?.phase,
     loading: () => null,
