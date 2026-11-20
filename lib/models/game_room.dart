@@ -48,6 +48,12 @@ class GameRoom {
   final String? winnerId;
   final int maxPoints;
 
+  /// Quantas cartas brancas cada jogador tem na mão.
+  final int handSize;
+
+  /// Quem já trocou a mão nesta partida (uma troca por jogador).
+  final List<String> handSwapsUsed;
+
   GameRoom({
     required this.roomId,
     required this.players,
@@ -62,6 +68,8 @@ class GameRoom {
     this.lastRoundWinnerId,
     this.winnerId,
     this.maxPoints = 5,
+    this.handSize = 5,
+    this.handSwapsUsed = const [],
   });
 
   bool isJudge(String playerId) => playerId == currentJudgeId;
@@ -114,6 +122,9 @@ class GameRoom {
       lastRoundWinnerId: json['lastRoundWinnerId'] as String?,
       winnerId: json['winnerId'] as String?,
       maxPoints: json['maxPoints'] as int? ?? 5,
+      handSize: json['handSize'] as int? ?? 5,
+      handSwapsUsed:
+          (json['handSwapsUsed'] as List<dynamic>? ?? []).cast<String>(),
     );
   }
 
@@ -136,6 +147,8 @@ class GameRoom {
       'lastRoundWinnerId': lastRoundWinnerId,
       'winnerId': winnerId,
       'maxPoints': maxPoints,
+      'handSize': handSize,
+      'handSwapsUsed': handSwapsUsed,
     };
   }
 
@@ -153,6 +166,8 @@ class GameRoom {
     String? lastRoundWinnerId,
     String? winnerId,
     int? maxPoints,
+    int? handSize,
+    List<String>? handSwapsUsed,
   }) {
     return GameRoom(
       roomId: roomId ?? this.roomId,
@@ -168,6 +183,8 @@ class GameRoom {
       lastRoundWinnerId: lastRoundWinnerId ?? this.lastRoundWinnerId,
       winnerId: winnerId ?? this.winnerId,
       maxPoints: maxPoints ?? this.maxPoints,
+      handSize: handSize ?? this.handSize,
+      handSwapsUsed: handSwapsUsed ?? this.handSwapsUsed,
     );
   }
 }

@@ -10,8 +10,12 @@ import '../models/player.dart';
 /// O FirebaseService lê o documento, chama uma destas funções e grava o
 /// resultado numa transação. Assim a regra é testável sem Firestore.
 
-/// Quantas cartas brancas cada jogador tem na mão.
+/// Quantas cartas brancas cada jogador tem na mão, se a sala não disser outra coisa.
 const tamanhoDaMao = 5;
+
+/// Opções oferecidas ao criar a sala.
+const opcoesDePontos = [3, 5, 7, 10];
+const opcoesDeMao = [5, 7];
 
 /// Mínimo de jogadores para começar: um juiz e ao menos dois que jogam cartas.
 const minimoDeJogadores = 3;
@@ -26,7 +30,7 @@ class JogadaInvalida implements Exception {
   String toString() => mensagem;
 }
 
-/// Começa a partida: embaralha os baralhos, dá [tamanhoDaMao] cartas a cada
+/// Começa a partida: embaralha os baralhos, dá [GameRoom.handSize] cartas a cada
 /// jogador, vira a primeira carta preta e abre a fase de envio.
 GameRoom iniciarJogo(GameRoom sala, String quemPediu, {Random? random}) {
   final rng = random ?? Random();
@@ -44,14 +48,17 @@ GameRoom iniciarJogo(GameRoom sala, String quemPediu, {Random? random}) {
 
   final brancas = List<GameCard>.from(sala.whiteCards)..shuffle(rng);
   final pretas = List<GameCard>.from(sala.blackCards)..shuffle(rng);
-  if (brancas.length < sala.players.length * tamanhoDaMao) {
-    throw JogadaInvalida('Não há cartas brancas para todos os jogadores');
+  if (brancas.length < sala.players.length * sala.handSize) {
+    throw JogadaInvalida(
+      'Não há cartas brancas para ${sala.players.length} jogadores com '
+      '${sala.handSize} cartas na mão. Diminua a mão ou o número de jogadores.',
+    );
   }
 
   final maos = <String, List<GameCard>>{};
   for (final jogador in sala.players) {
     maos[jogador.id] = [
-      for (var i = 0; i < tamanhoDaMao; i++) brancas.removeAt(0),
+      for (var i = 0; i < sala.handSize; i++) brancas.removeAt(0),
     ];
   }
 
@@ -181,7 +188,7 @@ GameRoom proximaRodada(GameRoom sala, String quemPediu) {
   final maos = <String, List<GameCard>>{};
   for (final p in sala.players) {
     final mao = [...?sala.hands[p.id]];
-    while (mao.length < tamanhoDaMao && brancas.isNotEmpty) {
+    while (mao.length < sala.handSize && brancas.isNotEmpty) {
       mao.add(brancas.removeAt(0));
     }
     maos[p.id] = mao;
@@ -244,4 +251,86 @@ String gerarCodigoSala({Random? random, int tamanho = 6}) {
     for (var i = 0; i < tamanho; i++)
       _alfabetoDoCodigo.codeUnitAt(rng.nextInt(_alfabetoDoCodigo.length)),
   ]);
+}
+
+/// Sala nova, esperando jogadores, com o baralho inicial e a configuração
+/// escolhida por quem criou.
+GameRoom novaSala({
+  required String roomId,
+  required Player anfitriao,
+  int maxPoints = 5,
+  int handSize = tamanhoDaMao,
+}) {
+  if (!opcoesDePontos.contains(maxPoints)) {
+    throw JogadaInvalida('Pontos para vencer inválidos: $maxPoints');
+  }
+  if (!opcoesDeMao.contains(handSize)) {
+    throw JogadaInvalida('Tamanho de mão inválido: $handSize');
+  }
+  return GameRoom(
+    roomId: roomId,
+    players: [anfitriao.copyWith(isHost: true, points: 0)],
+    blackCards: cartasPretas(),
+    whiteCards: cartasBrancas(),
+    currentJudgeId: anfitriao.id,
+    maxPoints: maxPoints,
+    handSize: handSize,
+  );
+}
+
+/// Troca a mão inteira do jogador por cartas novas do monte, uma vez por
+/// partida, antes de ele enviar a carta da rodada. As cartas devolvidas vão
+/// para o fim do monte.
+GameRoom trocarMao(GameRoom sala, String jogadorId) {
+  if (sala.phase != GamePhase.playersSubmitting) {
+    throw JogadaInvalida(
+        'Só dá para trocar a mão enquanto as cartas são escolhidas');
+  }
+  if (sala.submittedCards.containsKey(jogadorId)) {
+    throw JogadaInvalida('Você já enviou sua carta nesta rodada');
+  }
+  if (sala.handSwapsUsed.contains(jogadorId)) {
+    throw JogadaInvalida('Você já trocou a mão nesta partida');
+  }
+  final mao = sala.hands[jogadorId];
+  if (mao == null) throw JogadaInvalida('Você não está nesta partida');
+  if (sala.whiteCards.length < mao.length) {
+    throw JogadaInvalida(
+        'Não há cartas suficientes no monte para trocar agora');
+  }
+
+  final monte = [...sala.whiteCards];
+  final nova = [for (var i = 0; i < mao.length; i++) monte.removeAt(0)];
+  return sala.copyWith(
+    whiteCards: [...monte, ...mao],
+    hands: {...sala.hands, jogadorId: nova},
+    handSwapsUsed: [...sala.handSwapsUsed, jogadorId],
+  );
+}
+
+/// Recomeça com o mesmo grupo: placar zerado, todas as cartas de volta ao
+/// baralho e a sala esperando o anfitrião iniciar, para quem quiser entrar.
+GameRoom jogarDeNovo(GameRoom sala, String quemPediu) {
+  if (sala.phase != GamePhase.gameComplete) {
+    throw JogadaInvalida('O jogo ainda não terminou');
+  }
+  if (!sala.players.any((p) => p.id == quemPediu && p.isHost)) {
+    throw JogadaInvalida('Só o anfitrião recomeça o jogo');
+  }
+  return GameRoom(
+    roomId: sala.roomId,
+    players: [for (final p in sala.players) p.copyWith(points: 0)],
+    blackCards: [
+      ...sala.blackCards,
+      if (sala.currentBlackCard != null) sala.currentBlackCard!,
+    ],
+    whiteCards: [
+      ...sala.whiteCards,
+      ...sala.hands.values.expand((m) => m),
+      ...sala.submittedCards.values.expand((cs) => cs),
+    ],
+    currentJudgeId: sala.players.first.id,
+    maxPoints: sala.maxPoints,
+    handSize: sala.handSize,
+  );
 }

@@ -59,11 +59,11 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
   sempre igual, e o juiz aprende quem é quem depois de algumas rodadas
 - [x] **Frase completa na carta**: a carta preta com as brancas encaixadas nos espaços, na
   escolha do jogador, na do juiz, na mesa e no resultado
-- [ ] **Configurar a partida** ao criar a sala: pontos para vencer (hoje fixo em 5) e
-  tamanho da mão
-- [ ] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou
+- [x] **Configurar a partida** ao criar a sala: pontos para vencer (3, 5, 7 ou 10) e
+  tamanho da mão (5 ou 7)
+- [x] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou
   só carta ruim
-- [ ] **Jogar de novo** com o mesmo grupo, zerando o placar, em vez de "Voltar ao Menu"
+- [x] **Jogar de novo** com o mesmo grupo, zerando o placar, em vez de "Voltar ao Menu"
 - [ ] **Revisão do baralho**: mais cartas pretas (com 15, elas se repetem depois de 15
   rodadas), cartas brancas mais engraçadas e menos genéricas ("Música", "Tecnologia"),
   e regras de texto (uma lacuna por espaço, sem ponto final duplo, tamanho máximo). As

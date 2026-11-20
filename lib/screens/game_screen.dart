@@ -114,7 +114,7 @@ class GameScreen extends ConsumerWidget {
         return RoundResultWidget(room: room, isJudge: isJudge);
 
       case GamePhase.gameComplete:
-        return _buildGameComplete(context, ref, room);
+        return _buildGameComplete(context, ref, room, isHost);
     }
   }
 
@@ -139,6 +139,11 @@ class GameScreen extends ConsumerWidget {
           Text(
             'Jogadores na sala: ${room.players.length}',
             style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Até ${room.maxPoints} pontos · ${room.handSize} cartas na mão',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           if (room.players.length < minimoDeJogadores) ...[
             const SizedBox(height: 8),
@@ -222,7 +227,11 @@ class GameScreen extends ConsumerWidget {
   }
 
   Widget _buildGameComplete(
-      BuildContext context, WidgetRef ref, GameRoom room) {
+    BuildContext context,
+    WidgetRef ref,
+    GameRoom room,
+    bool isHost,
+  ) {
     final winner = room.players.firstWhere(
       (p) => p.id == room.winnerId,
       orElse: () => room.players.first,
@@ -267,6 +276,40 @@ class GameScreen extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 32),
+          if (isHost) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await FirebaseService.playAgain(room.roomId);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erro: $e')),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6A1B9A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text(
+                  'Jogar de novo',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ] else ...[
+            const Text(
+              'O anfitrião pode começar outra partida com o mesmo grupo.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+          ],
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
