@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../game/regras.dart';
 import '../models/game_room.dart';
+import '../ui/cartas.dart';
+import '../ui/tema.dart';
 
 /// As cartas enviadas, na ordem sorteada, para quem não é o juiz acompanhar
 /// enquanto ele escolhe. Sem o nome de quem enviou: isso só aparece no
@@ -13,33 +15,35 @@ class TableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cores = Cores.de(context);
     final preta = room.currentBlackCard;
-    final cartas = room.cardsOnTable;
+    final mesa = room.cardsOnTable;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding:
+          const EdgeInsets.fromLTRB(Medidas.margem, 12, Medidas.margem, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
+          Text(
             'O juiz está escolhendo a carta vencedora...',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: cores.tintaNaMesa),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Expanded(
-            child: ListView.builder(
-              itemCount: cartas.length,
+            child: ListView.separated(
+              itemCount: mesa.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
-                final brancas = cartas[index].value;
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  child: ListTile(
-                    title: Text(
-                      preta == null
-                          ? brancas.map((c) => c.text).join(' / ')
-                          : fraseCompleta(preta, brancas),
-                    ),
-                  ),
+                final brancas = mesa[index].value;
+                return CartaBranca(
+                  larga: true,
+                  texto: preta == null
+                      ? brancas.map((c) => c.text).join(' / ')
+                      : fraseCompleta(preta, brancas),
                 );
               },
             ),

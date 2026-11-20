@@ -6,6 +6,8 @@ import '../services/firebase_service.dart';
 import 'create_room_screen.dart';
 import 'join_room_screen.dart';
 import 'game_screen.dart';
+import '../ui/cartas.dart';
+import '../ui/tema.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -53,136 +55,132 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final authState = ref.watch(authProvider);
     final roomId = ref.watch(roomIdProvider);
 
-    // Se há um roomId, mostrar a tela do jogo
+    // Com uma sala escolhida, a tela é a do jogo.
     if (roomId != null) {
       return const GameScreen();
     }
 
+    final textos = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF6A1B9A), Color(0xFF9C27B0)],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
-                const Icon(
-                  Icons.casino,
-                  size: 100,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Cartaralho',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: Medidas.larguraMaxima),
+            child: Padding(
+              padding: const EdgeInsets.all(Medidas.margem),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Spacer(),
+                  const _CartasDaCapa(),
+                  const SizedBox(height: 36),
+                  Text(
+                    'Frases absurdas, completadas com as piores cartas da mão. '
+                    'Cada um joga no seu celular.',
+                    style: textos.titleMedium,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'O jogo de cartas mais divertido e politicamente incorreto!',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const Spacer(),
-                if (authState.isLoading)
-                  const CircularProgressIndicator(color: Colors.white)
-                else if (authState.hasError)
-                  Column(
-                    children: [
-                      const Text(
-                        'Erro ao conectar',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => FirebaseService.signInAnonymously(),
-                        child: const Text('Tentar novamente'),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CreateRoomScreen(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF6A1B9A),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Criar Sala',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                  const Spacer(flex: 2),
+                  if (authState.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (authState.hasError) ...[
+                    Text('Erro ao conectar', style: textos.titleMedium),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () => FirebaseService.signInAnonymously(),
+                      child: const Text('Tentar novamente'),
+                    ),
+                  ] else ...[
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreateRoomScreen(),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const JoinRoomScreen(),
-                              ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side:
-                                const BorderSide(color: Colors.white, width: 2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Entrar na Sala',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      child: const Text('Criar Sala'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const JoinRoomScreen(),
                         ),
                       ),
-                    ],
-                  ),
-                const Spacer(),
-              ],
+                      child: const Text('Entrar na Sala'),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// A capa: uma carta preta e a branca que a completa, jogadas de lado na mesa.
+class _CartasDaCapa extends StatelessWidget {
+  const _CartasDaCapa();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      header: true,
+      label: 'Cartaralho',
+      excludeSemantics: true,
+      child: SizedBox(
+        height: 250,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 48,
+              top: 0,
+              child: Transform.rotate(
+                angle: -0.06,
+                child: const CartaPreta(texto: 'O jogo de hoje é ____.'),
+              ),
+            ),
+            Positioned(
+              left: 72,
+              right: 0,
+              top: 128,
+              child: Transform.rotate(
+                angle: 0.05,
+                child: const _CartaDoNome(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CartaDoNome extends StatelessWidget {
+  const _CartaDoNome();
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Cores.de(context);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
+      decoration: BoxDecoration(
+        color: cores.carta,
+        borderRadius: BorderRadius.circular(Medidas.raioCarta),
+        boxShadow: const [
+          BoxShadow(color: Medidas.sombra, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Text(
+        'Cartaralho',
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              color: cores.tintaNaCarta,
+              fontWeight: FontWeight.w800,
+            ),
       ),
     );
   }

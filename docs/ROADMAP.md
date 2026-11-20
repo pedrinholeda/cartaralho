@@ -70,6 +70,9 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
   do arquivo conferidas por teste; tamanho máximo do texto ainda não
 - [x] **Baralho num arquivo JSON** em `assets/baralhos/basico.json`, fora do código, validado
   por teste
+- [x] **Cartas sem contração errada**: "fala de ____" virava "fala de o cunhado"; as cartas
+  foram reescritas e um teste recusa preposição contraível antes da lacuna (achado no teste
+  no navegador)
 - [ ] Baralhos customizados: escolher o baralho ao criar a sala, e depois criar o próprio
 
 ## Fase 3 — redesign (web primeiro)
@@ -77,12 +80,12 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 Deixar o jogo bonito e animado. Tudo testado no navegador, em tela de celular e de
 computador, no tema claro e no escuro, com print no PR.
 
-- [ ] **Identidade**: escolher o logo entre as propostas em [`docs/marca/`](marca) e tirar
-  dele a paleta (vermelho, preto e branco das cartas) e a tipografia; ícones e cores do
-  `manifest.json` da web
-- [ ] **Tema e tokens**: cores, espaçamentos, raios e tipografia num `ThemeData` próprio
-  (hoje `0xFF6A1B9A` se repete em cada tela) e tema escuro; registrar em `docs/DESIGN.md`
-- [ ] **Cartas com cara de carta**: proporção de carta de baralho, carta preta e branca com
+- [ ] **Identidade**: paleta e tipografia feitas (vermelho, preto e branco dos logos, Archivo).
+  Falta escolher o logo entre as propostas em [`docs/marca/`](marca) e gerar os ícones e as
+  cores do `manifest.json` da web
+- [x] **Tema e tokens**: cores, espaçamentos, raios e tipografia em `lib/ui/tema.dart`, tema
+  escuro, e tudo registrado em [`docs/DESIGN.md`](DESIGN.md)
+- [x] **Cartas com cara de carta**: proporção de carta de baralho, carta preta e branca com
   estilo próprio, a lacuna desenhada como linha
 - [ ] **Animações**: cartas sendo distribuídas, a carta enviada voando para a mesa, as cartas
   virando para o juiz, transição entre as fases e a revelação do vencedor com confete
@@ -92,13 +95,13 @@ computador, no tema claro e no escuro, com print no PR.
   Sala". Sons com licença livre (CC0), guardados em `assets/sons/` com a origem anotada
 - [ ] **Sala de espera viva**: código grande com botão de copiar e de compartilhar o link,
   jogadores aparecendo conforme entram
-- [ ] **Cartão do juiz na lista de jogadores**: a estrela some (âmbar sobre âmbar) e o rótulo
-  "JUIZ" vaza para fora do cartão de 80 px (achado no teste no navegador)
-- [ ] **Layout de computador**: hoje a tela é de celular esticada; mão em leque e mesa no
-  centro em tela larga
-- [ ] **Acessibilidade**: as cartas brancas não têm rótulo de acessibilidade (o teste de
-  ponta a ponta precisou de clique forçado), contraste revisado, animações respeitando
-  "reduzir movimento"
+- [x] **Cartão do juiz na lista de jogadores**: a estrela sumia (âmbar sobre âmbar) e o rótulo
+  "JUIZ" vazava do cartão; agora é uma ficha amarela com martelo
+- [ ] **Layout de computador**: o conteúdo já fica centralizado em até 560 px e a mão usa
+  mais colunas em tela larga; falta mão em leque e mesa no centro
+- [ ] **Acessibilidade**: cartas, placar e carta preta já têm rótulo de acessibilidade, e a
+  carta escolhida não se mexe com "reduzir movimento"; falta revisar contraste e foco de
+  teclado
 
 ## Fase 4 — plataformas
 

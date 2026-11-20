@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../game/regras.dart' as regras;
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
+import '../ui/tema.dart';
 
 class CreateRoomScreen extends ConsumerStatefulWidget {
   const CreateRoomScreen({super.key});
@@ -64,89 +65,61 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Criar Sala'),
-        backgroundColor: const Color(0xFF6A1B9A),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.add_circle_outline,
-                size: 80,
-                color: Color(0xFF6A1B9A),
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                'Criar Nova Sala',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF6A1B9A),
+          padding: const EdgeInsets.all(Medidas.margem),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: Medidas.larguraMaxima),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('Criar Nova Sala',
+                    style: Theme.of(context).textTheme.headlineMedium),
+                const SizedBox(height: 8),
+                Text(
+                  'Você vira o anfitrião e recebe um código para passar aos outros.',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Digite seu nome para criar uma nova sala de jogo',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Seu nome',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                ),
-                textCapitalization: TextCapitalization.words,
-              ),
-              const SizedBox(height: 24),
-              _Opcoes(
-                titulo: 'Pontos para vencer',
-                opcoes: regras.opcoesDePontos,
-                valor: _pontos,
-                aoEscolher: (v) => setState(() => _pontos = v),
-              ),
-              const SizedBox(height: 16),
-              _Opcoes(
-                titulo: 'Cartas na mão',
-                opcoes: regras.opcoesDeMao,
-                valor: _mao,
-                aoEscolher: (v) => setState(() => _mao = v),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isCreating ? null : _createRoom,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6A1B9A),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Seu nome',
+                    prefixIcon: Icon(Icons.person),
                   ),
-                  child: _isCreating
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Criar Sala',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  textCapitalization: TextCapitalization.words,
                 ),
-              ),
-            ],
+                const SizedBox(height: 24),
+                _Opcoes(
+                  titulo: 'Pontos para vencer',
+                  opcoes: regras.opcoesDePontos,
+                  valor: _pontos,
+                  aoEscolher: (v) => setState(() => _pontos = v),
+                ),
+                const SizedBox(height: 16),
+                _Opcoes(
+                  titulo: 'Cartas na mão',
+                  opcoes: regras.opcoesDeMao,
+                  valor: _mao,
+                  aoEscolher: (v) => setState(() => _mao = v),
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _isCreating ? null : _createRoom,
+                  child: _isCreating
+                      ? SizedBox.square(
+                          dimension: 22,
+                          child: CircularProgressIndicator(
+                            color: Cores.de(context).tintaNaCartaPreta,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text('Criar Sala'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

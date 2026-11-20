@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../game/regras.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
+import '../ui/cartas.dart';
+import '../ui/tema.dart';
 
+/// O juiz lê as frases da mesa, na ordem sorteada, e escolhe a melhor.
 class JudgeWidget extends ConsumerStatefulWidget {
   final GameRoom room;
 
-  const JudgeWidget({
-    super.key,
-    required this.room,
-  });
+  const JudgeWidget({super.key, required this.room});
 
   @override
   ConsumerState<JudgeWidget> createState() => _JudgeWidgetState();
@@ -23,81 +24,55 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final submittedCards = widget.room.cardsOnTable;
+    final cores = Cores.de(context);
+    final mesa = widget.room.cardsOnTable;
     final preta = widget.room.currentBlackCard;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding:
+          const EdgeInsets.fromLTRB(Medidas.margem, 12, Medidas.margem, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
+          Text(
             'Escolha a carta vencedora:',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: cores.tintaNaMesa),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Expanded(
-            child: ListView.builder(
-              itemCount: submittedCards.length,
+            child: ListView.separated(
+              itemCount: mesa.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
-                final cartas = submittedCards[index].value;
-                final playerId = submittedCards[index].key;
-                final isSelected = _selectedWinner == playerId;
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  color: isSelected ? const Color(0xFF6A1B9A) : Colors.white,
-                  child: ListTile(
-                    onTap: () {
-                      setState(() {
-                        _selectedWinner = playerId;
-                      });
-                    },
-                    title: Text(
-                      preta == null
-                          ? cartas.map((c) => c.text).join(' / ')
-                          : fraseCompleta(preta, cartas),
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? const Icon(Icons.check_circle, color: Colors.white)
-                        : const Icon(Icons.radio_button_unchecked),
-                  ),
+                final cartas = mesa[index].value;
+                final playerId = mesa[index].key;
+                return CartaBranca(
+                  larga: true,
+                  texto: preta == null
+                      ? cartas.map((c) => c.text).join(' / ')
+                      : fraseCompleta(preta, cartas),
+                  selecionada: _selectedWinner == playerId,
+                  aoTocar: () => setState(() => _selectedWinner = playerId),
                 );
               },
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _selectedWinner != null && !_isChoosing
-                  ? _chooseWinner
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A1B9A),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: _isChoosing
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text(
-                      'Escolher Vencedor',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed:
+                _selectedWinner != null && !_isChoosing ? _chooseWinner : null,
+            child: _isChoosing
+                ? SizedBox.square(
+                    dimension: 22,
+                    child: CircularProgressIndicator(
+                      color: cores.tintaNaCartaPreta,
+                      strokeWidth: 3,
                     ),
-            ),
+                  )
+                : const Text('Escolher Vencedor'),
           ),
         ],
       ),
@@ -106,25 +81,17 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
 
   Future<void> _chooseWinner() async {
     if (_selectedWinner == null) return;
-
-    setState(() {
-      _isChoosing = true;
-    });
-
+    setState(() => _isChoosing = true);
     try {
       await FirebaseService.chooseWinner(widget.room.roomId, _selectedWinner!);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao escolher vencedor: $e')),
+          SnackBar(content: Text('Não deu para escolher: $e')),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isChoosing = false;
-        });
-      }
+      if (mounted) setState(() => _isChoosing = false);
     }
   }
 }
