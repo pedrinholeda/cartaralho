@@ -70,6 +70,9 @@ class GameScreen extends ConsumerWidget {
                       duration: movimentoReduzido(context)
                           ? Duration.zero
                           : const Duration(milliseconds: 250),
+                      // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
+                      layoutBuilder: (atual, anteriores) =>
+                          atual ?? const SizedBox.shrink(),
                       child: KeyedSubtree(
                         key: ValueKey(
                           '${room.phase.name}-${room.currentBlackCard?.id}',
