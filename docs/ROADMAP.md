@@ -1,7 +1,9 @@
 # Roadmap
 
-Primeiro o que impede uma partida de chegar ao fim, depois as plataformas que não
-compilam ou não conectam, depois segurança e robustez, e por último conteúdo e acabamento.
+Primeiro o que impede uma partida de chegar ao fim. Com o jogo rodando na web, vêm a
+jogabilidade e as cartas (o que deixa a partida divertida), depois o redesign, ainda só na
+web. As plataformas nativas, a segurança e a manutenção ficam para depois que o jogo estiver
+gostoso de jogar.
 Cada item vira um ou mais PRs e uma entrada no [CHANGELOG](../CHANGELOG.md).
 
 Legenda: `[ ]` pendente · `[x]` feito
@@ -41,17 +43,74 @@ Legenda: `[ ]` pendente · `[x]` feito
 - [x] **Baralho para até 8 jogadores**: eram 15 brancas e cada mão tem 5, então mais de três
   jogadores não começavam
 
-## Fase 2 — plataformas
+## Fase 2 — jogabilidade e cartas
+
+O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
+
+- [ ] **Cartas pretas com mais de um espaço** ("Escolha 2"): o jogo só aceita uma carta
+  branca por jogador, então uma carta preta com dois ou três `____` não tem como ser
+  respondida. O baralho de hoje só tem cartas de um espaço, mas nada impede uma carta nova
+  com mais. Fazer a carta preta saber quantas brancas pede (contando as lacunas), o jogador
+  escolher na ordem e o juiz ver o conjunto. Até lá, um teste recusa carta com mais de um
+  espaço.
+- [ ] **Resultado da rodada**: o juiz escolhe e a tela já pula para a rodada seguinte;
+  ninguém vê qual carta ganhou nem quem a jogou (`lastRoundWinnerId` é gravado e nunca
+  mostrado). Uma fase curta de resultado, com a frase completa e o nome do vencedor
+- [ ] **Todos veem as cartas enviadas** enquanto o juiz escolhe (hoje só o juiz vê), para o
+  grupo ler e rir junto
+- [ ] **Ordem das cartas embaralhada para o juiz**: hoje vêm na ordem do id de quem enviou,
+  sempre igual, e o juiz aprende quem é quem depois de algumas rodadas
+- [ ] **Frase completa na carta**: mostrar a carta preta com a branca encaixada no espaço,
+  na escolha do jogador e na do juiz
+- [ ] **Configurar a partida** ao criar a sala: pontos para vencer (hoje fixo em 5) e
+  tamanho da mão
+- [ ] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou
+  só carta ruim
+- [ ] **Jogar de novo** com o mesmo grupo, zerando o placar, em vez de "Voltar ao Menu"
+- [ ] **Revisão do baralho**: mais cartas pretas (com 15, elas se repetem depois de 15
+  rodadas), cartas brancas mais engraçadas e menos genéricas ("Música", "Tecnologia"),
+  e regras de texto (uma lacuna por espaço, sem ponto final duplo, tamanho máximo)
+- [ ] Baralho num arquivo JSON em `assets/`, fora do código, validado por teste;
+  baralhos customizados depois
+
+## Fase 3 — redesign (web primeiro)
+
+Deixar o jogo bonito e animado. Tudo testado no navegador, em tela de celular e de
+computador, no tema claro e no escuro, com print no PR.
+
+- [ ] **Identidade**: escolher o logo entre as propostas em [`docs/marca/`](marca) e tirar
+  dele a paleta (vermelho, preto e branco das cartas) e a tipografia; ícones e cores do
+  `manifest.json` da web
+- [ ] **Tema e tokens**: cores, espaçamentos, raios e tipografia num `ThemeData` próprio
+  (hoje `0xFF6A1B9A` se repete em cada tela) e tema escuro; registrar em `docs/DESIGN.md`
+- [ ] **Cartas com cara de carta**: proporção de carta de baralho, carta preta e branca com
+  estilo próprio, a lacuna desenhada como linha
+- [ ] **Animações**: cartas sendo distribuídas, a carta enviada voando para a mesa, as cartas
+  virando para o juiz, transição entre as fases e a revelação do vencedor com confete
+- [ ] **Efeitos sonoros** curtos (distribuir, enviar, virar, vencer a rodada, vencer o jogo),
+  com botão de mudo lembrado entre partidas. Na web o navegador só toca som depois do
+  primeiro toque na página, então o primeiro som vem depois de "Criar Sala" ou "Entrar na
+  Sala". Sons com licença livre (CC0), guardados em `assets/sons/` com a origem anotada
+- [ ] **Sala de espera viva**: código grande com botão de copiar e de compartilhar o link,
+  jogadores aparecendo conforme entram
+- [ ] **Cartão do juiz na lista de jogadores**: a estrela some (âmbar sobre âmbar) e o rótulo
+  "JUIZ" vaza para fora do cartão de 80 px (achado no teste no navegador)
+- [ ] **Layout de computador**: hoje a tela é de celular esticada; mão em leque e mesa no
+  centro em tela larga
+- [ ] **Acessibilidade**: as cartas brancas não têm rótulo de acessibilidade (o teste de
+  ponta a ponta precisou de clique forçado), contraste revisado, animações respeitando
+  "reduzir movimento"
+
+## Fase 4 — plataformas
 
 - [ ] **Projeto iOS completo**: falta o `Runner.xcodeproj` (recriar com
   `flutter create --platforms=ios .` e conferir num Mac)
 - [ ] **Gradle moderno**: `android/` usa `apply from: flutter.gradle` (formato antigo) e
   Gradle 8.10, que não roda com JDK 25; o build de release assina com a chave de debug
-- [ ] Build de Android e web no CI e na tag de release
-- [ ] Ícones e cores do `manifest.json` da web (ainda os padrões do Flutter)
+- [ ] Build de Android e web no CI e na tag de release; publicar a web (Firebase Hosting)
 - [ ] macOS: registrar o app no Firebase ou tirar a pasta `macos/`
 
-## Fase 3 — segurança e robustez
+## Fase 5 — segurança e robustez
 
 - [ ] **Regras do Firestore de verdade**: hoje qualquer usuário logado grava qualquer
   sala; restringir a membros e validar a mudança de fase
@@ -66,13 +125,8 @@ Legenda: `[ ]` pendente · `[x]` feito
 - [ ] Teste de ponta a ponta no CI: uma partida com três jogadores contra o emulador do
   Firestore
 
-## Fase 4 — conteúdo e acabamento
+## Fase 6 — manutenção
 
-- [ ] Baralho num arquivo JSON em `assets/`, fora do código; baralhos customizados
-- [ ] **Cartão do juiz na lista de jogadores**: a estrela some (âmbar sobre âmbar) e o rótulo
-  "JUIZ" vaza para fora do cartão de 80 px (achado no teste no navegador)
-- [ ] Cores e tamanhos como tema (hoje `0xFF6A1B9A` se repete em cada tela) e tema escuro
-- [ ] Escolher o logo entre as propostas em [`docs/marca/`](marca) e gerar os ícones do app
 - [ ] Migrar de `package:flutter/material.dart` para `material_ui` e religar o aviso de
   API obsoleta no `analysis_options.yaml`
 - [ ] Atualizar Firebase (`firebase_core` 2 → atual) e Riverpod 3
