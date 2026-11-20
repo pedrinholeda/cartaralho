@@ -3,10 +3,12 @@ import '../models/player.dart';
 
 class PlayerListWidget extends StatelessWidget {
   final List<Player> players;
+  final String? judgeId;
 
   const PlayerListWidget({
     super.key,
     required this.players,
+    required this.judgeId,
   });
 
   @override
@@ -19,11 +21,12 @@ class PlayerListWidget extends StatelessWidget {
         itemCount: players.length,
         itemBuilder: (context, index) {
           final player = players[index];
+          final isJudge = player.id == judgeId;
           return Container(
             width: 120,
             margin: const EdgeInsets.only(right: 8),
             child: Card(
-              color: player.isJudge ? Colors.amber : Colors.white,
+              color: isJudge ? Colors.amber : Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -33,7 +36,7 @@ class PlayerListWidget extends StatelessWidget {
                       player.name,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: player.isJudge ? Colors.black : Colors.black87,
+                        color: isJudge ? Colors.black : Colors.black87,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -47,13 +50,12 @@ class PlayerListWidget extends StatelessWidget {
                           '${player.points}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color:
-                                player.isJudge ? Colors.black : Colors.black87,
+                            color: isJudge ? Colors.black : Colors.black87,
                           ),
                         ),
                       ],
                     ),
-                    if (player.isJudge)
+                    if (isJudge)
                       const Text(
                         'JUIZ',
                         style: TextStyle(

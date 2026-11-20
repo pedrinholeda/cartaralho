@@ -35,8 +35,10 @@ final isHostProvider = Provider<bool>((ref) {
 });
 
 final isJudgeProvider = Provider<bool>((ref) {
-  final currentPlayer = ref.watch(currentPlayerProvider);
-  return currentPlayer?.isJudge ?? false;
+  final uid = ref.watch(authProvider).value?.uid;
+  final roomId = ref.watch(roomIdProvider);
+  final room = ref.watch(gameRoomProvider(roomId!)).value;
+  return uid != null && room != null && room.isJudge(uid);
 });
 
 final gamePhaseProvider = Provider<GamePhase?>((ref) {

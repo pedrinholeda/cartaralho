@@ -18,15 +18,15 @@ Legenda: `[ ]` pendente · `[x]` feito
 
 ## Fase 1 — partida jogável do começo ao fim
 
-- [ ] **A rodada sai da primeira fase**: `startGame` grava `choosingBlackCard` e nada leva
+- [x] **A rodada sai da primeira fase**: `startGame` grava `choosingBlackCard` e nada leva
   a sala para `playersSubmitting`, então ninguém consegue enviar carta
-- [ ] **O juiz só escolhe quando todos enviaram**: `submitWhiteCard` passa para
+- [x] **O juiz só escolhe quando todos enviaram**: `submitWhiteCard` passa para
   `judgeChoosing` já na primeira carta
-- [ ] **Mão de cartas gravada**: a mão é sorteada de novo a cada redesenho
+- [x] **Mão de cartas gravada**: a mão é sorteada de novo a cada redesenho
   (`WhiteCardsWidget._playerWhiteCards`) e duas pessoas podem ter a mesma carta
-- [ ] **Juiz roda entre os jogadores**: `chooseWinner` atualiza `currentJudgeId` mas não
+- [x] **Juiz roda entre os jogadores**: `chooseWinner` atualiza `currentJudgeId` mas não
   `isJudge`, que é o que a tela lê, e calcula o próximo a partir de `isJudge`
-- [ ] **Regras do jogo como funções puras e testadas**, chamadas pelo `FirebaseService`
+- [x] **Regras do jogo como funções puras e testadas**, chamadas pelo `FirebaseService`
   dentro de transação
 - [ ] **Código de sala aleatório**: `_generateRoomId` usa o relógio e gera letras
   consecutivas (`ABCDEF`, `BCDEFG`); duas salas no mesmo milissegundo colidem
@@ -36,7 +36,8 @@ Legenda: `[ ]` pendente · `[x]` feito
   `web/index.html` carrega à toa o SDK JS compat 9.0.0
 - [ ] **iOS e macOS com as opções reais**: `firebase_options.dart` tem valores de exemplo
   de outro projeto (`cartaralho-app`), diferentes do `GoogleService-Info.plist`
-- [ ] Baralho com cartas para mais de três jogadores: são 15 brancas e cada mão tem 5
+- [x] **Baralho para até 8 jogadores**: eram 15 brancas e cada mão tem 5, então mais de três
+  jogadores não começavam
 
 ## Fase 2 — plataformas
 

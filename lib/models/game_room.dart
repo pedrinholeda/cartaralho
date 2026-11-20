@@ -1,24 +1,42 @@
-import 'player.dart';
 import 'card.dart';
+import 'player.dart';
 
+/// Fases da partida, na ordem em que acontecem. Gravadas pelo nome no Firestore.
 enum GamePhase {
+  /// Sala aberta, esperando o anfitrião iniciar.
   waitingForPlayers,
-  choosingBlackCard,
+
+  /// Carta preta na mesa; cada jogador menos o juiz envia uma carta branca.
   playersSubmitting,
+
+  /// Todos enviaram; o juiz escolhe a melhor.
   judgeChoosing,
-  roundComplete,
+
+  /// Alguém chegou a [GameRoom.maxPoints].
   gameComplete,
 }
 
 class GameRoom {
   final String roomId;
   final List<Player> players;
+
+  /// Monte de cartas pretas ainda não viradas.
   final List<GameCard> blackCards;
+
+  /// Monte de cartas brancas ainda não distribuídas.
   final List<GameCard> whiteCards;
   final GameCard? currentBlackCard;
   final GamePhase phase;
   final String? currentJudgeId;
+
+  /// Mão de cada jogador, pelo id.
+  final Map<String, List<GameCard>> hands;
+
+  /// Carta enviada na rodada atual, pelo id de quem enviou.
   final Map<String, GameCard> submittedCards;
+
+  /// Quem ganhou a última rodada, para a tela mostrar.
+  final String? lastRoundWinnerId;
   final String? winnerId;
   final int maxPoints;
 
@@ -30,34 +48,43 @@ class GameRoom {
     this.currentBlackCard,
     this.phase = GamePhase.waitingForPlayers,
     this.currentJudgeId,
+    this.hands = const {},
     this.submittedCards = const {},
+    this.lastRoundWinnerId,
     this.winnerId,
     this.maxPoints = 5,
   });
 
+  bool isJudge(String playerId) => playerId == currentJudgeId;
+
   factory GameRoom.fromJson(Map<String, dynamic> json) {
+    List<GameCard> cartas(Object? lista) => (lista as List<dynamic>? ?? [])
+        .map((c) => GameCard.fromJson(c as Map<String, dynamic>))
+        .toList();
+
     return GameRoom(
       roomId: json['roomId'] as String,
       players: (json['players'] as List<dynamic>)
           .map((p) => Player.fromJson(p as Map<String, dynamic>))
           .toList(),
-      blackCards: (json['blackCards'] as List<dynamic>)
-          .map((c) => GameCard.fromJson(c as Map<String, dynamic>))
-          .toList(),
-      whiteCards: (json['whiteCards'] as List<dynamic>)
-          .map((c) => GameCard.fromJson(c as Map<String, dynamic>))
-          .toList(),
+      blackCards: cartas(json['blackCards']),
+      whiteCards: cartas(json['whiteCards']),
       currentBlackCard: json['currentBlackCard'] != null
           ? GameCard.fromJson(json['currentBlackCard'] as Map<String, dynamic>)
           : null,
       phase: GamePhase.values.firstWhere(
-        (e) => e.toString() == 'GamePhase.${json['phase']}',
+        (e) => e.name == json['phase'],
         orElse: () => GamePhase.waitingForPlayers,
       ),
       currentJudgeId: json['currentJudgeId'] as String?,
-      submittedCards: (json['submittedCards'] as Map<String, dynamic>? ?? {})
-          .map((key, value) =>
-              MapEntry(key, GameCard.fromJson(value as Map<String, dynamic>))),
+      hands: (json['hands'] as Map<String, dynamic>? ?? {})
+          .map((key, value) => MapEntry(key, cartas(value))),
+      submittedCards:
+          (json['submittedCards'] as Map<String, dynamic>? ?? {}).map(
+        (key, value) =>
+            MapEntry(key, GameCard.fromJson(value as Map<String, dynamic>)),
+      ),
+      lastRoundWinnerId: json['lastRoundWinnerId'] as String?,
       winnerId: json['winnerId'] as String?,
       maxPoints: json['maxPoints'] as int? ?? 5,
     );
@@ -70,10 +97,14 @@ class GameRoom {
       'blackCards': blackCards.map((c) => c.toJson()).toList(),
       'whiteCards': whiteCards.map((c) => c.toJson()).toList(),
       'currentBlackCard': currentBlackCard?.toJson(),
-      'phase': phase.toString().split('.').last,
+      'phase': phase.name,
       'currentJudgeId': currentJudgeId,
+      'hands': hands.map(
+        (key, value) => MapEntry(key, value.map((c) => c.toJson()).toList()),
+      ),
       'submittedCards':
           submittedCards.map((key, value) => MapEntry(key, value.toJson())),
+      'lastRoundWinnerId': lastRoundWinnerId,
       'winnerId': winnerId,
       'maxPoints': maxPoints,
     };
@@ -87,7 +118,9 @@ class GameRoom {
     GameCard? currentBlackCard,
     GamePhase? phase,
     String? currentJudgeId,
+    Map<String, List<GameCard>>? hands,
     Map<String, GameCard>? submittedCards,
+    String? lastRoundWinnerId,
     String? winnerId,
     int? maxPoints,
   }) {
@@ -99,7 +132,9 @@ class GameRoom {
       currentBlackCard: currentBlackCard ?? this.currentBlackCard,
       phase: phase ?? this.phase,
       currentJudgeId: currentJudgeId ?? this.currentJudgeId,
+      hands: hands ?? this.hands,
       submittedCards: submittedCards ?? this.submittedCards,
+      lastRoundWinnerId: lastRoundWinnerId ?? this.lastRoundWinnerId,
       winnerId: winnerId ?? this.winnerId,
       maxPoints: maxPoints ?? this.maxPoints,
     );

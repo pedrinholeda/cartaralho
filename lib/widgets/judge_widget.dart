@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/game_room.dart';
-import '../models/card.dart';
 import '../services/firebase_service.dart';
 
 class JudgeWidget extends ConsumerStatefulWidget {
@@ -17,12 +16,13 @@ class JudgeWidget extends ConsumerStatefulWidget {
 }
 
 class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
-  GameCard? _selectedWinner;
+  /// Id de quem enviou a carta escolhida.
+  String? _selectedWinner;
   bool _isChoosing = false;
 
   @override
   Widget build(BuildContext context) {
-    final submittedCards = widget.room.submittedCards.values.toList();
+    final submittedCards = widget.room.submittedCards.entries.toList();
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -41,8 +41,9 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
             child: ListView.builder(
               itemCount: submittedCards.length,
               itemBuilder: (context, index) {
-                final card = submittedCards[index];
-                final isSelected = _selectedWinner?.id == card.id;
+                final card = submittedCards[index].value;
+                final playerId = submittedCards[index].key;
+                final isSelected = _selectedWinner == playerId;
 
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4),
@@ -50,7 +51,7 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                   child: ListTile(
                     onTap: () {
                       setState(() {
-                        _selectedWinner = card;
+                        _selectedWinner = playerId;
                       });
                     },
                     title: Text(
@@ -107,12 +108,7 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
     });
 
     try {
-      // Encontrar o ID do jogador que enviou a carta vencedora
-      final winnerId = widget.room.submittedCards.entries
-          .firstWhere((entry) => entry.value.id == _selectedWinner!.id)
-          .key;
-
-      await FirebaseService.chooseWinner(widget.room.roomId, winnerId);
+      await FirebaseService.chooseWinner(widget.room.roomId, _selectedWinner!);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
