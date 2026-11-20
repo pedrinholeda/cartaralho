@@ -76,6 +76,10 @@ stateDiagram-v2
   roundResult --> playersSubmitting: proximaRodada (o juiz avança)
 ```
 
+Uma carta preta pede uma branca por lacuna (`GameCard.pick`, de 1 a 3); cada jogador envia
+essa quantidade, na ordem, e `submittedCards` guarda a lista. Salas gravadas antes da 0.3,
+com uma carta por jogador, ainda são lidas.
+
 Quando a última carta chega, a ordem da mesa é sorteada e gravada em `revealOrder`, para
 todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 
@@ -87,7 +91,7 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/firebase_options.dart`](../lib/firebase_options.dart) | Opções do Firebase por plataforma, geradas pelo FlutterFire CLI. |
 | [`lib/models/`](../lib/models) | `GameCard`, `Player` e `GameRoom`, imutáveis, com `fromJson`/`toJson`/`copyWith`. `GamePhase` lista as fases da partida. |
 | [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `entrarNaSala`, `iniciarJogo`, `enviarCarta`, `escolherVencedor`, `proximaRodada`, o sorteio do código da sala e `fraseCompleta` (a carta preta com as brancas no lugar das lacunas). Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
-| [`lib/game/baralho.dart`](../lib/game/baralho.dart) | O baralho com que toda sala começa (15 pretas, 48 brancas, até 8 jogadores). |
+| [`lib/game/baralho.dart`](../lib/game/baralho.dart) | O baralho com que toda sala começa (19 pretas, 4 delas "Escolha 2" ou "Escolha 3"; 48 brancas; até 8 jogadores). |
 | [`lib/services/firebase_service.dart`](../lib/services/firebase_service.dart) | Login anônimo, criar sala (conferindo numa transação que o código está livre) e o stream da sala. Entrar na sala e as jogadas passam por `_alterarSala`, que roda a regra numa transação. |
 | [`lib/providers/auth_provider.dart`](../lib/providers/auth_provider.dart) | Stream do usuário logado. |
 | [`lib/providers/game_provider.dart`](../lib/providers/game_provider.dart) | Código da sala atual, stream da sala e o que deriva dela: jogador atual, se é anfitrião, se é juiz, fase. |
@@ -116,8 +120,6 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 
 Os principais, todos com item no [roadmap](ROADMAP.md):
 
-- Carta preta com mais de um espaço não funciona: cada jogador envia uma carta só. Um teste
-  em `test/game/baralho_test.dart` impede que uma entre no baralho.
 - O macOS não tem app registrado no Firebase e para na inicialização.
 - O projeto iOS não tem `Runner.xcodeproj`, então não compila.
 - O build Android usa o formato antigo do plugin do Flutter e o Gradle 8.10, que não roda
