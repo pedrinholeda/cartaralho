@@ -103,6 +103,14 @@ partidas (`shared_preferences`, localStorage na web). Na web o navegador só dei
 depois do primeiro toque na página, e todo som vem depois de "Criar Sala" ou "Entrar na
 Sala". Se o navegador recusar, o jogo segue em silêncio.
 
+## Tela larga e teclado
+
+- A partir de 900 px (`Medidas.larguraDuasColunas`) a tela de jogo vira duas colunas: carta
+  preta e placar à esquerda, a jogada à direita.
+- Carta tocável funciona pelo teclado: Tab chega nela, Enter ou Espaço escolhe, e o foco
+  aparece num contorno amarelo (`destaque`). `test/ui/contraste_test.dart` confere que
+  cada par de cores do tema passa de 4,5:1 e que o contorno passa de 3:1 sobre a mesa.
+
 ## Decisões
 
 - **Por que não preto e branco com Helvetica.** É o visual de outro jogo de cartas muito
@@ -116,5 +124,4 @@ Sala". Se o navegador recusar, o jogo segue em silêncio.
 
 ## Pendências
 
-No [roadmap](ROADMAP.md), fase 3: sala de espera com compartilhamento e layout próprio
-para tela larga.
+A fase 3 do [roadmap](ROADMAP.md) está feita.

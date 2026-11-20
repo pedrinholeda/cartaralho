@@ -24,7 +24,8 @@ passa a vez de juiz.
 
 1. **Criar sala**: quem cria vira o anfitrião, escolhe quantos pontos vencem (3 a 10) e quantas
    cartas cada um tem na mão, e recebe um código de seis caracteres.
-2. **Entrar**: os outros digitam o código e o nome.
+2. **Entrar**: os outros digitam o código e o nome, ou abrem o convite que o anfitrião
+   copiou da sala, que já vem com o código.
 3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou (de 3 a 8 jogadores).
 4. **Rodada**: o juiz vê a carta preta; cada um dos outros envia uma carta branca; o juiz
    escolhe a combinação mais engraçada e quem a enviou ganha um ponto. Todos veem as cartas
