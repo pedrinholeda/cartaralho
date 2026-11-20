@@ -92,15 +92,16 @@ computador, no tema claro e no escuro, com print no PR.
 - [x] **Efeitos sonoros** curtos (distribuir, enviar, virar, vencer a rodada, vencer o jogo),
   com botão de mudo lembrado entre partidas. Em vez de sons de terceiros, gerados por
   `tool/gerar_sons.mjs`, sem licença a conferir
-- [ ] **Sala de espera viva**: código grande com botão de copiar e de compartilhar o link,
-  jogadores aparecendo conforme entram
+- [x] **Sala de espera viva**: código grande, botões de copiar o código e o convite (um link
+  `?sala=CÓDIGO` que abre o jogo na tela de entrar com o código preenchido), e os jogadores
+  aparecendo conforme entram
 - [x] **Cartão do juiz na lista de jogadores**: a estrela sumia (âmbar sobre âmbar) e o rótulo
   "JUIZ" vazava do cartão; agora é uma ficha amarela com martelo
-- [ ] **Layout de computador**: o conteúdo já fica centralizado em até 560 px e a mão usa
-  mais colunas em tela larga; falta mão em leque e mesa no centro
-- [ ] **Acessibilidade**: cartas, placar e carta preta já têm rótulo de acessibilidade, e a
-  carta escolhida não se mexe com "reduzir movimento"; falta revisar contraste e foco de
-  teclado
+- [x] **Layout de computador**: a partir de 900 px, carta preta e placar à esquerda e a jogada
+  à direita; a mão usa mais colunas. A mão em leque ficou de fora: a grade já resolve
+- [x] **Acessibilidade**: cartas, placar e carta preta com rótulo; cartas escolhidas pelo
+  teclado (Tab até a carta, Enter ou Espaço), com contorno amarelo de foco; contraste das
+  cores do tema conferido por teste (WCAG AA); animações respeitam "reduzir movimento"
 
 ## Fase 4 — plataformas
 

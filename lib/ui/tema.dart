@@ -114,6 +114,9 @@ abstract final class Medidas {
   /// Largura máxima do conteúdo em tela larga.
   static const larguraMaxima = 560.0;
 
+  /// A partir desta largura a tela de jogo se divide em duas colunas.
+  static const larguraDuasColunas = 900.0;
+
   /// Sombra seca embaixo da carta, como papel em cima da mesa.
   static const sombra = Color(0x40000000);
   static const sombraLeve = Color(0x33000000);

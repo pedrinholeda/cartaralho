@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../game/convite.dart';
 import '../game/regras.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
@@ -56,56 +58,77 @@ class GameScreen extends ConsumerWidget {
         ],
       ),
       body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Medidas.larguraMaxima),
-          child: gameRoom.when(
-            data: (room) {
-              if (room == null) {
-                return const _Aviso('Essa sala não existe mais.');
-              }
-              return Column(
-                children: [
-                  const SizedBox(height: 4),
-                  PlayerListWidget(
-                    players: room.players,
-                    judgeId: room.currentJudgeId,
-                  ),
-                  if (room.currentBlackCard != null &&
-                      room.phase != GamePhase.waitingForPlayers)
-                    BlackCardWidget(card: room.currentBlackCard!),
-                  Expanded(
-                    // Cada fase (e cada rodada) entra com um fade curto, para o
-                    // jogador perceber que a tela mudou.
-                    child: AnimatedSwitcher(
-                      duration: movimentoReduzido(context)
-                          ? Duration.zero
-                          : const Duration(milliseconds: 250),
-                      // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
-                      layoutBuilder: (atual, anteriores) =>
-                          atual ?? const SizedBox.shrink(),
-                      child: KeyedSubtree(
-                        key: ValueKey(
-                          '${room.phase.name}-${room.currentBlackCard?.id}',
+        child: gameRoom.when(
+          data: (room) {
+            if (room == null) {
+              return const _Aviso('Essa sala não existe mais.');
+            }
+            final topo = [
+              const SizedBox(height: 4),
+              PlayerListWidget(
+                players: room.players,
+                judgeId: room.currentJudgeId,
+              ),
+              if (room.currentBlackCard != null &&
+                  room.phase != GamePhase.waitingForPlayers)
+                BlackCardWidget(card: room.currentBlackCard!),
+            ];
+            // Cada fase (e cada rodada) entra com um fade curto, para o
+            // jogador perceber que a tela mudou.
+            final conteudo = AnimatedSwitcher(
+              duration: movimentoReduzido(context)
+                  ? Duration.zero
+                  : const Duration(milliseconds: 250),
+              // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
+              layoutBuilder: (atual, anteriores) =>
+                  atual ?? const SizedBox.shrink(),
+              child: KeyedSubtree(
+                key: ValueKey(
+                  '${room.phase.name}-${room.currentBlackCard?.id}',
+                ),
+                child: _conteudo(
+                  context,
+                  ref,
+                  room,
+                  currentPlayer,
+                  isHost,
+                  isJudge,
+                  gamePhase,
+                ),
+              ),
+            );
+
+            return LayoutBuilder(
+              builder: (context, espaco) {
+                // Tela larga: carta preta e placar à esquerda, a jogada à
+                // direita. Celular: tudo numa coluna só.
+                if (espaco.maxWidth >= Medidas.larguraDuasColunas) {
+                  return ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1120),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 400,
+                          child: Column(children: topo),
                         ),
-                        child: _conteudo(
-                          context,
-                          ref,
-                          room,
-                          currentPlayer,
-                          isHost,
-                          isJudge,
-                          gamePhase,
-                        ),
-                      ),
+                        Expanded(child: conteudo),
+                      ],
                     ),
+                  );
+                }
+                return ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxWidth: Medidas.larguraMaxima),
+                  child: Column(
+                    children: [...topo, Expanded(child: conteudo)],
                   ),
-                ],
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) =>
-                _Aviso('Não deu para abrir a sala: $error'),
-          ),
+                );
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => _Aviso('Não deu para abrir a sala: $error'),
         ),
       ),
     );
@@ -174,6 +197,14 @@ class _SalaDeEspera extends StatelessWidget {
 
   const _SalaDeEspera({required this.room, required this.isHost});
 
+  Future<void> _copiar(BuildContext context, String texto, String aviso) async {
+    await Clipboard.setData(ClipboardData(text: texto));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(aviso)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textos = Theme.of(context).textTheme;
@@ -194,6 +225,30 @@ class _SalaDeEspera extends StatelessWidget {
               fontSize: 64,
               letterSpacing: 4,
             ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: Medidas.espaco,
+            runSpacing: Medidas.espaco,
+            children: [
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
+                onPressed: () =>
+                    _copiar(context, room.roomId, 'Código copiado.'),
+                icon: const Icon(Icons.copy),
+                label: const Text('Copiar código'),
+              ),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
+                onPressed: () => _copiar(
+                  context,
+                  textoDoConvite(Uri.base, room.roomId),
+                  'Convite copiado. Cole no grupo da galera.',
+                ),
+                icon: const Icon(Icons.link),
+                label: const Text('Copiar convite'),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           Text(
