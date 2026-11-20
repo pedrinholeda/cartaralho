@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../game/regras.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
+import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/tema.dart';
 
@@ -64,7 +65,7 @@ class _RoundResultWidgetState extends State<RoundResultWidget> {
       ...room.cardsOnTable.where((e) => e.key != vencedorId),
     ];
 
-    return Padding(
+    final conteudo = Padding(
       padding:
           const EdgeInsets.fromLTRB(Medidas.margem, 12, Medidas.margem, 16),
       child: Column(
@@ -83,12 +84,15 @@ class _RoundResultWidgetState extends State<RoundResultWidget> {
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final id = mesa[index].key;
-                return CartaBranca(
+                final carta = CartaBranca(
                   larga: true,
                   texto: frase(id),
                   autor: _nome(id),
                   vencedora: id == vencedorId,
                 );
+                return id == vencedorId
+                    ? Entrada(deslocamento: -24, child: carta)
+                    : carta;
               },
             ),
           ),
@@ -114,6 +118,13 @@ class _RoundResultWidgetState extends State<RoundResultWidget> {
             ),
         ],
       ),
+    );
+
+    return Stack(
+      children: [
+        conteudo,
+        if (vencedorId != null) const Positioned.fill(child: Confete()),
+      ],
     );
   }
 }

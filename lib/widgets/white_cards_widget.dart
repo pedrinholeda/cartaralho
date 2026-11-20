@@ -6,6 +6,7 @@ import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../services/firebase_service.dart';
+import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/tema.dart';
 
@@ -108,7 +109,10 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CartaBranca(texto: frase, larga: true),
+            Entrada(
+              deslocamento: 80,
+              child: CartaBranca(texto: frase, larga: true),
+            ),
             const SizedBox(height: 16),
             Text(
               'Enviada. Esperando os outros jogadores.',
@@ -154,11 +158,16 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
               construir: (context, index) {
                 final carta = mao[index];
                 final posicao = _escolhidas.indexWhere((c) => c.id == carta.id);
-                return CartaBranca(
-                  texto: carta.text,
-                  selecionada: posicao >= 0,
-                  ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
-                  aoTocar: () => _tocar(carta),
+                // Uma key por carta: as que chegam na mão animam, as que ficam não.
+                return Entrada(
+                  key: ValueKey(carta.id),
+                  atraso: Duration(milliseconds: 60 * index),
+                  child: CartaBranca(
+                    texto: carta.text,
+                    selecionada: posicao >= 0,
+                    ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
+                    aoTocar: () => _tocar(carta),
+                  ),
                 );
               },
             ),
