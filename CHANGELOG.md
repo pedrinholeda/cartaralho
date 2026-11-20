@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0](https://github.com/pedrinholeda/cartaralho/compare/v0.4.0...v0.5.0) (2026-11-20)
+
+
+### Novidades
+
+* **sala:** convite por link que abre o jogo com o código preenchido ([e99477e](https://github.com/pedrinholeda/cartaralho/commit/e99477e7473e545a4b729e0af3ed9495529ad08d))
+* **sala:** sala de espera com copiar código e convite, e tela de jogo em duas colunas em tela larga ([96f74ef](https://github.com/pedrinholeda/cartaralho/commit/96f74ef6936b9cba350e6131cb6c5f786b422558))
+* **ui:** cartas escolhidas pelo teclado, com foco visível ([fb58a47](https://github.com/pedrinholeda/cartaralho/commit/fb58a4797977b1dbc63fed19f7cabeac21dc58ae))
+
+
+### Documentação
+
+* como publicar a web e criar o segredo do Firebase ([990a18a](https://github.com/pedrinholeda/cartaralho/commit/990a18a6e02bc78f5028ee8072e41f992df72f36))
+* convite, tela larga e teclado; fase 3 do roadmap concluída ([5183c77](https://github.com/pedrinholeda/cartaralho/commit/5183c77c45a274a5c5d2f924df32dd6e21954fd1))
+
 ## [0.4.0](https://github.com/pedrinholeda/cartaralho/compare/v0.3.0...v0.4.0) (2026-11-20)
 
 
