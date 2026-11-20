@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import '../game/baralho.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../game/regras.dart' as regras;
@@ -7,6 +9,11 @@ import '../game/regras.dart' as regras;
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static Baralho? _baralho;
+
+  /// O baralho do arquivo em [arquivoDoBaralho], lido uma vez só.
+  static Future<Baralho> _baralhoPadrao() async => _baralho ??=
+      Baralho.fromJsonString(await rootBundle.loadString(arquivoDoBaralho));
 
   // Authentication
   static Future<User?> signInAnonymously() async {
@@ -42,6 +49,7 @@ class FirebaseService {
       final user = _auth.currentUser;
       if (user == null) throw Exception('Usuário não autenticado');
 
+      final baralho = await _baralhoPadrao();
       final player = Player(
         id: user.uid,
         name: playerName,
@@ -58,6 +66,7 @@ class FirebaseService {
           final gameRoom = regras.novaSala(
             roomId: roomId,
             anfitriao: player,
+            baralho: baralho,
             maxPoints: maxPoints,
             handSize: handSize,
           );
