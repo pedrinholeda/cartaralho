@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
+import '../ui/icones.dart';
 import '../ui/tema.dart';
 
 class JoinRoomScreen extends ConsumerStatefulWidget {
@@ -91,7 +92,10 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                   controller: _roomIdController,
                   decoration: const InputDecoration(
                     labelText: 'Código da sala',
-                    prefixIcon: Icon(Icons.vpn_key),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: IconeFofo(Desenho.chave, tamanho: 22),
+                    ),
                     hintText: 'Ex: K7PX2M',
                   ),
                   textCapitalization: TextCapitalization.characters,
@@ -102,7 +106,10 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Seu nome',
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: IconeFofo(Desenho.pessoa, tamanho: 22),
+                    ),
                   ),
                   textCapitalization: TextCapitalization.words,
                 ),

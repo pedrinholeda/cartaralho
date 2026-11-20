@@ -9,6 +9,7 @@ import '../models/player.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
+import '../ui/icones.dart';
 import '../ui/cartas.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
@@ -155,7 +156,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
                   message: 'Troca todas as cartas da mão, uma vez por partida',
                   child: TextButton.icon(
                     onPressed: _trocando ? null : _trocarMao,
-                    icon: const Icon(Icons.swap_horiz, size: 18),
+                    icon: const IconeFofo(Desenho.trocar, tamanho: 22),
                     label: const Text('Trocar mão'),
                   ),
                 ),

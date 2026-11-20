@@ -5,6 +5,7 @@ import '../game/regras.dart' as regras;
 import '../providers/baralhos_provider.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
+import '../ui/icones.dart';
 import '../ui/tema.dart';
 
 class CreateRoomScreen extends ConsumerStatefulWidget {
@@ -104,7 +105,10 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Seu nome',
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: IconeFofo(Desenho.pessoa, tamanho: 22),
+                    ),
                   ),
                   textCapitalization: TextCapitalization.words,
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'icones.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/game_room.dart';
@@ -101,7 +103,7 @@ class BotaoDeSom extends ConsumerWidget {
     final mudo = ref.watch(mudoProvider);
     return IconButton(
       tooltip: mudo ? 'Ligar som' : 'Desligar som',
-      icon: Icon(mudo ? Icons.volume_off : Icons.volume_up),
+      icon: IconeFofo(mudo ? Desenho.mudo : Desenho.som),
       onPressed: () => ref.read(mudoProvider.notifier).alternar(),
     );
   }
