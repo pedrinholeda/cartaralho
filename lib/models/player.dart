@@ -4,11 +4,16 @@ class Player {
   final int points;
   final bool isHost;
 
+  /// Quantas vezes o jogador sorteou outra carinha; com o id, decide qual
+  /// carinha ele tem (`Carinha.de`).
+  final int avatar;
+
   Player({
     required this.id,
     required this.name,
     this.points = 0,
     this.isHost = false,
+    this.avatar = 0,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
@@ -17,6 +22,7 @@ class Player {
       name: json['name'] as String,
       points: json['points'] as int? ?? 0,
       isHost: json['isHost'] as bool? ?? false,
+      avatar: json['avatar'] as int? ?? 0,
     );
   }
 
@@ -26,6 +32,7 @@ class Player {
       'name': name,
       'points': points,
       'isHost': isHost,
+      'avatar': avatar,
     };
   }
 
@@ -34,12 +41,14 @@ class Player {
     String? name,
     int? points,
     bool? isHost,
+    int? avatar,
   }) {
     return Player(
       id: id ?? this.id,
       name: name ?? this.name,
       points: points ?? this.points,
       isHost: isHost ?? this.isHost,
+      avatar: avatar ?? this.avatar,
     );
   }
 }

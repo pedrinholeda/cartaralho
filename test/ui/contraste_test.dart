@@ -47,7 +47,7 @@ void main() {
     });
   }
 
-  test('as cores dos avatares têm contraste com a inicial', () {
+  test('os traços da carinha se leem sobre a cor do avatar', () {
     for (final (fundo, tinta) in coresDeJogador) {
       expect(contraste(tinta, fundo), greaterThanOrEqualTo(4.5));
     }

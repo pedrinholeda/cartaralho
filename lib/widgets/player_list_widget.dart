@@ -22,10 +22,12 @@ class PlayerListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cores = Cores.de(context);
     return SizedBox(
-      height: 92,
+      height: 102,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: Medidas.margem),
+        // Em cima, espaço para o chapéu e o topete das carinhas.
+        padding:
+            const EdgeInsets.fromLTRB(Medidas.margem, 10, Medidas.margem, 0),
         itemCount: players.length,
         separatorBuilder: (_, __) => const SizedBox(width: 14),
         itemBuilder: (context, index) {
@@ -50,6 +52,8 @@ class PlayerListWidget extends StatelessWidget {
                       nome: player.name,
                       indice: index,
                       juiz: juiz,
+                      semente: player.id,
+                      variacao: player.avatar,
                     ),
                     const SizedBox(height: 4),
                     Text(
