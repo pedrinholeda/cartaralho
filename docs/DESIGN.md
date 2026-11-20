@@ -85,6 +85,24 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
 - `movimentoReduzido(context)`: verdadeiro quando o sistema pede menos movimento; os três
   componentes já respeitam.
 
+## Som
+
+Cinco efeitos curtos, em `assets/sons/`, gerados por [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs)
+(síntese própria: nenhum arquivo de terceiros, nenhuma licença a conferir):
+
+| som | quando | como soa |
+|---|---|---|
+| `distribuir` | cartas novas na mão | quatro estalos de carta |
+| `enviar` | o jogador enviou | um sopro e um estalo |
+| `virar` | as respostas viram para o juiz | dois estalos |
+| `rodada` | saiu o resultado da rodada | três notas subindo (dó, mi, sol) |
+| `vitoria` | alguém venceu o jogo | fanfarra curta terminando num acorde |
+
+O botão de som fica na capa e na barra de cima da tela de jogo; a escolha é lembrada entre
+partidas (`shared_preferences`, localStorage na web). Na web o navegador só deixa tocar
+depois do primeiro toque na página, e todo som vem depois de "Criar Sala" ou "Entrar na
+Sala". Se o navegador recusar, o jogo segue em silêncio.
+
 ## Decisões
 
 - **Por que não preto e branco com Helvetica.** É o visual de outro jogo de cartas muito
@@ -98,5 +116,5 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
 
 ## Pendências
 
-No [roadmap](ROADMAP.md), fase 3:
-efeitos sonoros, sala de espera com compartilhamento e layout próprio para tela larga.
+No [roadmap](ROADMAP.md), fase 3: sala de espera com compartilhamento e layout próprio
+para tela larga.
