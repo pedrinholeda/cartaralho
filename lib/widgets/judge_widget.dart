@@ -77,7 +77,7 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                       strokeWidth: 3,
                     ),
                   )
-                : const Text('Escolher Vencedor'),
+                : const Text('Escolher vencedor'),
           ),
         ],
       ),

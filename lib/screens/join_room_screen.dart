@@ -80,7 +80,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Entrar na Sala', style: textos.headlineMedium),
+                Text('Entrar na sala', style: textos.headlineMedium),
                 const SizedBox(height: 8),
                 Text(
                   'Peça o código de seis letras e números a quem criou a sala.',
@@ -117,7 +117,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                             strokeWidth: 3,
                           ),
                         )
-                      : const Text('Entrar na Sala'),
+                      : const Text('Entrar na sala'),
                 ),
               ],
             ),

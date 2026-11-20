@@ -8,8 +8,8 @@
 </p>
 
 <p align="center">
-  <img src="docs/imagens/escolha-2.png" width="240" alt="Mão do jogador numa carta Escolha 2: duas cartas brancas escolhidas, numeradas 1 e 2, e a frase montada acima, sobre a mesa vermelha">
-  <img src="docs/imagens/resultado.png" width="240" alt="Resultado da rodada: a frase vencedora numa carta amarela com o nome de quem enviou, e a outra frase numa carta branca">
+  <img src="docs/imagens/escolha-2.png" width="240" alt="Mão do jogador numa carta Escolha 2: a frase aparece montada na carta preta, com as respostas em vermelho, e a mão em leque embaixo com duas cartas escolhidas">
+  <img src="docs/imagens/resultado.png" width="240" alt="Resultado da rodada na mesa escura: a frase vencedora numa carta amarela com o nome de quem enviou, a outra numa carta branca, e confete caindo">
 </p>
 
 Jogo de cartas de festa precisa de baralho impresso, alguém para embaralhar e uma mesa. E

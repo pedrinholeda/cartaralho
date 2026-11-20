@@ -15,7 +15,7 @@ lib/
   providers/            providers Riverpod: usuário logado, sala atual, jogador atual
   screens/              telas: início, criar sala, entrar na sala, jogo
   widgets/              peças da tela de jogo: jogadores, carta preta, mão, escolha do juiz
-  ui/                   tema (cores, medidas, fontes) e os componentes de carta
+  ui/                   tema (cores, medidas, fonte), cartas, avatares, animações e sons
 test/                   testes (flutter_test), espelhando lib/
 assets/baralhos/        as cartas do jogo, em JSON
 assets/sons/            efeitos sonoros (.wav), gerados por tool/gerar_sons.mjs
@@ -43,10 +43,11 @@ android/ ios/ macos/ web/  projetos de plataforma
   dentro; sorteio recebe um `Random` opcional, para o teste fixar a semente.
 - Quem é o juiz vem de `GameRoom.currentJudgeId` (`room.isJudge(id)`), não de um campo
   do jogador.
-- Cor só pelo tema: `Cores.de(context).mesa`, `.carta`, `.cartaPreta`... Nada de
+- Cor só pelo tema: `Cores.de(context).mesa`, `.acao`, `.carta`... Nada de
   `Color(0x...)` nem `Colors.xxx` (fora `Colors.transparent`) em tela ou widget. Carta se
   desenha com `CartaPreta` e `CartaBranca` (`lib/ui/cartas.dart`). Regras visuais em
   `docs/DESIGN.md`.
+- Rótulo de botão em frase normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 - Texto de interface em português do Brasil. Comentário explica por quê, não o quê.
 
 ## Adicionando uma jogada

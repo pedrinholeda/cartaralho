@@ -234,7 +234,7 @@ class _ConfeteState extends State<Confete> with SingleTickerProviderStateMixin {
           painter: _PintorDeConfete(
             papeis: _papeis,
             t: _c.value,
-            cores: [cores.destaque, cores.carta, cores.cartaPreta],
+            cores: [cores.destaque, cores.carta, cores.acao],
           ),
         ),
       ),

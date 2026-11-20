@@ -35,9 +35,7 @@ class CartaralhoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cartaralho',
-      theme: temaClaro,
-      darkTheme: temaEscuro,
-      themeMode: ThemeMode.system,
+      theme: tema,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );

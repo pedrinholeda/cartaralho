@@ -4,14 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/convite.dart';
 import '../game/regras.dart';
+import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
+import '../ui/jogadores.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
+import 'tutorial_screen.dart';
 import '../widgets/black_card_widget.dart';
 import '../widgets/judge_widget.dart';
 import '../widgets/player_list_widget.dart';
@@ -46,6 +49,11 @@ class GameScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         actions: [
+          IconButton(
+            tooltip: 'Como jogar',
+            icon: const Icon(Icons.help_outline_rounded),
+            onPressed: () => abrirTutorial(context),
+          ),
           const BotaoDeSom(),
           IconButton(
             tooltip: 'Sair da sala',
@@ -63,15 +71,31 @@ class GameScreen extends ConsumerWidget {
             if (room == null) {
               return const _Aviso('Essa sala não existe mais.');
             }
+            final aviso = _avisoDaVez(room, currentPlayer, isJudge);
             final topo = [
               const SizedBox(height: 4),
-              PlayerListWidget(
-                players: room.players,
-                judgeId: room.currentJudgeId,
-              ),
+              if (room.phase != GamePhase.waitingForPlayers)
+                PlayerListWidget(
+                  players: room.players,
+                  judgeId: room.currentJudgeId,
+                ),
+              if (aviso != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    Medidas.margem,
+                    4,
+                    Medidas.margem,
+                    8,
+                  ),
+                  child: Align(alignment: Alignment.centerLeft, child: aviso),
+                ),
               if (room.currentBlackCard != null &&
                   room.phase != GamePhase.waitingForPlayers)
-                BlackCardWidget(card: room.currentBlackCard!),
+                BlackCardWidget(
+                  card: room.currentBlackCard!,
+                  respostas:
+                      _respostasNaCarta(ref, room, currentPlayer, isJudge),
+                ),
             ];
             // Cada fase (e cada rodada) entra com um fade curto, para o
             // jogador perceber que a tela mudou.
@@ -134,6 +158,57 @@ class GameScreen extends ConsumerWidget {
     );
   }
 
+  /// O que vai nas lacunas da carta preta: o que o jogador está escolhendo,
+  /// ou o que ele já enviou nesta rodada.
+  List<String> _respostasNaCarta(
+    WidgetRef ref,
+    GameRoom room,
+    Player? jogador,
+    bool isJudge,
+  ) {
+    if (room.phase != GamePhase.playersSubmitting ||
+        isJudge ||
+        jogador == null) {
+      return const [];
+    }
+    final enviadas = room.submittedCards[jogador.id];
+    final List<GameCard> cartas =
+        enviadas ?? ref.watch(escolhidasProvider(chaveDaRodada(room)));
+    return [for (final c in cartas) c.text];
+  }
+
+  /// O aviso curto de quem é a vez, embaixo do placar.
+  Widget? _avisoDaVez(GameRoom room, Player? jogador, bool isJudge) {
+    final juiz = room.players
+        .where((p) => p.id == room.currentJudgeId)
+        .firstOrNull
+        ?.name;
+    switch (room.phase) {
+      case GamePhase.playersSubmitting:
+        if (isJudge) {
+          return const AvisoDaVez(
+            'Você é o juiz desta rodada',
+            icone: Icons.gavel_rounded,
+            destaque: true,
+          );
+        }
+        return AvisoDaVez('Juiz da rodada: $juiz', icone: Icons.gavel_rounded);
+      case GamePhase.judgeChoosing:
+        if (isJudge) {
+          return const AvisoDaVez(
+            'Sua vez de julgar',
+            icone: Icons.gavel_rounded,
+            destaque: true,
+          );
+        }
+        return AvisoDaVez('Juiz da rodada: $juiz', icone: Icons.gavel_rounded);
+      case GamePhase.waitingForPlayers:
+      case GamePhase.roundResult:
+      case GamePhase.gameComplete:
+        return null;
+    }
+  }
+
   Widget _conteudo(
     BuildContext context,
     WidgetRef ref,
@@ -155,8 +230,8 @@ class GameScreen extends ConsumerWidget {
         if (isJudge) {
           final faltam = room.players.length - 1 - room.submittedCards.length;
           return _Aviso(
-            'Você é o juiz desta rodada! Esperando $faltam '
-            '${faltam == 1 ? 'jogador' : 'jogadores'} enviar a carta.',
+            'Esperando $faltam '
+            '${faltam == 1 ? 'jogador enviar a carta' : 'jogadores enviarem as cartas'}.',
           );
         }
         return WhiteCardsWidget(room: room, currentPlayer: currentPlayer);
@@ -207,6 +282,7 @@ class _SalaDeEspera extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cores = Cores.de(context);
     final textos = Theme.of(context).textTheme;
     final faltam = minimoDeJogadores - room.players.length;
 
@@ -215,59 +291,101 @@ class _SalaDeEspera extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Spacer(),
           Text('Aguardando jogadores...', style: textos.headlineSmall),
           const SizedBox(height: 4),
-          Text('Código da sala', style: textos.bodyLarge),
-          SelectableText(
-            room.roomId,
-            style: textos.displaySmall?.copyWith(
-              fontSize: 64,
-              letterSpacing: 4,
+          Text(
+            faltam > 0
+                ? 'São precisos ao menos $minimoDeJogadores para começar. '
+                    'Passe o código da sala: ${room.roomId}'
+                : 'Jogadores na sala: ${room.players.length}. '
+                    'Já dá para começar.',
+            style: textos.bodyLarge?.copyWith(color: cores.tintaSuave),
+          ),
+          const SizedBox(height: 16),
+          // O código e o convite, num painel só.
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: cores.superficie,
+              borderRadius: BorderRadius.circular(Medidas.raioPainel),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Código da sala',
+                  style: textos.bodyMedium?.copyWith(color: cores.tintaSuave),
+                ),
+                SelectableText(
+                  room.roomId,
+                  style: textos.displaySmall?.copyWith(letterSpacing: 6),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _copiar(
+                          context,
+                          textoDoConvite(Uri.base, room.roomId),
+                          'Convite copiado. Cole no grupo da galera.',
+                        ),
+                        icon: const Icon(Icons.link_rounded),
+                        label: const Text('Copiar convite'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton.filledTonal(
+                      tooltip: 'Copiar código',
+                      style: IconButton.styleFrom(
+                        backgroundColor: cores.mesa,
+                        foregroundColor: cores.tintaNaMesa,
+                        minimumSize: const Size(56, 56),
+                      ),
+                      onPressed: () =>
+                          _copiar(context, room.roomId, 'Código copiado.'),
+                      icon: const Icon(Icons.copy_rounded),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: Medidas.espaco,
-            runSpacing: Medidas.espaco,
-            children: [
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
-                onPressed: () =>
-                    _copiar(context, room.roomId, 'Código copiado.'),
-                icon: const Icon(Icons.copy),
-                label: const Text('Copiar código'),
-              ),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
-                onPressed: () => _copiar(
-                  context,
-                  textoDoConvite(Uri.base, room.roomId),
-                  'Convite copiado. Cole no grupo da galera.',
-                ),
-                icon: const Icon(Icons.link),
-                label: const Text('Copiar convite'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           Text(
             'Jogadores na sala: ${room.players.length}',
-            style: textos.bodyLarge,
+            style: textos.titleMedium,
           ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 14,
+            runSpacing: 12,
+            children: [
+              for (var i = 0; i < room.players.length; i++)
+                AvatarDeJogador(nome: room.players[i].name, indice: i),
+              // Os lugares que ainda faltam para dar o mínimo.
+              for (var i = 0; i < faltam; i++)
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: cores.superficie, width: 2),
+                  ),
+                  child: Icon(
+                    Icons.person_add_alt_1_rounded,
+                    size: 20,
+                    color: cores.tintaSuave,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
           Text(
             'Até ${room.maxPoints} pontos, ${room.handSize} cartas na mão',
-            style: textos.bodyLarge,
+            style: textos.bodyMedium?.copyWith(color: cores.tintaSuave),
           ),
-          if (faltam > 0) ...[
-            const SizedBox(height: 12),
-            Text(
-              'São precisos ao menos $minimoDeJogadores para começar. '
-              'Passe o código da sala: ${room.roomId}',
-              style: textos.bodyLarge,
-            ),
-          ],
-          const Spacer(flex: 2),
+          const Spacer(),
           if (isHost)
             ElevatedButton(
               onPressed: faltam > 0
@@ -283,12 +401,16 @@ class _SalaDeEspera extends StatelessWidget {
                         }
                       }
                     },
-              child: const Text('Iniciar Jogo'),
+              child: Text(
+                faltam > 0
+                    ? 'Faltam $faltam para iniciar jogo'
+                    : 'Iniciar jogo',
+              ),
             )
           else
             Text(
               'O anfitrião inicia o jogo quando todo mundo entrar.',
-              style: textos.bodyLarge,
+              style: textos.bodyLarge?.copyWith(color: cores.tintaSuave),
               textAlign: TextAlign.center,
             ),
         ],
@@ -321,7 +443,7 @@ class _FimDeJogo extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              Text('Jogo Finalizado!', style: textos.titleLarge),
+              Text('Fim de jogo!', style: textos.titleLarge),
               Text(
                 'Vencedor: ${winner.name}',
                 style: textos.displaySmall,
@@ -361,7 +483,7 @@ class _FimDeJogo extends ConsumerWidget {
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => ref.read(roomIdProvider.notifier).state = null,
-                child: const Text('Voltar ao Menu'),
+                child: const Text('Voltar ao menu'),
               ),
             ],
           ),

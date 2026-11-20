@@ -11,36 +11,45 @@ double contraste(Color a, Color b) {
 }
 
 void main() {
-  for (final (nome, cores) in [
-    ('claro', Cores.claro),
-    ('escuro', Cores.escuro)
-  ]) {
-    group('tema $nome', () {
-      // Texto comum pede 4,5:1 (WCAG AA).
-      final pares = {
-        'texto na mesa': (cores.tintaNaMesa, cores.mesa),
-        'texto na carta branca': (cores.tintaNaCarta, cores.carta),
-        'texto na carta preta': (cores.tintaNaCartaPreta, cores.cartaPreta),
-        'texto no destaque': (cores.tintaNoDestaque, cores.destaque),
-      };
-      for (final MapEntry(key: par, value: (texto, fundo)) in pares.entries) {
-        test('$par tem contraste de ao menos 4,5:1', () {
-          expect(contraste(texto, fundo), greaterThanOrEqualTo(4.5));
-        });
-      }
+  const cores = Cores.noite;
 
-      // Contorno de foco e borda de componente pedem 3:1 contra o que está em
-      // volta (WCAG 1.4.11).
-      test('o contorno de foco (destaque) aparece sobre a mesa', () {
-        expect(contraste(cores.destaque, cores.mesa), greaterThanOrEqualTo(3));
-      });
-
-      test('a carta escolhida (contorno preto) aparece sobre a carta', () {
-        expect(
-          contraste(cores.cartaPreta, cores.carta),
-          greaterThanOrEqualTo(3),
-        );
-      });
+  // Texto comum pede 4,5:1 (WCAG AA).
+  final texto = {
+    'texto na mesa': (cores.tintaNaMesa, cores.mesa),
+    'texto na superfície': (cores.tintaNaMesa, cores.superficie),
+    'texto de apoio na mesa': (cores.tintaSuave, cores.mesa),
+    'texto de apoio na superfície': (cores.tintaSuave, cores.superficie),
+    'texto na carta branca': (cores.tintaNaCarta, cores.carta),
+    'texto na carta preta': (cores.tintaNaCartaPreta, cores.cartaPreta),
+    'texto no botão de ação': (cores.tintaNaAcao, cores.acao),
+    'texto no destaque': (cores.tintaNoDestaque, cores.destaque),
+  };
+  for (final MapEntry(key: par, value: (tinta, fundo)) in texto.entries) {
+    test('$par tem contraste de ao menos 4,5:1', () {
+      expect(contraste(tinta, fundo), greaterThanOrEqualTo(4.5));
     });
   }
+
+  // Borda de componente e contorno de foco pedem 3:1 contra o que está em
+  // volta (WCAG 1.4.11).
+  final bordas = {
+    'contorno de foco (destaque) sobre a mesa': (cores.destaque, cores.mesa),
+    'carta escolhida (contorno da ação) sobre a carta': (
+      cores.acao,
+      cores.carta
+    ),
+    'botão de ação sobre a mesa': (cores.acao, cores.mesa),
+    'carta branca sobre a mesa': (cores.carta, cores.mesa),
+  };
+  for (final MapEntry(key: par, value: (borda, fundo)) in bordas.entries) {
+    test('$par tem contraste de ao menos 3:1', () {
+      expect(contraste(borda, fundo), greaterThanOrEqualTo(3));
+    });
+  }
+
+  test('as cores dos avatares têm contraste com a inicial', () {
+    for (final (fundo, tinta) in coresDeJogador) {
+      expect(contraste(tinta, fundo), greaterThanOrEqualTo(4.5));
+    }
+  });
 }

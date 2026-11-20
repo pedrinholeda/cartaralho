@@ -28,3 +28,6 @@ Thumbs.db
 # Cocoapods
 **/Pods/
 **/Podfile.lock
+
+# Cache do Firebase CLI (deploy)
+.firebase/
