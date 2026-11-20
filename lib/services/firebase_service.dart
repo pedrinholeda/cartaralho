@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
-import '../game/baralho.dart';
 import '../game/regras.dart' as regras;
 
 class FirebaseService {
@@ -34,7 +33,11 @@ class FirebaseService {
   static User? get currentUser => _auth.currentUser;
 
   // Room Management
-  static Future<String> createRoom(String playerName) async {
+  static Future<String> createRoom(
+    String playerName, {
+    int maxPoints = 5,
+    int handSize = regras.tamanhoDaMao,
+  }) async {
     try {
       final user = _auth.currentUser;
       if (user == null) throw Exception('Usuário não autenticado');
@@ -52,12 +55,11 @@ class FirebaseService {
         final ref = _firestore.collection('rooms').doc(roomId);
         final criou = await _firestore.runTransaction((tx) async {
           if ((await tx.get(ref)).exists) return false;
-          final gameRoom = GameRoom(
+          final gameRoom = regras.novaSala(
             roomId: roomId,
-            players: [player],
-            blackCards: cartasPretas(),
-            whiteCards: cartasBrancas(),
-            currentJudgeId: user.uid,
+            anfitriao: player,
+            maxPoints: maxPoints,
+            handSize: handSize,
           );
           tx.set(ref, gameRoom.toJson());
           return true;
@@ -120,6 +122,16 @@ class FirebaseService {
       roomId,
       (sala) => regras.proximaRodada(sala, user.uid),
     );
+  }
+
+  static Future<void> swapHand(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => regras.trocarMao(sala, user.uid));
+  }
+
+  static Future<void> playAgain(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => regras.jogarDeNovo(sala, user.uid));
   }
 
   static User _usuarioLogado() {
