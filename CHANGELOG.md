@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.4.0](https://github.com/pedrinholeda/cartaralho/compare/v0.3.0...v0.4.0) (2026-11-20)
+
+
+### Novidades
+
+* **marca:** ícones da web e do Android com o logo da carta malandra ([558d14f](https://github.com/pedrinholeda/cartaralho/commit/558d14f53113cf194ef3a792f40bc83955b8d862))
+* **sons:** efeitos sonoros gerados por síntese, sem arquivo de terceiros ([99b96eb](https://github.com/pedrinholeda/cartaralho/commit/99b96ebf134fc2d620c1f60c0717621d7809cd66))
+* **sons:** sons em cada momento da rodada, com botão de mudo ([5a1274b](https://github.com/pedrinholeda/cartaralho/commit/5a1274be66ad4f2b62d523ac51b0473e1f741fda))
+* **ui:** cartas entram na mão, viram para o juiz e o vencedor leva confete ([a5ec026](https://github.com/pedrinholeda/cartaralho/commit/a5ec0266cd5dcb616980fdf726be136527d96402))
+* **ui:** componentes de animação Entrada, Virada e Confete ([49b41fa](https://github.com/pedrinholeda/cartaralho/commit/49b41fa66d8eb561fcaa1a6c4ce05495822105f1))
+* **ui:** tema da mesa vermelha, com tema escuro e componentes de carta ([35540b0](https://github.com/pedrinholeda/cartaralho/commit/35540b09a375f2ad1a58e473c4d5045aa8a74a1a))
+* **ui:** todas as telas na mesa vermelha, com cartas de baralho ([1cfd3a7](https://github.com/pedrinholeda/cartaralho/commit/1cfd3a75bb91735bb670e2e2b942fd77d5b3d4c6))
+
+
+### Correções
+
+* **baralho:** cartas sem preposição que vira contração antes da lacuna ([dee7a4c](https://github.com/pedrinholeda/cartaralho/commit/dee7a4c9d7cb54a84b54f184b8895b46d49af883))
+* **ui:** a troca de fase não sobrepõe a tela antiga à nova ([2eb3be1](https://github.com/pedrinholeda/cartaralho/commit/2eb3be1613c6c9bb436170181ab89717dfb58e36))
+
+
+### Documentação
+
+* animações no DESIGN.md, no guia de desenvolvimento e no roadmap ([03ec590](https://github.com/pedrinholeda/cartaralho/commit/03ec59080b75d9195146daabcbbeb95c9d173a44))
+* DESIGN.md com princípios, tokens e componentes; prints no README ([500fd5b](https://github.com/pedrinholeda/cartaralho/commit/500fd5b5c7df37d752c6652e006aab6b0248d1ae))
+* logo escolhido no DESIGN.md, no README e no roadmap ([9482ecb](https://github.com/pedrinholeda/cartaralho/commit/9482ecb3191c40ba25e40b02d3c3fcd1cb14bd23))
+* print do confete no DESIGN.md ([38bdec7](https://github.com/pedrinholeda/cartaralho/commit/38bdec71a18e46a3a6b8e036df0fc6069f2e022d))
+* sons no DESIGN.md, no guia de desenvolvimento, no AGENTS.md e no roadmap ([53f707e](https://github.com/pedrinholeda/cartaralho/commit/53f707ea407dc480d50cf981a906b14901b83c19))
+
 ## [0.3.0](https://github.com/pedrinholeda/cartaralho/compare/v0.2.0...v0.3.0) (2026-11-20)
 
 
