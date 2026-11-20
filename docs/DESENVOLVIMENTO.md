@@ -92,7 +92,7 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/main.dart`](../lib/main.dart) | Inicializa o Firebase (com timeout de 30 s) e abre o app dentro do `ProviderScope`. |
 | [`lib/firebase_options.dart`](../lib/firebase_options.dart) | Opções do Firebase por plataforma, geradas pelo FlutterFire CLI. |
 | [`lib/models/`](../lib/models) | `GameCard`, `Player` e `GameRoom`, imutáveis, com `fromJson`/`toJson`/`copyWith`. `GamePhase` lista as fases da partida. |
-| [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `novaSala`, `entrarNaSala`, `iniciarJogo`, `enviarCarta`, `trocarMao`, `escolherVencedor`, `proximaRodada`, `jogarDeNovo`, o sorteio do código da sala e `fraseCompleta` (a carta preta com as brancas no lugar das lacunas). Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
+| [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `novaSala`, `entrarNaSala`, `sortearOutraCarinha`, `iniciarJogo`, `enviarCarta`, `trocarMao`, `escolherVencedor`, `proximaRodada`, `jogarDeNovo`, o sorteio do código da sala e `fraseCompleta` (a carta preta com as brancas no lugar das lacunas). Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
 | [`lib/game/convite.dart`](../lib/game/convite.dart) | O link de convite (`?sala=CÓDIGO`): ler o código do link, montar o link e o texto para colar no grupo. |
 | [`lib/game/baralho.dart`](../lib/game/baralho.dart) | O catálogo de pacotes (`pacotes`), a leitura de um pacote do JSON (`Baralho.fromJsonString`), a junção dos escolhidos num baralho só (`Baralho.juntar`) e de que pacote veio uma carta (`pacoteDaCarta`). |
 | [`assets/baralhos/`](../assets/baralhos) | Um JSON por pacote. O Básico tem 31 pretas e 82 brancas; Brasilidades, Grupo da família, Firma, Rolê, Internet e Amor e desamor têm 25 pretas (4 de duas ou três lacunas) e 62 brancas cada. Sozinho, cada um dá para 8 jogadores com mão de 7. As regras de escrita estão em `test/game/baralho_test.dart`. |
@@ -105,7 +105,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/screens/tutorial_screen.dart`](../lib/screens/tutorial_screen.dart) | O tutorial de três telas; abre sozinho na primeira visita (`tutorialPendente`) e pelo "Como jogar" (`abrirTutorial`). |
 | [`lib/ui/tema.dart`](../lib/ui/tema.dart) | Tema claro e escuro: as cores (`Cores`), as medidas (`Medidas`) e a tipografia. Ver [DESIGN.md](DESIGN.md). |
 | [`lib/ui/cartas.dart`](../lib/ui/cartas.dart) | `CartaPreta` (com a frase montada ao vivo), `CartaBranca` e `MaoEmLeque`, usadas em todas as telas. |
-| [`lib/ui/jogadores.dart`](../lib/ui/jogadores.dart) | `AvatarDeJogador` (inicial na cor do jogador, anel amarelo no juiz) e `AvisoDaVez` (a pílula de quem é a vez). |
+| [`lib/ui/jogadores.dart`](../lib/ui/jogadores.dart) | `AvatarDeJogador` (a carinha na cor do jogador, anel amarelo no juiz) e `AvisoDaVez` (a pílula de quem é a vez). |
+| [`lib/ui/carinhas.dart`](../lib/ui/carinhas.dart) | As carinhas: `Carinha.de(id, variacao)` sorteia olhos, boca, enfeite e bochechas de forma estável (`misturar`, a mesma conta no celular e na web) e `PintorDeCarinha` desenha. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |
 | [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese. Rode com `node tool/gerar_sons.mjs`. |

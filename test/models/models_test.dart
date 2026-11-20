@@ -23,6 +23,13 @@ void main() {
       final p = Player.fromJson({'id': 'u1', 'name': 'Ana'});
       expect(p.points, 0);
       expect(p.isHost, isFalse);
+      expect(p.avatar, 0);
+    });
+
+    test('a carinha sorteada vai e volta do Firestore', () {
+      final p = Player(id: 'u1', name: 'Ana', avatar: 4);
+      expect(Player.fromJson(p.toJson()).avatar, 4);
+      expect(p.copyWith(points: 1).avatar, 4);
     });
 
     test('copyWith troca só o que foi pedido', () {

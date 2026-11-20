@@ -141,8 +141,9 @@ com a MIT, e o humor tem que ser daqui.
 - [ ] Pacote Família, sem palavrão, para jogar com criança e com a vó, e pacote Sem filtro
   (+18), que só entra quando alguém marca, com aviso
 - [ ] Carta em branco: o jogador escreve a própria resposta (uma ou duas por mão)
-- [ ] Avatares engraçados: carinhas desenhadas no próprio jogo (formato, olhos, boca e
-  acessório sorteados pelo id do jogador), com "Sortear outra" na sala de espera
+- [x] **Carinhas**: cada jogador ganha uma carinha desenhada pelo jogo (olhos, boca, enfeite
+  e bochechas sorteados pelo id, 1.024 combinações), a mesma em todos os aparelhos, com
+  "Sortear outra carinha" na sala de espera
 - [ ] Solo contra a CPU, sem internet: bots com personalidade, que como juiz preferem as
   cartas de certos pacotes (`pacoteDaCarta`)
 - [ ] Zé Aleatório: com 2 pessoas na sala, um jogador imaginário completa o mínimo e joga

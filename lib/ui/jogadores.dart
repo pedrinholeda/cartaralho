@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'carinhas.dart';
 import 'tema.dart';
 
-/// Avatar redondo com a inicial do jogador, numa cor fixa pela posição dele
-/// na sala ([coresDeJogador]). O juiz da rodada ganha um anel amarelo e o
-/// martelo.
+/// Avatar redondo com a carinha do jogador, numa cor fixa pela posição dele
+/// na sala ([coresDeJogador]). A carinha sai de [semente] (o id do jogador) e
+/// [variacao] (quantas vezes ele pediu outra); sem semente, sai do nome. O
+/// juiz da rodada ganha um anel amarelo e o martelo.
 class AvatarDeJogador extends StatelessWidget {
   final String nome;
   final int indice;
   final bool juiz;
   final double tamanho;
+  final String? semente;
+  final int variacao;
 
   const AvatarDeJogador({
     super.key,
@@ -18,13 +22,15 @@ class AvatarDeJogador extends StatelessWidget {
     required this.indice,
     this.juiz = false,
     this.tamanho = 44,
+    this.semente,
+    this.variacao = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final cores = Cores.de(context);
     final (fundo, tinta) = coresDeJogador[indice % coresDeJogador.length];
-    final inicial = nome.trim().isEmpty ? '?' : nome.trim()[0].toUpperCase();
+    final carinha = Carinha.de(semente ?? nome, variacao);
 
     return SizedBox(
       width: tamanho + 6,
@@ -44,15 +50,27 @@ class AvatarDeJogador extends StatelessWidget {
               ),
             ),
           ),
-          CircleAvatar(
-            radius: tamanho / 2,
-            backgroundColor: fundo,
-            child: Text(
-              inicial,
-              style: GoogleFonts.figtree(
-                color: tinta,
-                fontSize: tamanho * 0.42,
-                fontWeight: FontWeight.w800,
+          // A carinha muda com um pulinho quando o jogador sorteia outra.
+          AnimatedSwitcher(
+            duration: MediaQuery.of(context).disableAnimations
+                ? Duration.zero
+                : const Duration(milliseconds: 260),
+            transitionBuilder: (filho, animacao) => ScaleTransition(
+              scale: CurvedAnimation(
+                parent: animacao,
+                curve: Curves.easeOutBack,
+              ),
+              child: filho,
+            ),
+            child: CustomPaint(
+              key: ValueKey(carinha),
+              size: Size.square(tamanho),
+              painter: PintorDeCarinha(
+                carinha: carinha,
+                fundo: fundo,
+                tinta: tinta,
+                bochecha: cores.acao,
+                branco: cores.carta,
               ),
             ),
           ),
