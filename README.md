@@ -22,8 +22,8 @@ passa a vez de juiz.
 
 ## Como jogar
 
-1. **Criar sala**: quem cria vira o anfitrião, escolhe quantos pontos vencem (3 a 10) e quantas
-   cartas cada um tem na mão, e recebe um código de seis caracteres.
+1. **Criar sala**: quem cria vira o anfitrião, escolhe quantos pontos vencem (3 a 10), quantas
+   cartas cada um tem na mão e quais baralhos entram, e recebe um código de seis caracteres.
 2. **Entrar**: os outros digitam o código e o nome, ou abrem o convite que o anfitrião
    copiou da sala, que já vem com o código.
 3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou (de 3 a 8 jogadores).
@@ -40,6 +40,8 @@ passa a vez de juiz.
 - Entrada só com o código e um nome: sem cadastro, o login é anônimo.
 
 **Partida**
+- Sete baralhos para misturar: Básico, Brasilidades, Grupo da família, Firma, Rolê,
+  Internet e Amor e desamor, com mais de 600 cartas ao todo.
 - Lista de jogadores com os pontos e quem é o juiz da vez.
 - Cinco cartas brancas na mão, completadas a cada rodada.
 - Uma vez por partida, cada jogador pode trocar a mão inteira.
@@ -95,7 +97,7 @@ identifica o projeto e vai dentro de qualquer app publicado; quem protege os dad
 [regras do Firestore](firestore.rules).
 
 **Dá para jogar com cartas minhas?** Ainda não pelo app. As cartas ficam em
-[`assets/baralhos/basico.json`](assets/baralhos/basico.json), e quem roda o projeto pode
+[`assets/baralhos/`](assets/baralhos), um arquivo por baralho, e quem roda o projeto pode
 editá-las; baralhos próprios dentro do jogo estão no [roadmap](docs/ROADMAP.md).
 
 ## Solução de problemas

@@ -9,7 +9,7 @@ grupos, em Flutter, com as salas sincronizadas em tempo real pelo Firestore.
 lib/
   main.dart             inicializa o Firebase e abre a HomeScreen dentro do ProviderScope
   firebase_options.dart opções do Firebase por plataforma (gerado pelo FlutterFire CLI)
-  game/                 regras da partida (funções puras) e o baralho inicial
+  game/                 regras da partida (funções puras) e os pacotes de cartas
   models/               GameCard, Player, GameRoom: dados e conversão para o Firestore
   services/             FirebaseService: login anônimo e todas as leituras e escritas da sala
   providers/            providers Riverpod: usuário logado, sala atual, jogador atual
@@ -17,7 +17,7 @@ lib/
   widgets/              peças da tela de jogo: jogadores, carta preta, mão, escolha do juiz
   ui/                   tema (cores, medidas, fonte), cartas, avatares, animações e sons
 test/                   testes (flutter_test), espelhando lib/
-assets/baralhos/        as cartas do jogo, em JSON
+assets/baralhos/        as cartas do jogo, um JSON por pacote
 assets/sons/            efeitos sonoros (.wav), gerados por tool/gerar_sons.mjs
 tool/                   scripts de apoio (Node), fora do app
 docs/                   documentação longa, roadmap e imagens
@@ -62,12 +62,17 @@ android/ ios/ macos/ web/  projetos de plataforma
 
 ## Editando as cartas
 
-1. Edite `assets/baralhos/basico.json`: `pretas` têm de uma a três lacunas `____`;
-   `brancas` começam com minúscula (salvo nome próprio) e não terminam em ponto.
-2. Rode `flutter test test/game/baralho_test.dart`, que confere essas regras e se há
-   brancas para 8 jogadores com mão de 7.
-3. Os ids saem da posição (`b1`, `w1`...): trocar a ordem muda os ids, o que não afeta
-   salas novas.
+1. Cada pacote é um `assets/baralhos/<id>.json` (`nome`, `descricao`, `pretas`, `brancas`).
+   `pretas` têm de uma a três lacunas `____`, sem preposição que contrai antes dela (`de`,
+   `em`, `por`, `a`) e sem letra colada nela; `brancas` começam com minúscula (salvo nome
+   próprio) e não terminam em ponto.
+2. Pacote novo entra também na lista `pacotes` de `lib/game/baralho.dart`.
+3. Rode `flutter test test/game/baralho_test.dart`, que confere essas regras, se cada pacote
+   sozinho tem brancas para 8 jogadores com mão de 7 e se nenhum texto se repete entre
+   pacotes.
+4. Os ids saem do pacote e da posição (`firma-b1`, `firma-w1`): trocar a ordem muda os ids,
+   o que não afeta salas novas. O prefixo diz de que pacote a carta veio
+   (`pacoteDaCarta`).
 
 ## Comandos
 
