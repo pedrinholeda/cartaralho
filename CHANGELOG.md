@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/pedrinholeda/cartaralho/compare/v0.6.0...v0.7.0) (2026-11-20)
+
+
+### Novidades
+
+* **baralho:** seis pacotes temáticos de cartas ([4ff0ca1](https://github.com/pedrinholeda/cartaralho/commit/4ff0ca1b50c53588987b05b09cc8f668d45ec218))
+* **sala:** escolher os baralhos ao criar a sala ([7b2dfae](https://github.com/pedrinholeda/cartaralho/commit/7b2dfaedb958bd22cb0e4f37f10dd3c325f218c4))
+
 ## [0.6.0](https://github.com/pedrinholeda/cartaralho/compare/v0.5.0...v0.6.0) (2026-11-20)
 
 
