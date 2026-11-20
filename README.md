@@ -7,6 +7,11 @@
   <img src="https://img.shields.io/badge/Flutter-3.50-02569B" alt="Flutter 3.50">
 </p>
 
+<p align="center">
+  <img src="docs/imagens/escolha-2.png" width="240" alt="Mão do jogador numa carta Escolha 2: duas cartas brancas escolhidas, numeradas 1 e 2, e a frase montada acima, sobre a mesa vermelha">
+  <img src="docs/imagens/resultado.png" width="240" alt="Resultado da rodada: a frase vencedora numa carta amarela com o nome de quem enviou, e a outra frase numa carta branca">
+</p>
+
 Jogo de cartas de festa precisa de baralho impresso, alguém para embaralhar e uma mesa. E
 na hora de contar os pontos, ninguém lembra quem ganhou a rodada passada.
 
@@ -106,7 +111,8 @@ lib/
 docs/          configuração, desenvolvimento, roadmap
 ```
 
-O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md#módulos).
+O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md#módulos). O visual
+(cores, fontes, cartas) está em [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Status e roadmap
 

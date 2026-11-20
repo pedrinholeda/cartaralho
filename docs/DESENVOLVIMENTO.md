@@ -99,6 +99,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/providers/game_provider.dart`](../lib/providers/game_provider.dart) | Código da sala atual, stream da sala e o que deriva dela: jogador atual, se é anfitrião, se é juiz, fase. |
 | [`lib/screens/home_screen.dart`](../lib/screens/home_screen.dart) | Faz o login anônimo (três tentativas) e mostra criar/entrar; com uma sala escolhida, mostra a `GameScreen`. |
 | [`lib/screens/game_screen.dart`](../lib/screens/game_screen.dart) | Escolhe o que mostrar pela fase da partida. |
+| [`lib/ui/tema.dart`](../lib/ui/tema.dart) | Tema claro e escuro: as cores (`Cores`), as medidas (`Medidas`) e a tipografia. Ver [DESIGN.md](DESIGN.md). |
+| [`lib/ui/cartas.dart`](../lib/ui/cartas.dart) | `CartaPreta`, `CartaBranca` e `GradeDeCartas`, usadas em todas as telas. |
 | [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias
