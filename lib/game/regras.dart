@@ -66,13 +66,14 @@ GameRoom iniciarJogo(GameRoom sala, String quemPediu, {Random? random}) {
   );
 }
 
-/// Um jogador envia uma carta da própria mão. Quando todos menos o juiz
+/// Um jogador envia da própria mão as cartas que a carta preta pede, na ordem
+/// das lacunas (uma só na carta comum). Quando todos menos o juiz
 /// enviaram, a sala passa para a escolha do juiz, com as cartas numa ordem
 /// sorteada ([GameRoom.revealOrder]) para ninguém saber quem enviou qual.
 GameRoom enviarCarta(
   GameRoom sala,
   String jogadorId,
-  String cartaId, {
+  List<String> cartaIds, {
   Random? random,
 }) {
   if (sala.phase != GamePhase.playersSubmitting) {
@@ -84,18 +85,30 @@ GameRoom enviarCarta(
   if (sala.submittedCards.containsKey(jogadorId)) {
     throw JogadaInvalida('Você já enviou sua carta nesta rodada');
   }
-  final mao = sala.hands[jogadorId] ?? const <GameCard>[];
-  final carta = mao.where((c) => c.id == cartaId).firstOrNull;
-  if (carta == null) {
-    throw JogadaInvalida('Essa carta não está na sua mão');
+  final pede = sala.currentBlackCard?.pick ?? 1;
+  if (cartaIds.length != pede) {
+    throw JogadaInvalida(
+      pede == 1
+          ? 'Escolha uma carta'
+          : 'Escolha $pede cartas para esta carta preta',
+    );
   }
+  if (cartaIds.toSet().length != cartaIds.length) {
+    throw JogadaInvalida('A mesma carta não pode ir duas vezes');
+  }
+  final mao = sala.hands[jogadorId] ?? const <GameCard>[];
+  final cartas = [
+    for (final id in cartaIds)
+      mao.where((c) => c.id == id).firstOrNull ??
+          (throw JogadaInvalida('Essa carta não está na sua mão')),
+  ];
 
-  final enviadas = {...sala.submittedCards, jogadorId: carta};
+  final enviadas = {...sala.submittedCards, jogadorId: cartas};
   final maos = {
     ...sala.hands,
     jogadorId: [
       for (final c in mao)
-        if (c.id != cartaId) c
+        if (!cartaIds.contains(c.id)) c
     ],
   };
   final faltam = sala.players
@@ -161,7 +174,10 @@ GameRoom proximaRodada(GameRoom sala, String quemPediu) {
   }
 
   // As cartas usadas voltam para o fim do baralho, para ele nunca acabar.
-  final brancas = [...sala.whiteCards, ...sala.submittedCards.values];
+  final brancas = [
+    ...sala.whiteCards,
+    ...sala.submittedCards.values.expand((cs) => cs),
+  ];
   final maos = <String, List<GameCard>>{};
   for (final p in sala.players) {
     final mao = [...?sala.hands[p.id]];

@@ -29,7 +29,8 @@ GameRoom salaDeEspera({int jogadores = 3, int brancas = 30, int pretas = 5}) {
 GameRoom todosEnviam(GameRoom sala) {
   var s = sala;
   for (final p in sala.players.where((p) => p.id != sala.currentJudgeId)) {
-    s = enviarCarta(s, p.id, s.hands[p.id]!.first.id);
+    final pede = s.currentBlackCard!.pick;
+    s = enviarCarta(s, p.id, [for (final c in s.hands[p.id]!.take(pede)) c.id]);
   }
   return s;
 }
@@ -85,11 +86,11 @@ void main() {
     setUp(() => sala = iniciarJogo(salaDeEspera(), 'p0', random: Random(1)));
 
     test('a fase só muda quando todos menos o juiz enviaram', () {
-      final umaEnviada = enviarCarta(sala, 'p1', sala.hands['p1']!.first.id);
+      final umaEnviada = enviarCarta(sala, 'p1', [sala.hands['p1']!.first.id]);
       expect(umaEnviada.phase, GamePhase.playersSubmitting);
 
       final todas =
-          enviarCarta(umaEnviada, 'p2', umaEnviada.hands['p2']!.first.id);
+          enviarCarta(umaEnviada, 'p2', [umaEnviada.hands['p2']!.first.id]);
       expect(todas.phase, GamePhase.judgeChoosing);
       expect(todas.submittedCards.keys, unorderedEquals(['p1', 'p2']));
     });
@@ -100,7 +101,7 @@ void main() {
         var s =
             iniciarJogo(salaDeEspera(jogadores: 5), 'p0', random: Random(1));
         for (final p in s.players.where((p) => p.id != 'p0')) {
-          s = enviarCarta(s, p.id, s.hands[p.id]!.first.id,
+          s = enviarCarta(s, p.id, [s.hands[p.id]!.first.id],
               random: Random(semente));
         }
         expect(s.revealOrder, unorderedEquals(['p1', 'p2', 'p3', 'p4']));
@@ -112,25 +113,72 @@ void main() {
 
     test('a carta enviada sai da mão', () {
       final carta = sala.hands['p1']!.first;
-      final depois = enviarCarta(sala, 'p1', carta.id);
+      final depois = enviarCarta(sala, 'p1', [carta.id]);
       expect(depois.hands['p1']!.map((c) => c.id), isNot(contains(carta.id)));
       expect(depois.hands['p1'], hasLength(tamanhoDaMao - 1));
     });
 
     test('o juiz não envia', () {
-      expect(() => enviarCarta(sala, 'p0', sala.hands['p0']!.first.id),
+      expect(() => enviarCarta(sala, 'p0', [sala.hands['p0']!.first.id]),
           throwsA(isA<JogadaInvalida>()));
     });
 
     test('não envia carta que não está na mão', () {
-      expect(() => enviarCarta(sala, 'p1', sala.hands['p2']!.first.id),
+      expect(() => enviarCarta(sala, 'p1', [sala.hands['p2']!.first.id]),
           throwsA(isA<JogadaInvalida>()));
     });
 
     test('não envia duas vezes na mesma rodada', () {
-      final depois = enviarCarta(sala, 'p1', sala.hands['p1']![0].id);
-      expect(() => enviarCarta(depois, 'p1', depois.hands['p1']![0].id),
+      final depois = enviarCarta(sala, 'p1', [sala.hands['p1']![0].id]);
+      expect(() => enviarCarta(depois, 'p1', [depois.hands['p1']![0].id]),
           throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
+  group('cartas "Escolha 2"', () {
+    late GameRoom sala;
+    setUp(() {
+      sala = iniciarJogo(salaDeEspera(), 'p0', random: Random(1)).copyWith(
+        currentBlackCard: GameCard(
+            id: 'bx', text: '____ combina com ____.', type: CardType.black),
+      );
+    });
+
+    test('a carta preta pede uma branca por lacuna', () {
+      expect(sala.currentBlackCard!.pick, 2);
+      expect(
+          GameCard(id: 'q', text: 'O que é isso?', type: CardType.black).pick,
+          1);
+    });
+
+    test('o jogador envia duas cartas, na ordem escolhida', () {
+      final mao = sala.hands['p1']!;
+      final depois = enviarCarta(sala, 'p1', [mao[3].id, mao[1].id]);
+
+      expect(depois.submittedCards['p1']!.map((c) => c.id),
+          [mao[3].id, mao[1].id]);
+      expect(depois.hands['p1'], hasLength(tamanhoDaMao - 2));
+      expect(
+          fraseCompleta(depois.currentBlackCard!, depois.submittedCards['p1']!),
+          '${mao[3].text} combina com ${mao[1].text}.');
+    });
+
+    test('recusa uma carta só quando a preta pede duas', () {
+      expect(() => enviarCarta(sala, 'p1', [sala.hands['p1']!.first.id]),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('recusa a mesma carta duas vezes', () {
+      final id = sala.hands['p1']!.first.id;
+      expect(() => enviarCarta(sala, 'p1', [id, id]),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('as duas cartas voltam ao baralho e a mão é completada', () {
+      final fim = fecharRodada(todosEnviam(sala));
+      for (final p in fim.players) {
+        expect(fim.hands[p.id], hasLength(tamanhoDaMao));
+      }
     });
   });
 

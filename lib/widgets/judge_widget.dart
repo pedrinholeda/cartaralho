@@ -43,7 +43,7 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
             child: ListView.builder(
               itemCount: submittedCards.length,
               itemBuilder: (context, index) {
-                final card = submittedCards[index].value;
+                final cartas = submittedCards[index].value;
                 final playerId = submittedCards[index].key;
                 final isSelected = _selectedWinner == playerId;
 
@@ -57,7 +57,9 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                       });
                     },
                     title: Text(
-                      preta == null ? card.text : fraseCompleta(preta, [card]),
+                      preta == null
+                          ? cartas.map((c) => c.text).join(' / ')
+                          : fraseCompleta(preta, cartas),
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
