@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.6.0](https://github.com/pedrinholeda/cartaralho/compare/v0.5.0...v0.6.0) (2026-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ui:** o app deixa de seguir o tema claro ou escuro do sistema; é sempre escuro.
+
+### Novidades
+
+* **jogo:** telas no visual novo, com aviso de vez, sala de espera e tutorial ([1eea56c](https://github.com/pedrinholeda/cartaralho/commit/1eea56c4b75c62182bd18fdf65e67b129c1ef9c2))
+* **ui:** carta preta com a frase montada, mão em leque e avatares de jogador ([c1e3309](https://github.com/pedrinholeda/cartaralho/commit/c1e3309fead8eb2ec7700d0020e09af444598de4))
+* **ui:** tema Noite de jogo, com mesa escura e Figtree ([565173b](https://github.com/pedrinholeda/cartaralho/commit/565173b5eae100408014746a129249439951874e))
+
+
+### Documentação
+
+* DESIGN.md da Noite de jogo, prints novos e fase 3b no roadmap ([38c8d1b](https://github.com/pedrinholeda/cartaralho/commit/38c8d1becb5ce07830054e91d2ecdbcc04fe267f))
+
 ## [0.5.0](https://github.com/pedrinholeda/cartaralho/compare/v0.4.0...v0.5.0) (2026-11-20)
 
 
