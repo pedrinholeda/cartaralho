@@ -137,5 +137,8 @@ Os principais, todos com item no [roadmap](ROADMAP.md):
 
 O [release-please](https://github.com/googleapis/release-please) lê os Conventional
 Commits da `main` e mantém um PR de release com o `CHANGELOG.md` e a versão nova no
-`pubspec.yaml`. O merge desse PR cria a tag `vX.Y.Z` e a Release no GitHub. Ainda não há
-build de Android, iOS ou web na tag nem publicação em loja.
+`pubspec.yaml`. O merge desse PR cria a tag `vX.Y.Z` e a Release no GitHub.
+
+A web é publicada em https://cartaralho.web.app a cada merge na `main` pelo workflow
+`deploy-web.yml` (detalhes e o segredo que ele precisa em [FIREBASE.md](FIREBASE.md#publicar-a-web)).
+Ainda não há build de Android nem de iOS no CI, nem publicação em loja.

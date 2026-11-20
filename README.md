@@ -63,6 +63,11 @@ flowchart LR
 Não há servidor próprio: cada sala é um documento no Firestore, e todos os aparelhos
 escutam esse documento. Detalhes em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md).
 
+## Jogar
+
+O jogo está no ar em **https://cartaralho.web.app**. A publicação a cada merge na `main` está
+em [docs/FIREBASE.md](docs/FIREBASE.md#publicar-a-web).
+
 ## Rodando
 
 Requisitos: [Flutter 3.50](https://docs.flutter.dev/get-started/install) e um projeto
