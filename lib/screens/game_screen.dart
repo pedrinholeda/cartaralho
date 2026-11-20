@@ -9,6 +9,7 @@ import '../models/game_room.dart';
 import '../models/player.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
+import '../services/mesa_local.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/icones.dart';
@@ -29,7 +30,9 @@ class GameScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final roomId = ref.watch(roomIdProvider);
-    final gameRoom = ref.watch(gameRoomProvider(roomId!));
+    // Saindo da sala: a capa assume no próximo quadro.
+    if (roomId == null) return const SizedBox.shrink();
+    final gameRoom = ref.watch(gameRoomProvider(roomId));
     final currentPlayer = ref.watch(currentPlayerProvider);
     final isHost = ref.watch(isHostProvider);
     final isJudge = ref.watch(isJudgeProvider);
@@ -46,7 +49,7 @@ class GameScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Sala $roomId',
+          MesaLocal.eh(roomId) ? 'Jogo solo' : 'Sala $roomId',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         actions: [
@@ -61,7 +64,7 @@ class GameScreen extends ConsumerWidget {
             icon: const IconeFofo(Desenho.sair, tamanho: 26),
             onPressed: () {
               ref.read(roomIdProvider.notifier).state = null;
-              FirebaseService.signOut();
+              FirebaseService.sair(roomId);
             },
           ),
         ],
@@ -543,7 +546,10 @@ class _FimDeJogo extends ConsumerWidget {
                 ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => ref.read(roomIdProvider.notifier).state = null,
+                onPressed: () {
+                  ref.read(roomIdProvider.notifier).state = null;
+                  if (MesaLocal.eh(room.roomId)) MesaLocal.fechar(room.roomId);
+                },
                 child: const Text('Voltar ao menu'),
               ),
             ],

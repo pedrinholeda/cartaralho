@@ -6,6 +6,7 @@ import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import 'create_room_screen.dart';
 import 'join_room_screen.dart';
+import 'solo_screen.dart';
 import 'tutorial_screen.dart';
 import 'game_screen.dart';
 import '../ui/cartas.dart';
@@ -153,6 +154,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       child: const Text('Entrar na sala'),
+                    ),
+                    const SizedBox(height: 4),
+                    TextButton.icon(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SoloScreen(),
+                        ),
+                      ),
+                      icon: const IconeFofo(Desenho.pessoa, tamanho: 22),
+                      label: const Text('Jogar sozinho contra bots'),
                     ),
                   ],
                 ],

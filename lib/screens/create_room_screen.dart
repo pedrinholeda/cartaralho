@@ -6,6 +6,7 @@ import '../providers/baralhos_provider.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/icones.dart';
+import '../ui/opcoes.dart';
 import '../ui/tema.dart';
 
 class CreateRoomScreen extends ConsumerStatefulWidget {
@@ -113,14 +114,14 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                   textCapitalization: TextCapitalization.words,
                 ),
                 const SizedBox(height: 24),
-                _Opcoes(
+                LinhaDeOpcoes(
                   titulo: 'Pontos para vencer',
                   opcoes: regras.opcoesDePontos,
                   valor: _pontos,
                   aoEscolher: (v) => setState(() => _pontos = v),
                 ),
                 const SizedBox(height: 16),
-                _Opcoes(
+                LinhaDeOpcoes(
                   titulo: 'Cartas na mão',
                   opcoes: regras.opcoesDeMao,
                   valor: _mao,
@@ -151,43 +152,6 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Uma linha de opções da partida, como "Pontos para vencer: 3 5 7 10".
-class _Opcoes extends StatelessWidget {
-  final String titulo;
-  final List<int> opcoes;
-  final int valor;
-  final ValueChanged<int> aoEscolher;
-
-  const _Opcoes({
-    required this.titulo,
-    required this.opcoes,
-    required this.valor,
-    required this.aoEscolher,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(titulo, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: [
-            for (final o in opcoes)
-              ChoiceChip(
-                label: Text('$o'),
-                selected: o == valor,
-                onSelected: (_) => aoEscolher(o),
-              ),
-          ],
-        ),
-      ],
     );
   }
 }

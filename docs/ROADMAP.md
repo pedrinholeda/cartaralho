@@ -148,8 +148,12 @@ com a MIT, e o humor tem que ser daqui.
   olhinhos; capa com carinhas espiando; sala de espera com lugares vazios que olham. E três
   sustos pequenos: carinhas assombradas na madrugada, a lacuna que abre um olho para quem
   demora e a coroa que derrete no fim de jogo. Direção desenhada num canva antes
-- [ ] Solo contra a CPU, sem internet: bots com personalidade, que como juiz preferem as
-  cartas de certos pacotes (`pacoteDaCarta`)
+- [x] **Jogar sozinho contra bots**: você e 2 a 4 bots (Tia do Zap, Coach Quântico, Tio do
+  Pavê, Estagiário, Crush, DJ do Rolê, Zé do Bar), cada um fã de um pacote: na mão, tende a
+  jogar as cartas dele; como juiz, a premiar quem jogou. A partida roda no aparelho
+  (`MesaLocal`), pelas mesmas regras, sem Firestore; ainda pede o login anônimo da capa
+- [x] Voltar ao menu não quebra mais os providers da sala (o código virava nulo e
+  `roomId!` lançava)
 - [ ] Zé Aleatório: com 2 pessoas na sala, um jogador imaginário completa o mínimo e joga
   uma carta sorteada por rodada
 

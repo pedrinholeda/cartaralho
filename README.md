@@ -33,6 +33,10 @@ passa a vez de juiz.
 5. **Fim**: quem chegar aos pontos combinados primeiro vence. O anfitrião pode jogar de novo
    com o mesmo grupo.
 
+Sem ninguém por perto? **Jogar sozinho contra bots**, na capa: você e 2 a 4 bots, cada um com
+o seu gosto (a Tia do Zap adora as cartas do grupo da família; o Coach Quântico, as da
+firma). A partida roda no próprio aparelho, sem sala nem código.
+
 ## O que faz
 
 **Salas em tempo real**
@@ -40,6 +44,7 @@ passa a vez de juiz.
 - Entrada só com o código e um nome: sem cadastro, o login é anônimo.
 
 **Partida**
+- Modo solo contra bots com personalidade, que jogam e julgam pelo próprio gosto.
 - Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
 - Fofo por fora, ácido por dentro: ícones com olhinhos, cartas sem dó, e alguns sustos
   escondidos (jogue de madrugada, ou demore para escolher a carta).

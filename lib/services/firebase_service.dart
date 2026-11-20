@@ -4,6 +4,7 @@ import '../game/baralho.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../game/regras.dart' as regras;
+import 'mesa_local.dart';
 
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,6 +25,16 @@ class FirebaseService {
       print('Erro detalhado no login anônimo: $e');
       throw Exception('Erro ao fazer login anônimo: $e');
     }
+  }
+
+  /// Sai da sala. Da partida solo, só fecha a mesa; de uma sala online,
+  /// faz logout (o próximo login é outro jogador).
+  static Future<void> sair(String roomId) async {
+    if (MesaLocal.eh(roomId)) {
+      MesaLocal.fechar(roomId);
+      return;
+    }
+    await signOut();
   }
 
   static Future<void> signOut() async {
@@ -92,6 +103,7 @@ class FirebaseService {
   }
 
   static Stream<GameRoom?> watchRoom(String roomId) {
+    if (MesaLocal.eh(roomId)) return MesaLocal.observar(roomId);
     return _firestore
         .collection('rooms')
         .doc(roomId)
@@ -157,6 +169,8 @@ class FirebaseService {
     String roomId,
     GameRoom Function(GameRoom sala) regra,
   ) async {
+    // Partida solo: a sala está neste aparelho, e a regra roda na hora.
+    if (MesaLocal.eh(roomId)) return MesaLocal.alterar(roomId, regra);
     final ref = _firestore.collection('rooms').doc(roomId);
     await _firestore.runTransaction((tx) async {
       final doc = await tx.get(ref);

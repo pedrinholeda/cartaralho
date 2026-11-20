@@ -1,0 +1,123 @@
+import 'dart:math';
+
+import '../models/card.dart';
+import '../models/game_room.dart';
+import '../models/player.dart';
+import 'baralho.dart';
+import 'regras.dart';
+
+/// Um adversário do modo solo. Cada um tem um pacote de cartas preferido: na
+/// mão, tende a jogar as cartas dele; como juiz, tende a premiar quem jogou.
+class Bot {
+  final String id;
+  final String nome;
+  final String pacote;
+
+  const Bot(this.id, this.nome, this.pacote);
+}
+
+/// Os bots, cada um fã de um pacote. Os ids começam com `bot-`.
+const bots = [
+  Bot('bot-tia', 'Tia do Zap', 'familia'),
+  Bot('bot-coach', 'Coach Quântico', 'firma'),
+  Bot('bot-tio', 'Tio do Pavê', 'basico'),
+  Bot('bot-estagiario', 'Estagiário', 'internet'),
+  Bot('bot-crush', 'Crush', 'amor'),
+  Bot('bot-dj', 'DJ do Rolê', 'role'),
+  Bot('bot-ze', 'Zé do Bar', 'brasilidades'),
+];
+
+/// Opções de quantos bots jogam contra você.
+const opcoesDeAdversarios = [2, 3, 4];
+
+bool ehBot(String jogadorId) => jogadorId.startsWith('bot-');
+
+Bot? botPorId(String id) => bots.where((b) => b.id == id).firstOrNull;
+
+/// O quanto o bot gosta de uma carta: bastante se ela é do pacote dele, e um
+/// tanto de sorte, para ele não ser previsível.
+double _gosto(Bot bot, GameCard carta, Random rng) =>
+    (pacoteDaCarta(carta) == bot.pacote ? 2 : 0) + rng.nextDouble() * 2.6;
+
+/// As cartas que o bot envia: as que ele mais gosta, quantas a preta pedir.
+List<String> jogadaDoBot(GameRoom sala, String botId, Random rng) {
+  final bot = botPorId(botId)!;
+  final mao = [...?sala.hands[botId]];
+  final pede = sala.currentBlackCard?.pick ?? 1;
+  final notas = {for (final c in mao) c.id: _gosto(bot, c, rng)};
+  mao.sort((a, b) => notas[b.id]!.compareTo(notas[a.id]!));
+  return [for (final c in mao.take(pede)) c.id];
+}
+
+/// Quem o bot juiz escolhe: a jogada com mais cartas do pacote dele, com sorte
+/// no meio.
+String votoDoBot(GameRoom sala, String botId, Random rng) {
+  final bot = botPorId(botId)!;
+  String? melhor;
+  var maior = double.negativeInfinity;
+  for (final MapEntry(key: jogador, value: cartas)
+      in sala.submittedCards.entries) {
+    final nota =
+        cartas.fold<double>(0, (soma, c) => soma + _gosto(bot, c, rng));
+    if (nota > maior) {
+      maior = nota;
+      melhor = jogador;
+    }
+  }
+  return melhor!;
+}
+
+/// A próxima jogada de algum bot, ou nulo quando a vez é de uma pessoa. Uma
+/// por vez, para a mesa poder espaçar as jogadas no tempo.
+GameRoom? passoDosBots(GameRoom sala, Random rng) {
+  final juiz = sala.currentJudgeId;
+  switch (sala.phase) {
+    case GamePhase.playersSubmitting:
+      for (final p in sala.players) {
+        if (ehBot(p.id) &&
+            p.id != juiz &&
+            !sala.submittedCards.containsKey(p.id)) {
+          return enviarCarta(sala, p.id, jogadaDoBot(sala, p.id, rng));
+        }
+      }
+      return null;
+    case GamePhase.judgeChoosing:
+      if (juiz != null && ehBot(juiz)) {
+        return escolherVencedor(sala, juiz, votoDoBot(sala, juiz, rng));
+      }
+      return null;
+    case GamePhase.roundResult:
+      if (juiz != null && ehBot(juiz)) return proximaRodada(sala, juiz);
+      return null;
+    case GamePhase.waitingForPlayers:
+    case GamePhase.gameComplete:
+      return null;
+  }
+}
+
+/// Uma partida solo já começada: você, que é o anfitrião e o primeiro juiz, e
+/// [adversarios] bots sorteados.
+GameRoom salaSolo({
+  required String roomId,
+  required Player voce,
+  required Baralho baralho,
+  int adversarios = 3,
+  int maxPoints = 5,
+  Random? random,
+}) {
+  if (!opcoesDeAdversarios.contains(adversarios)) {
+    throw JogadaInvalida('Número de adversários inválido: $adversarios');
+  }
+  final rng = random ?? Random();
+  final escolhidos = [...bots]..shuffle(rng);
+  var sala = novaSala(
+    roomId: roomId,
+    anfitriao: voce,
+    baralho: baralho,
+    maxPoints: maxPoints,
+  );
+  for (final b in escolhidos.take(adversarios)) {
+    sala = entrarNaSala(sala, Player(id: b.id, name: b.nome));
+  }
+  return iniciarJogo(sala, voce.id, random: rng);
+}
