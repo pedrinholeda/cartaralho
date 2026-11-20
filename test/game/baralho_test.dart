@@ -19,9 +19,12 @@ void main() {
     expect(brancas.every((c) => c.type == CardType.white), isTrue);
   });
 
-  test('toda carta preta tem a lacuna', () {
+  test('toda carta preta tem exatamente uma lacuna', () {
+    // O jogo só aceita uma carta branca por jogador. Uma carta preta com dois
+    // ou três espaços não teria como ser respondida até as cartas "Escolha 2"
+    // existirem (docs/ROADMAP.md, fase 2).
     for (final c in cartasPretas()) {
-      expect(c.text, contains('____'), reason: c.text);
+      expect(RegExp('____').allMatches(c.text), hasLength(1), reason: c.text);
     }
   });
 
