@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
+import 'ui/tema.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,11 +35,9 @@ class CartaralhoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cartaralho',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        fontFamily: 'Roboto',
-        useMaterial3: true,
-      ),
+      theme: temaClaro,
+      darkTheme: temaEscuro,
+      themeMode: ThemeMode.system,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
