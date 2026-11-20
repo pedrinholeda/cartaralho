@@ -5,14 +5,18 @@ import '../services/firebase_service.dart';
 import '../ui/tema.dart';
 
 class JoinRoomScreen extends ConsumerStatefulWidget {
-  const JoinRoomScreen({super.key});
+  const JoinRoomScreen({super.key, this.codigoInicial});
+
+  /// Código que veio no link de convite, já preenchido.
+  final String? codigoInicial;
 
   @override
   ConsumerState<JoinRoomScreen> createState() => _JoinRoomScreenState();
 }
 
 class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
-  final _roomIdController = TextEditingController();
+  late final _roomIdController =
+      TextEditingController(text: widget.codigoInicial ?? '');
   final _nameController = TextEditingController();
   bool _isJoining = false;
 

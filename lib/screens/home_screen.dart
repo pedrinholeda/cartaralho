@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../game/convite.dart';
 import '../providers/auth_provider.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
@@ -18,6 +19,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  /// Código do link de convite (`?sala=`), aberto uma vez quando o login ficar
+  /// pronto.
+  String? _convite = codigoDoConvite(Uri.base);
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +60,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final roomId = ref.watch(roomIdProvider);
+
+    ref.listen(authProvider, (antes, depois) {
+      final codigo = _convite;
+      if (codigo == null || depois.valueOrNull == null) return;
+      _convite = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || ref.read(roomIdProvider) != null) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => JoinRoomScreen(codigoInicial: codigo),
+          ),
+        );
+      });
+    });
 
     // Com uma sala escolhida, a tela é a do jogo.
     if (roomId != null) {
