@@ -99,6 +99,8 @@ aplica a regra e grava numa transação; a mudança volta para todos pelo stream
 
 Os principais, todos com item no [roadmap](ROADMAP.md):
 
+- Carta preta com mais de um espaço não funciona: cada jogador envia uma carta só. Um teste
+  em `test/game/baralho_test.dart` impede que uma entre no baralho.
 - O macOS não tem app registrado no Firebase e para na inicialização.
 - O projeto iOS não tem `Runner.xcodeproj`, então não compila.
 - O build Android usa o formato antigo do plugin do Flutter e o Gradle 8.10, que não roda
