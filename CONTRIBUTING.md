@@ -39,8 +39,8 @@ flutter test
 ```
 
 O CI roda os três e o `flutter build web` em todo PR. Ele não abre o app nem fala com o
-Firebase: mudança no fluxo do jogo precisa de uma partida de teste com três jogadores (três
-abas do navegador servem) e isso vai descrito no PR.
+Firebase: mudança no fluxo do jogo precisa de uma partida de teste com três jogadores (veja como em
+[docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md#setup-e-o-dia-a-dia)) e isso vai descrito no PR.
 
 ## Estilo
 

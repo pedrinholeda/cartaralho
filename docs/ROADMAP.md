@@ -32,10 +32,12 @@ Legenda: `[ ]` pendente · `[x]` feito
   consecutivas (`ABCDEF`, `BCDEFG`); duas salas no mesmo milissegundo colidem
 - [x] **Entrar na sala sem perder jogador**: `joinRoom` lê e grava em dois passos, e duas
   entradas ao mesmo tempo apagam uma; também deixa entrar depois que o jogo começou
-- [ ] **Web conecta ao Firebase**: `DefaultFirebaseOptions` lança erro na web; o
+- [x] **Web conecta ao Firebase**: `DefaultFirebaseOptions` lança erro na web; o
   `web/index.html` carrega à toa o SDK JS compat 9.0.0
-- [ ] **iOS e macOS com as opções reais**: `firebase_options.dart` tem valores de exemplo
-  de outro projeto (`cartaralho-app`), diferentes do `GoogleService-Info.plist`
+- [x] **iOS com as opções reais**: `firebase_options.dart` tinha valores de exemplo de outro
+  projeto (`cartaralho-app`), diferentes do `GoogleService-Info.plist`
+- [x] **A página web carrega**: o `index.html` só incluía `flutter.js`, que não inicia o app
+  no Flutter atual (achado no teste no navegador)
 - [x] **Baralho para até 8 jogadores**: eram 15 brancas e cada mão tem 5, então mais de três
   jogadores não começavam
 
@@ -46,8 +48,8 @@ Legenda: `[ ]` pendente · `[x]` feito
 - [ ] **Gradle moderno**: `android/` usa `apply from: flutter.gradle` (formato antigo) e
   Gradle 8.10, que não roda com JDK 25; o build de release assina com a chave de debug
 - [ ] Build de Android e web no CI e na tag de release
-- [ ] `web/index.html` no formato atual (`flutter_bootstrap.js`), ícones e cores do
-  `manifest.json`
+- [ ] Ícones e cores do `manifest.json` da web (ainda os padrões do Flutter)
+- [ ] macOS: registrar o app no Firebase ou tirar a pasta `macos/`
 
 ## Fase 3 — segurança e robustez
 
@@ -61,10 +63,14 @@ Legenda: `[ ]` pendente · `[x]` feito
 - [ ] Log com `debugPrint` ou um logger no lugar de `print`
 - [ ] Apagar salas antigas (TTL do Firestore)
 - [ ] Testes de widget das telas principais
+- [ ] Teste de ponta a ponta no CI: uma partida com três jogadores contra o emulador do
+  Firestore
 
 ## Fase 4 — conteúdo e acabamento
 
 - [ ] Baralho num arquivo JSON em `assets/`, fora do código; baralhos customizados
+- [ ] **Cartão do juiz na lista de jogadores**: a estrela some (âmbar sobre âmbar) e o rótulo
+  "JUIZ" vaza para fora do cartão de 80 px (achado no teste no navegador)
 - [ ] Cores e tamanhos como tema (hoje `0xFF6A1B9A` se repete em cada tela) e tema escuro
 - [ ] Escolher o logo entre as propostas em [`docs/marca/`](marca) e gerar os ícones do app
 - [ ] Migrar de `package:flutter/material.dart` para `material_ui` e religar o aviso de

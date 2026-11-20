@@ -63,7 +63,8 @@ flutter pub get
 flutter run -d chrome
 ```
 
-Para testar sozinho, abra três abas: cada uma vira um jogador.
+Para testar sozinho com três jogadores, veja
+[docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.md#setup-e-o-dia-a-dia).
 
 ## Perguntas frequentes
 
@@ -100,8 +101,9 @@ O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.
 
 ## Status e roadmap
 
-Em desenvolvimento. As regras da partida estão completas e testadas, mas a web e o iOS
-ainda não conectam ao Firebase, e as jogadas ainda não são conferidas pelo servidor. O que
+Em desenvolvimento. Uma partida inteira roda na web, com as regras testadas; o build de
+Android e o de iOS ainda precisam de ajuste, e as jogadas ainda não são conferidas pelo
+servidor. O que
 vem agora está no [roadmap](docs/ROADMAP.md).
 
 ## Contribuindo
