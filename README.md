@@ -17,13 +17,15 @@ passa a vez de juiz.
 
 ## Como jogar
 
-1. **Criar sala**: quem cria vira o anfitrião e recebe um código de seis caracteres.
+1. **Criar sala**: quem cria vira o anfitrião, escolhe quantos pontos vencem (3 a 10) e quantas
+   cartas cada um tem na mão, e recebe um código de seis caracteres.
 2. **Entrar**: os outros digitam o código e o nome.
 3. **Começar**: o anfitrião inicia a partida quando todo mundo entrou (de 3 a 8 jogadores).
 4. **Rodada**: o juiz vê a carta preta; cada um dos outros envia uma carta branca; o juiz
    escolhe a combinação mais engraçada e quem a enviou ganha um ponto. Todos veem as cartas
    da mesa e, no fim da rodada, quem enviou cada uma.
-5. **Fim**: quem chegar a 5 pontos primeiro vence.
+5. **Fim**: quem chegar aos pontos combinados primeiro vence. O anfitrião pode jogar de novo
+   com o mesmo grupo.
 
 ## O que faz
 
@@ -34,6 +36,7 @@ passa a vez de juiz.
 **Partida**
 - Lista de jogadores com os pontos e quem é o juiz da vez.
 - Cinco cartas brancas na mão, completadas a cada rodada.
+- Uma vez por partida, cada jogador pode trocar a mão inteira.
 - Cartas pretas com duas ou três lacunas pedem duas ou três brancas, na ordem, e a frase
   aparece montada antes de enviar.
 - A vez de juiz passa de jogador em jogador, e a rodada só vai para o juiz quando todos
