@@ -75,7 +75,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Criar Nova Sala',
+                Text('Criar nova sala',
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 8),
                 Text(
@@ -116,7 +116,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                             strokeWidth: 3,
                           ),
                         )
-                      : const Text('Criar Sala'),
+                      : const Text('Criar sala'),
                 ),
               ],
             ),

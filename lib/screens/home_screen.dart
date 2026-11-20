@@ -6,6 +6,7 @@ import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import 'create_room_screen.dart';
 import 'join_room_screen.dart';
+import 'tutorial_screen.dart';
 import 'game_screen.dart';
 import '../ui/cartas.dart';
 import '../ui/sons.dart';
@@ -27,8 +28,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     // Fazer login anônimo automaticamente
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _signInAnonymously();
+      // Na primeira visita, o tutorial abre sozinho (menos para quem chegou
+      // por um convite: esse vai direto para a sala).
+      if (_convite == null && await tutorialPendente() && mounted) {
+        abrirTutorial(context);
+      }
     });
   }
 
@@ -93,9 +99,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Align(
-                    alignment: Alignment.topRight,
-                    child: BotaoDeSom(),
+                  Row(
+                    children: [
+                      TextButton.icon(
+                        onPressed: () => abrirTutorial(context),
+                        icon: const Icon(Icons.help_outline_rounded, size: 20),
+                        label: const Text('Como jogar'),
+                      ),
+                      const Spacer(),
+                      const BotaoDeSom(),
+                    ],
                   ),
                   const Spacer(),
                   const _CartasDaCapa(),
@@ -103,7 +116,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     'Frases absurdas, completadas com as piores cartas da mão. '
                     'Cada um joga no seu celular.',
-                    style: textos.titleMedium,
+                    style: textos.titleMedium?.copyWith(
+                      color: Cores.de(context).tintaSuave,
+                      fontWeight: FontWeight.w500,
+                      height: 1.45,
+                    ),
                   ),
                   const Spacer(flex: 2),
                   if (authState.isLoading)
@@ -123,7 +140,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           builder: (context) => const CreateRoomScreen(),
                         ),
                       ),
-                      child: const Text('Criar Sala'),
+                      child: const Text('Criar sala'),
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton(
@@ -133,7 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           builder: (context) => const JoinRoomScreen(),
                         ),
                       ),
-                      child: const Text('Entrar na Sala'),
+                      child: const Text('Entrar na sala'),
                     ),
                   ],
                 ],

@@ -1,5 +1,6 @@
 import 'package:cartaralho/models/player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/card.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
 import 'auth_provider.dart';
@@ -50,3 +51,14 @@ final gamePhaseProvider = Provider<GamePhase?>((ref) {
     error: (_, __) => null,
   );
 });
+
+/// As cartas que o jogador está escolhendo nesta rodada, na ordem das lacunas.
+/// A chave é sala e carta preta, então cada rodada começa vazia. A mão escreve
+/// aqui, e a carta preta lê para mostrar a frase pronta.
+final escolhidasProvider =
+    StateProvider.autoDispose.family<List<GameCard>, String>(
+  (ref, rodada) => const [],
+);
+
+String chaveDaRodada(GameRoom sala) =>
+    '${sala.roomId}-${sala.currentBlackCard?.id}';

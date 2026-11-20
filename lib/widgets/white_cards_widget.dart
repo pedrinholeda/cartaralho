@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/regras.dart';
 import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
+import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 
-/// A mão do jogador. Ele escolhe quantas cartas a carta preta pede, na ordem
-/// das lacunas, e vê a frase sendo montada antes de enviar.
+/// A mão do jogador, em leque embaixo da tela. Ele escolhe quantas cartas a
+/// carta preta pede, na ordem das lacunas; a frase aparece pronta na própria
+/// carta preta (via [escolhidasProvider]) antes de enviar.
 class WhiteCardsWidget extends ConsumerStatefulWidget {
   final GameRoom room;
   final Player currentPlayer;
@@ -28,8 +31,6 @@ class WhiteCardsWidget extends ConsumerStatefulWidget {
 }
 
 class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
-  /// Cartas escolhidas, na ordem em que vão preencher as lacunas.
-  final List<GameCard> _escolhidas = [];
   bool _isSubmitting = false;
   bool _trocando = false;
 
@@ -38,36 +39,31 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
 
   int get _pede => widget.room.currentBlackCard?.pick ?? 1;
 
-  @override
-  void didUpdateWidget(WhiteCardsWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Numa rodada nova as cartas escolhidas antes já não estão na mão, e a
-    // carta preta pode pedir outra quantidade.
-    _escolhidas.removeWhere((e) => !_mao.any((c) => c.id == e.id));
-    if (_escolhidas.length > _pede) _escolhidas.clear();
-  }
+  StateController<List<GameCard>> get _escolha =>
+      ref.read(escolhidasProvider(chaveDaRodada(widget.room)).notifier);
 
   void _tocar(GameCard carta) {
-    setState(() {
-      if (_escolhidas.any((c) => c.id == carta.id)) {
-        _escolhidas.removeWhere((c) => c.id == carta.id);
-      } else if (_pede == 1) {
-        _escolhidas
-          ..clear()
-          ..add(carta);
-      } else if (_escolhidas.length < _pede) {
-        _escolhidas.add(carta);
-      }
-    });
+    final atual = [..._escolha.state];
+    if (atual.any((c) => c.id == carta.id)) {
+      atual.removeWhere((c) => c.id == carta.id);
+    } else if (_pede == 1) {
+      atual
+        ..clear()
+        ..add(carta);
+    } else if (atual.length < _pede) {
+      atual.add(carta);
+    }
+    _escolha.state = atual;
   }
 
-  Future<void> _enviar() async {
+  Future<void> _enviar(List<GameCard> escolhidas) async {
     setState(() => _isSubmitting = true);
     try {
       await FirebaseService.submitWhiteCards(
         widget.room.roomId,
-        [for (final c in _escolhidas) c.id],
+        [for (final c in escolhidas) c.id],
       );
+      HapticFeedback.mediumImpact();
       ref.read(sonsProvider).tocar(Som.enviar);
     } catch (e) {
       _avisar('Não deu para enviar: $e');
@@ -80,7 +76,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
     setState(() => _trocando = true);
     try {
       await FirebaseService.swapHand(widget.room.roomId);
-      _escolhidas.clear();
+      _escolha.state = const [];
     } catch (e) {
       _avisar('Não deu para trocar a mão: $e');
     } finally {
@@ -109,7 +105,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       return Padding(
         padding: const EdgeInsets.all(Medidas.margem),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Entrada(
               deslocamento: 80,
@@ -118,9 +114,10 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
             const SizedBox(height: 16),
             Text(
               'Enviada. Esperando os outros jogadores.',
-              style: textos.titleMedium?.copyWith(color: cores.tintaNaMesa),
+              style: textos.titleMedium?.copyWith(color: cores.tintaSuave),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
           ],
         ),
       );
@@ -128,75 +125,79 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
 
     final mao = _mao;
     final pede = _pede;
-    final pronto = _escolhidas.length == pede;
+    final escolhidas = ref
+        .watch(escolhidasProvider(chaveDaRodada(widget.room)))
+        // Uma carta que saiu da mão (troca) deixa de valer.
+        .where((e) => mao.any((c) => c.id == e.id))
+        .toList();
+    final pronto = escolhidas.length == pede;
     final podeTrocar =
         !widget.room.handSwapsUsed.contains(widget.currentPlayer.id);
 
-    return Padding(
-      padding:
-          const EdgeInsets.fromLTRB(Medidas.margem, 12, Medidas.margem, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            pede == 1
-                ? 'Escolha uma carta branca:'
-                : 'Escolha $pede cartas brancas, na ordem:',
-            style: textos.titleLarge?.copyWith(color: cores.tintaNaMesa),
-          ),
-          if (_escolhidas.isNotEmpty && preta != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              fraseCompleta(preta, _escolhidas),
-              style: textos.bodyLarge?.copyWith(
-                color: cores.tintaNaMesa,
-                fontStyle: FontStyle.italic,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Medidas.margem),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  pede == 1
+                      ? 'Escolha uma carta branca:'
+                      : 'Escolha $pede cartas brancas, na ordem:',
+                  style: textos.titleMedium?.copyWith(color: cores.tintaSuave),
+                ),
               ),
-            ),
-          ],
-          Expanded(
-            child: GradeDeCartas(
-              quantidade: mao.length,
-              construir: (context, index) {
-                final carta = mao[index];
-                final posicao = _escolhidas.indexWhere((c) => c.id == carta.id);
-                // Uma key por carta: as que chegam na mão animam, as que ficam não.
-                return Entrada(
-                  key: ValueKey(carta.id),
-                  atraso: Duration(milliseconds: 60 * index),
-                  child: CartaBranca(
-                    texto: carta.text,
-                    selecionada: posicao >= 0,
-                    ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
-                    aoTocar: () => _tocar(carta),
+              if (podeTrocar)
+                Tooltip(
+                  message: 'Troca todas as cartas da mão, uma vez por partida',
+                  child: TextButton.icon(
+                    onPressed: _trocando ? null : _trocarMao,
+                    icon: const Icon(Icons.swap_horiz, size: 18),
+                    label: const Text('Trocar mão'),
                   ),
-                );
-              },
-            ),
+                ),
+            ],
           ),
-          if (podeTrocar)
-            Align(
-              child: TextButton.icon(
-                onPressed: _trocando ? null : _trocarMao,
-                icon: const Icon(Icons.swap_horiz),
-                label: const Text('Trocar minha mão (uma vez por partida)'),
+        ),
+        MaoEmLeque(
+          quantidade: mao.length,
+          construir: (context, index) {
+            final carta = mao[index];
+            final posicao = escolhidas.indexWhere((c) => c.id == carta.id);
+            // Uma key por carta: as que chegam na mão animam, as que ficam não.
+            return Entrada(
+              key: ValueKey(carta.id),
+              atraso: Duration(milliseconds: 60 * index),
+              child: CartaBranca(
+                texto: carta.text,
+                selecionada: posicao >= 0,
+                ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
+                aoTocar: () => _tocar(carta),
               ),
-            ),
-          const SizedBox(height: 4),
-          ElevatedButton(
-            onPressed: pronto && !_isSubmitting ? _enviar : null,
+            );
+          },
+        ),
+        Padding(
+          padding:
+              const EdgeInsets.fromLTRB(Medidas.margem, 4, Medidas.margem, 20),
+          child: ElevatedButton(
+            onPressed:
+                pronto && !_isSubmitting ? () => _enviar(escolhidas) : null,
             child: _isSubmitting
                 ? SizedBox.square(
                     dimension: 22,
                     child: CircularProgressIndicator(
-                      color: cores.tintaNaCartaPreta,
+                      color: cores.tintaNaAcao,
                       strokeWidth: 3,
                     ),
                   )
-                : Text(pede == 1 ? 'Enviar Carta' : 'Enviar Cartas'),
+                : Text(pede == 1 ? 'Enviar carta' : 'Enviar cartas'),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
