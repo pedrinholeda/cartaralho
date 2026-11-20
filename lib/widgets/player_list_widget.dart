@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/player.dart';
 
+import '../models/player.dart';
+import '../ui/tema.dart';
+
+/// Placar: uma ficha por jogador, com nome e pontos. O juiz da rodada fica em
+/// amarelo, com a coroa.
 class PlayerListWidget extends StatelessWidget {
   final List<Player> players;
   final String? judgeId;
@@ -13,59 +17,56 @@ class PlayerListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListView.builder(
+    final cores = Cores.de(context);
+    return SizedBox(
+      height: 48,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: Medidas.margem),
         itemCount: players.length,
+        separatorBuilder: (_, __) => const SizedBox(width: Medidas.espaco),
         itemBuilder: (context, index) {
           final player = players[index];
-          final isJudge = player.id == judgeId;
-          return Container(
-            width: 120,
-            margin: const EdgeInsets.only(right: 8),
-            child: Card(
-              color: isJudge ? Colors.amber : Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      player.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isJudge ? Colors.black : Colors.black87,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.star, size: 16, color: Colors.amber),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${player.points}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isJudge ? Colors.black : Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (isJudge)
-                      const Text(
-                        'JUIZ',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
+          final juiz = player.id == judgeId;
+          final fundo = juiz ? cores.destaque : cores.carta;
+          final tinta = juiz ? cores.tintaNoDestaque : cores.tintaNaCarta;
+          final pontos =
+              player.points == 1 ? '1 ponto' : '${player.points} pontos';
+
+          return Semantics(
+            label: '${player.name}, $pontos${juiz ? ', juiz da rodada' : ''}',
+            excludeSemantics: true,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: fundo,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                children: [
+                  if (juiz) ...[
+                    Icon(Icons.gavel_rounded, size: 18, color: tinta),
+                    const SizedBox(width: 6),
                   ],
-                ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 110),
+                    child: Text(
+                      player.name,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyle(color: tinta, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '${player.points}',
+                    style: TextStyle(
+                      color: tinta,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
           );

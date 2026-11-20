@@ -6,6 +6,8 @@ import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../services/firebase_service.dart';
+import '../ui/cartas.dart';
+import '../ui/tema.dart';
 
 /// A mão do jogador. Ele escolhe quantas cartas a carta preta pede, na ordem
 /// das lacunas, e vê a frase sendo montada antes de enviar.
@@ -65,11 +67,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
         [for (final c in _escolhidas) c.id],
       );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao enviar: $e')),
-        );
-      }
+      _avisar('Não deu para enviar: $e');
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -81,32 +79,43 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       await FirebaseService.swapHand(widget.room.roomId);
       _escolhidas.clear();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao trocar: $e')),
-        );
-      }
+      _avisar('Não deu para trocar a mão: $e');
     } finally {
       if (mounted) setState(() => _trocando = false);
     }
   }
 
+  void _avisar(String mensagem) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensagem)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cores = Cores.de(context);
+    final textos = Theme.of(context).textTheme;
     final preta = widget.room.currentBlackCard;
     final enviadas = widget.room.submittedCards[widget.currentPlayer.id];
+
     if (enviadas != null) {
       final frase = preta == null
           ? enviadas.map((c) => c.text).join(' / ')
           : fraseCompleta(preta, enviadas);
       return Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: Text(
-            'Você enviou "$frase". Esperando os outros jogadores.',
-            style: const TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
+        padding: const EdgeInsets.all(Medidas.margem),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CartaBranca(texto: frase, larga: true),
+            const SizedBox(height: 16),
+            Text(
+              'Enviada. Esperando os outros jogadores.',
+              style: textos.titleMedium?.copyWith(color: cores.tintaNaMesa),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
@@ -114,118 +123,66 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
     final mao = _mao;
     final pede = _pede;
     final pronto = _escolhidas.length == pede;
+    final podeTrocar =
+        !widget.room.handSwapsUsed.contains(widget.currentPlayer.id);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding:
+          const EdgeInsets.fromLTRB(Medidas.margem, 12, Medidas.margem, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             pede == 1
                 ? 'Escolha uma carta branca:'
                 : 'Escolha $pede cartas brancas, na ordem:',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: textos.titleLarge?.copyWith(color: cores.tintaNaMesa),
           ),
           if (_escolhidas.isNotEmpty && preta != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               fraseCompleta(preta, _escolhidas),
-              style: const TextStyle(fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
+              style: textos.bodyLarge?.copyWith(
+                color: cores.tintaNaMesa,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
-          const SizedBox(height: 16),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.5,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: mao.length,
-              itemBuilder: (context, index) {
+            child: GradeDeCartas(
+              quantidade: mao.length,
+              construir: (context, index) {
                 final carta = mao[index];
                 final posicao = _escolhidas.indexWhere((c) => c.id == carta.id);
-                final escolhida = posicao >= 0;
-
-                return Semantics(
-                  button: true,
-                  selected: escolhida,
-                  label: carta.text,
-                  excludeSemantics: true,
-                  child: GestureDetector(
-                    onTap: () => _tocar(carta),
-                    child: Card(
-                      color: escolhida ? const Color(0xFF6A1B9A) : Colors.white,
-                      child: Stack(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            alignment: Alignment.center,
-                            child: Text(
-                              carta.text,
-                              style: TextStyle(
-                                color: escolhida ? Colors.white : Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          if (escolhida && pede > 1)
-                            Positioned(
-                              top: 6,
-                              left: 6,
-                              child: CircleAvatar(
-                                radius: 11,
-                                backgroundColor: Colors.white,
-                                child: Text(
-                                  '${posicao + 1}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF6A1B9A),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return CartaBranca(
+                  texto: carta.text,
+                  selecionada: posicao >= 0,
+                  ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
+                  aoTocar: () => _tocar(carta),
                 );
               },
             ),
           ),
-          if (!widget.room.handSwapsUsed.contains(widget.currentPlayer.id))
-            TextButton.icon(
-              onPressed: _trocando ? null : _trocarMao,
-              icon: const Icon(Icons.swap_horiz),
-              label: const Text('Trocar minha mão (uma vez por partida)'),
-            ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: pronto && !_isSubmitting ? _enviar : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A1B9A),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+          if (podeTrocar)
+            Align(
+              child: TextButton.icon(
+                onPressed: _trocando ? null : _trocarMao,
+                icon: const Icon(Icons.swap_horiz),
+                label: const Text('Trocar minha mão (uma vez por partida)'),
               ),
-              child: _isSubmitting
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      pede == 1 ? 'Enviar Carta' : 'Enviar Cartas',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
             ),
+          const SizedBox(height: 4),
+          ElevatedButton(
+            onPressed: pronto && !_isSubmitting ? _enviar : null,
+            child: _isSubmitting
+                ? SizedBox.square(
+                    dimension: 22,
+                    child: CircularProgressIndicator(
+                      color: cores.tintaNaCartaPreta,
+                      strokeWidth: 3,
+                    ),
+                  )
+                : Text(pede == 1 ? 'Enviar Carta' : 'Enviar Cartas'),
           ),
         ],
       ),
