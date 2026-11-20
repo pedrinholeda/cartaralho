@@ -28,9 +28,9 @@ Legenda: `[ ]` pendente · `[x]` feito
   `isJudge`, que é o que a tela lê, e calcula o próximo a partir de `isJudge`
 - [x] **Regras do jogo como funções puras e testadas**, chamadas pelo `FirebaseService`
   dentro de transação
-- [ ] **Código de sala aleatório**: `_generateRoomId` usa o relógio e gera letras
+- [x] **Código de sala aleatório**: `_generateRoomId` usa o relógio e gera letras
   consecutivas (`ABCDEF`, `BCDEFG`); duas salas no mesmo milissegundo colidem
-- [ ] **Entrar na sala sem perder jogador**: `joinRoom` lê e grava em dois passos, e duas
+- [x] **Entrar na sala sem perder jogador**: `joinRoom` lê e grava em dois passos, e duas
   entradas ao mesmo tempo apagam uma; também deixa entrar depois que o jogo começou
 - [ ] **Web conecta ao Firebase**: `DefaultFirebaseOptions` lança erro na web; o
   `web/index.html` carrega à toa o SDK JS compat 9.0.0

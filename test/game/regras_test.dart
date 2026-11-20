@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cartaralho/game/baralho.dart';
 import 'package:cartaralho/game/regras.dart';
 import 'package:cartaralho/models/card.dart';
 import 'package:cartaralho/models/game_room.dart';
@@ -181,6 +182,49 @@ void main() {
     test('não escolhe quem não enviou carta', () {
       expect(() => escolherVencedor(sala, 'p0', 'p0'),
           throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
+  group('entrarNaSala', () {
+    test('adiciona o jogador novo', () {
+      final sala =
+          entrarNaSala(salaDeEspera(), Player(id: 'novo', name: 'Novo'));
+      expect(sala.players.map((p) => p.id), contains('novo'));
+    });
+
+    test('quem já está na sala não entra de novo', () {
+      final sala = entrarNaSala(salaDeEspera(), Player(id: 'p1', name: 'X'));
+      expect(sala.players, hasLength(3));
+    });
+
+    test('recusa quando a sala está cheia', () {
+      final cheia = salaDeEspera(jogadores: maximoDeJogadores);
+      expect(() => entrarNaSala(cheia, Player(id: 'novo', name: 'Novo')),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('recusa depois que o jogo começou', () {
+      final emJogo = iniciarJogo(salaDeEspera(), 'p0');
+      expect(() => entrarNaSala(emJogo, Player(id: 'novo', name: 'Novo')),
+          throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
+  group('gerarCodigoSala', () {
+    test('tem 6 caracteres do alfabeto sem ambíguos', () {
+      final rng = Random(3);
+      for (var i = 0; i < 200; i++) {
+        final codigo = gerarCodigoSala(random: rng);
+        expect(codigo, matches(RegExp(r'^[A-HJKMNP-Z2-9]{6}$')));
+      }
+    });
+
+    test('códigos gerados em sequência não se repetem nem andam juntos', () {
+      // O gerador antigo usava o relógio e produzia letras consecutivas
+      // ("ABCDEF", "BCDEFG"...), então duas salas criadas no mesmo
+      // milissegundo tinham o mesmo código.
+      final codigos = {for (var i = 0; i < 1000; i++) gerarCodigoSala()};
+      expect(codigos.length, greaterThan(995));
     });
   });
 }

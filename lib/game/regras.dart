@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'baralho.dart';
 import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
@@ -163,4 +164,28 @@ GameRoom escolherVencedor(GameRoom sala, String juizId, String vencedorId) {
 String proximoJuiz(List<Player> jogadores, String? juizAtual) {
   final i = jogadores.indexWhere((p) => p.id == juizAtual);
   return jogadores[(i + 1) % jogadores.length].id;
+}
+
+/// Adiciona um jogador à sala, se ela ainda está esperando e ele não está nela.
+GameRoom entrarNaSala(GameRoom sala, Player jogador) {
+  if (sala.players.any((p) => p.id == jogador.id)) return sala;
+  if (sala.phase != GamePhase.waitingForPlayers) {
+    throw JogadaInvalida('O jogo dessa sala já começou');
+  }
+  if (sala.players.length >= maximoDeJogadores) {
+    throw JogadaInvalida('A sala está cheia');
+  }
+  return sala.copyWith(players: [...sala.players, jogador]);
+}
+
+/// Letras e números sem os que se confundem ao ditar ou ler (0/O, 1/I/L).
+const _alfabetoDoCodigo = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+/// Código de sala com [tamanho] caracteres sorteados de [_alfabetoDoCodigo].
+String gerarCodigoSala({Random? random, int tamanho = 6}) {
+  final rng = random ?? Random.secure();
+  return String.fromCharCodes([
+    for (var i = 0; i < tamanho; i++)
+      _alfabetoDoCodigo.codeUnitAt(rng.nextInt(_alfabetoDoCodigo.length)),
+  ]);
 }

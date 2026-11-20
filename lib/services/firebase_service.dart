@@ -39,54 +39,44 @@ class FirebaseService {
       final user = _auth.currentUser;
       if (user == null) throw Exception('Usuário não autenticado');
 
-      final roomId = _generateRoomId();
       final player = Player(
         id: user.uid,
         name: playerName,
         isHost: true,
       );
 
-      final gameRoom = GameRoom(
-        roomId: roomId,
-        players: [player],
-        blackCards: cartasPretas(),
-        whiteCards: cartasBrancas(),
-        currentJudgeId: user.uid,
-      );
-
-      await _firestore.collection('rooms').doc(roomId).set(gameRoom.toJson());
-      return roomId;
+      // Com 31^6 códigos possíveis a colisão é rara, mas uma sala viva nunca é
+      // sobrescrita: a transação confere se o código está livre antes de gravar.
+      for (var tentativa = 0; tentativa < 5; tentativa++) {
+        final roomId = regras.gerarCodigoSala();
+        final ref = _firestore.collection('rooms').doc(roomId);
+        final criou = await _firestore.runTransaction((tx) async {
+          if ((await tx.get(ref)).exists) return false;
+          final gameRoom = GameRoom(
+            roomId: roomId,
+            players: [player],
+            blackCards: cartasPretas(),
+            whiteCards: cartasBrancas(),
+            currentJudgeId: user.uid,
+          );
+          tx.set(ref, gameRoom.toJson());
+          return true;
+        });
+        if (criou) return roomId;
+      }
+      throw Exception('Não foi possível gerar um código de sala livre');
     } catch (e) {
       throw Exception('Erro ao criar sala: $e');
     }
   }
 
   static Future<void> joinRoom(String roomId, String playerName) async {
-    try {
-      final user = _auth.currentUser;
-      if (user == null) throw Exception('Usuário não autenticado');
-
-      final roomDoc = await _firestore.collection('rooms').doc(roomId).get();
-      if (!roomDoc.exists) {
-        throw Exception('Sala não encontrada');
-      }
-
-      final gameRoom = GameRoom.fromJson(roomDoc.data()!);
-
-      // Verificar se o jogador já está na sala
-      if (gameRoom.players.any((p) => p.id == user.uid)) {
-        return; // Jogador já está na sala
-      }
-
-      final newPlayer = Player(id: user.uid, name: playerName);
-      final updatedPlayers = [...gameRoom.players, newPlayer];
-
-      await _firestore.collection('rooms').doc(roomId).update({
-        'players': updatedPlayers.map((p) => p.toJson()).toList(),
-      });
-    } catch (e) {
-      throw Exception('Erro ao entrar na sala: $e');
-    }
+    final user = _usuarioLogado();
+    await _alterarSala(
+      roomId,
+      (sala) =>
+          regras.entrarNaSala(sala, Player(id: user.uid, name: playerName)),
+    );
   }
 
   static Stream<GameRoom?> watchRoom(String roomId) {
@@ -140,16 +130,5 @@ class FirebaseService {
       if (!doc.exists) throw Exception('Sala não encontrada');
       tx.set(ref, regra(GameRoom.fromJson(doc.data()!)).toJson());
     });
-  }
-
-  // Helper methods
-  static String _generateRoomId() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final random = DateTime.now().millisecondsSinceEpoch;
-    String result = '';
-    for (int i = 0; i < 6; i++) {
-      result += chars[(random + i) % chars.length];
-    }
-    return result;
   }
 }
