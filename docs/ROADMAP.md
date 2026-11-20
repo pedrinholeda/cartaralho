@@ -144,6 +144,10 @@ com a MIT, e o humor tem que ser daqui.
 - [x] **Carinhas**: cada jogador ganha uma carinha desenhada pelo jogo (olhos, boca, enfeite
   e bochechas sorteados pelo id, 1.024 combinações), a mesma em todos os aparelhos, com
   "Sortear outra carinha" na sala de espera
+- [x] **Fofo por fora, ácido por dentro**: ícones desenhados no traço das carinhas, com
+  olhinhos; capa com carinhas espiando; sala de espera com lugares vazios que olham. E três
+  sustos pequenos: carinhas assombradas na madrugada, a lacuna que abre um olho para quem
+  demora e a coroa que derrete no fim de jogo. Direção desenhada num canva antes
 - [ ] Solo contra a CPU, sem internet: bots com personalidade, que como juiz preferem as
   cartas de certos pacotes (`pacoteDaCarta`)
 - [ ] Zé Aleatório: com 2 pessoas na sala, um jogador imaginário completa o mínimo e joga

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'assombro.dart';
 import 'carinhas.dart';
+import 'icones.dart';
 import 'tema.dart';
 
 /// Avatar redondo com a carinha do jogador, numa cor fixa pela posição dele
@@ -16,6 +18,9 @@ class AvatarDeJogador extends StatelessWidget {
   final String? semente;
   final int variacao;
 
+  /// Força (ou impede) a carinha da madrugada; sem valor, vale a hora certa.
+  final bool? assombrado;
+
   const AvatarDeJogador({
     super.key,
     required this.nome,
@@ -24,6 +29,7 @@ class AvatarDeJogador extends StatelessWidget {
     this.tamanho = 44,
     this.semente,
     this.variacao = 0,
+    this.assombrado,
   });
 
   @override
@@ -71,6 +77,7 @@ class AvatarDeJogador extends StatelessWidget {
                 tinta: tinta,
                 bochecha: cores.acao,
                 branco: cores.carta,
+                assombrada: assombrado ?? ehMadrugada(agora()),
               ),
             ),
           ),
@@ -85,10 +92,10 @@ class AvatarDeJogador extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: cores.mesa, width: 2),
                 ),
-                child: Icon(
-                  Icons.gavel_rounded,
-                  size: 12,
-                  color: cores.tintaNoDestaque,
+                child: IconeFofo(
+                  Desenho.juiz,
+                  tamanho: 13,
+                  cor: cores.tintaNoDestaque,
                 ),
               ),
             ),
@@ -101,7 +108,7 @@ class AvatarDeJogador extends StatelessWidget {
 /// Um aviso curto sobre a mesa: de quem é a vez, o que fazer agora.
 class AvisoDaVez extends StatelessWidget {
   final String texto;
-  final IconData? icone;
+  final Desenho? icone;
   final bool destaque;
 
   const AvisoDaVez(this.texto, {super.key, this.icone, this.destaque = false});
@@ -121,7 +128,7 @@ class AvisoDaVez extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icone != null) ...[
-            Icon(icone, size: 16, color: tinta),
+            IconeFofo(icone!, tamanho: 18, cor: tinta),
             const SizedBox(width: 8),
           ],
           Flexible(

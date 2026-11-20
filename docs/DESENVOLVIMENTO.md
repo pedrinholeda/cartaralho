@@ -107,6 +107,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/ui/cartas.dart`](../lib/ui/cartas.dart) | `CartaPreta` (com a frase montada ao vivo), `CartaBranca` e `MaoEmLeque`, usadas em todas as telas. |
 | [`lib/ui/jogadores.dart`](../lib/ui/jogadores.dart) | `AvatarDeJogador` (a carinha na cor do jogador, anel amarelo no juiz) e `AvisoDaVez` (a pílula de quem é a vez). |
 | [`lib/ui/carinhas.dart`](../lib/ui/carinhas.dart) | As carinhas: `Carinha.de(id, variacao)` sorteia olhos, boca, enfeite e bochechas de forma estável (`misturar`, a mesma conta no celular e na web) e `PintorDeCarinha` desenha. |
+| [`lib/ui/icones.dart`](../lib/ui/icones.dart) | `IconeFofo` e `PintorDeIcone`: os ícones do jogo desenhados no traço das carinhas, no lugar dos ícones do Material. |
+| [`lib/ui/assombro.dart`](../lib/ui/assombro.dart) | Os momentos creepy: `ehMadrugada`, `esperaDaLacuna` e a hora em `agora()`, que os testes trocam. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |
 | [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese. Rode com `node tool/gerar_sons.mjs`. |

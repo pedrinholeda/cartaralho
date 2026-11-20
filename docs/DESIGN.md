@@ -4,8 +4,12 @@
 da festa. As cartas brilham em cima dela; o vermelho do logo aparece só onde há uma ação a
 fazer; o amarelo marca o juiz e quem ganhou. Tudo é arredondado, macio e responde ao toque.
 
+**Fofo por fora, ácido por dentro.** A interface é redonda, gordinha e sorridente: as
+carinhas dos jogadores e os ícones têm olhinhos. As cartas dizem as piores coisas. E de vez
+em quando, algo na mesa olha de volta.
+
 <p>
-  <img src="imagens/inicio.png" width="200" alt="Capa: carta preta 'O jogo de hoje é ____.' com faixa vermelha e, inclinada embaixo, uma carta branca escrita Cartaralho, sobre a mesa escura; botões Criar sala em vermelho e Entrar na sala">
+  <img src="imagens/inicio.png" width="200" alt="Capa: carta preta 'O jogo de hoje é ____.' com faixa vermelha e, inclinada embaixo, uma carta branca escrita Cartaralho; entre as duas, três carinhas espiam, uma de chapéu de festa; embaixo, Carinhas fofas. Cartas horríveis., e os botões Criar sala e Entrar na sala">
   <img src="imagens/escolha-2.png" width="200" alt="Mão do jogador numa carta Escolha 2: a frase aparece montada na carta preta com as respostas em vermelho; embaixo, a mão em leque com duas cartas escolhidas, numeradas 1 e 2, e o botão Enviar cartas">
   <img src="imagens/resultado.png" width="200" alt="Resultado da rodada: a frase vencedora numa carta amarela com o nome de quem enviou, a outra numa carta branca, e confete caindo">
 </p>
@@ -28,6 +32,10 @@ ficam em `marca/` como registro. Os ícones do app (web e Android) saem dele com
   e o que fazer agora.
 - **A frase pronta antes de enviar.** Enquanto o jogador escolhe, a resposta aparece em
   vermelho dentro da carta preta.
+- **Tudo tem carinha, menos a carta.** Ícones e avatares sorriem; o texto da carta preta e
+  das brancas continua seco e afiado. O fofo nunca entra na frase.
+- **O creepy é raro.** Três sustos pequenos, em momentos certos (abaixo). Nunca no meio da
+  jogada, nunca escondendo um botão.
 - **Movimento mostra o que mudou.** A carta escolhida sobe; as cartas novas entram na mão uma
   a uma; as respostas viram para o juiz; a fase nova entra com um fade curto; quem ganha leva
   confete; o botão encolhe um pouco ao ser apertado. Nada se mexe sem motivo, e com "reduzir
@@ -63,6 +71,24 @@ carinha se leem sobre a cor do avatar. Foi esse teste que trocou o vermelho mais
 
 Medidas em `Medidas`: espaço de 8, margem de 20, raio de carta 16, de painel 22 e de botão
 18, largura máxima do conteúdo 560.
+
+## Ícones
+
+[`lib/ui/icones.dart`](../lib/ui/icones.dart): `IconeFofo(Desenho.xxx)` desenha os ícones
+do jogo no traço das carinhas (grosso, ponta redonda) e funciona onde caberia um `Icon`:
+sem cor, pega a do `IconTheme`. Nada de `Icons.xxx` do Material em tela nova.
+
+| desenho | onde | o detalhe |
+|---|---|---|
+| `ajuda` | "Como jogar" e "?" | um balão que sorri |
+| `som`, `mudo` | botão de som | o alto-falante tem cara; mudo, ele dorme |
+| `sair` | sair da sala | alguém espia pela fresta da porta, com olhos amarelos |
+| `trocar` | trocar mão | duas cartas girando |
+| `juiz` | aviso e selo do juiz | o martelo tem olhinhos |
+| `dado` | sortear outra carinha | um dado sorrindo |
+| `convite`, `copiar` | sala de espera | envelope com coração; a folha copiada também olha |
+| `coroa` | fim de jogo | derrete: `gotejo` vai de 0 a 1 |
+| `pessoa`, `chave` | campos de nome e código | uma carinha; a chave tem um olho |
 
 ## Tipografia
 
@@ -116,18 +142,44 @@ mostra o avatar deixa espaço em cima.
 
 | tela | o que tem |
 |---|---|
-| Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo; "Criar sala" e "Entrar na sala" embaixo |
+| Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo, com três carinhas espiando entre elas; "Carinhas fofas. Cartas horríveis."; "Criar sala" e "Entrar na sala" embaixo |
 | Tutorial ([`tutorial_screen.dart`](../lib/screens/tutorial_screen.dart)) | três telas (chame a galera, complete a frase, o juiz escolhe) com as cartas de verdade num exemplo; abre sozinho na primeira visita e pelo "Como jogar" ou pelo "?" |
-| Sala de espera | código num painel com "Copiar convite" e copiar código; a carinha e o nome de quem entrou, "Sortear outra carinha" e lugares vazios até o mínimo; o botão diz quantos faltam |
+| Sala de espera | código num painel com "Copiar convite" e copiar código; "Chama a galera" e quantas pessoas faltam ("a mesa já está com fome"); a carinha e o nome de quem entrou, "Sortear outra carinha" e os lugares vazios com olhinhos no escuro; o botão diz quantos faltam |
 | Jogo | placar de avatares; aviso de quem é a vez; carta preta com a frase montada; mão em leque e botão fixo embaixo |
 | Juiz e mesa | as frases viram uma a uma; o juiz toca e confirma |
-| Resultado | a frase vencedora em amarelo, com confete, e o que cada um jogou |
+| Resultado | a frase vencedora em amarelo, com confete, e o que cada um jogou; no fim de jogo, a coroa que derrete |
 
 <img src="imagens/tutorial.png" width="200" alt="Tutorial, segunda tela: carta preta com a frase montada e três cartas brancas em leque, a do meio escolhida; embaixo, Complete a frase e o botão Próximo">
-<img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: código da sala num painel, botão Copiar convite em vermelho e as carinhas de Você, Bia e Caio, uma piscando de gravata-borboleta, outra de chapéu de festa e língua de fora; embaixo, Sortear outra carinha">
+<img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: Chama a galera, Falta 1 pessoa. A mesa já está com fome.; o código num painel com Copiar convite; as carinhas de Você e Bia e um lugar vazio escuro com dois olhinhos amarelos; Sortear outra carinha">
 
 Em tela larga (900 px ou mais) o jogo vira duas colunas: carta preta e placar à esquerda, a
 jogada à direita.
+
+## Momentos creepy
+
+Em [`lib/ui/assombro.dart`](../lib/ui/assombro.dart), com a hora vinda de `agora()` para os
+testes fixarem.
+
+- **Madrugada** (das 3h às 4h59, `ehMadrugada`): as carinhas desbotam e ficam de olhos
+  fundos, cada uma olhando um pouco para um lado; a carta preta ganha o rodapé "ainda
+  acordado?". A carinha desbotada ainda passa de 3:1 com os traços (teste de contraste).
+- **A lacuna espera**: quem ainda não enviou e passa de `esperaDaLacuna` (40 s) olhando a
+  carta vê a primeira lacuna vazia abrir um olho de pupila vermelha, que olha de um lado
+  para o outro. Fecha quando a carta é enviada ou a rodada muda; com a lacuna preenchida
+  não há onde abrir.
+- **A coroa derrete**: no fim de jogo a coroa sorri e pinga devagar. Quem venceu lê "Você
+  venceu. Que orgulho."; os outros, "Bia venceu. Que pena."
+- **O lugar vazio** da sala de espera é um buraco escuro com dois olhinhos amarelos que
+  piscam de vez em quando.
+
+Com "reduzir movimento", o olho já vem aberto e parado, a coroa já vem derretida e os
+olhinhos não piscam.
+
+<p>
+  <img src="imagens/madrugada.png" width="200" alt="Jogo às 3h30: as carinhas do placar desbotadas e de olhos fundos; a carta preta com o rodapé ainda acordado? em itálico">
+  <img src="imagens/lacuna.png" width="200" alt="Carta preta 'No grupo da família, o assunto da semana é' com um olho de pupila vermelha aberto no lugar da lacuna">
+  <img src="imagens/fim.png" width="200" alt="Fim de jogo: coroa amarela derretendo ao lado de Você venceu. Que orgulho., 3 pontos, e a frase vencedora numa carta amarela">
+</p>
 
 ## Som
 

@@ -41,6 +41,8 @@ passa a vez de juiz.
 
 **Partida**
 - Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
+- Fofo por fora, ácido por dentro: ícones com olhinhos, cartas sem dó, e alguns sustos
+  escondidos (jogue de madrugada, ou demore para escolher a carta).
 - Sete baralhos para misturar: Básico, Brasilidades, Grupo da família, Firma, Rolê,
   Internet e Amor e desamor, com mais de 600 cartas ao todo.
 - Lista de jogadores com os pontos e quem é o juiz da vez.
