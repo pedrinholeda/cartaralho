@@ -16,6 +16,7 @@ lib/
   screens/              telas: início, criar sala, entrar na sala, jogo
   widgets/              peças da tela de jogo: jogadores, carta preta, mão, escolha do juiz
 test/                   testes (flutter_test), espelhando lib/
+assets/baralhos/      as cartas do jogo, em JSON
 docs/                   documentação longa, roadmap e imagens
 android/ ios/ macos/ web/  projetos de plataforma
 ```
@@ -50,6 +51,15 @@ android/ ios/ macos/ web/  projetos de plataforma
 5. Campo novo na sala? `fromJson` com padrão, `toJson`, `copyWith` e o teste em
    `test/models/`.
 6. Atualize `docs/DESENVOLVIMENTO.md` e rode `flutter analyze` e `flutter test`.
+
+## Editando as cartas
+
+1. Edite `assets/baralhos/basico.json`: `pretas` têm de uma a três lacunas `____`;
+   `brancas` começam com minúscula (salvo nome próprio) e não terminam em ponto.
+2. Rode `flutter test test/game/baralho_test.dart`, que confere essas regras e se há
+   brancas para 8 jogadores com mão de 7.
+3. Os ids saem da posição (`b1`, `w1`...): trocar a ordem muda os ids, o que não afeta
+   salas novas.
 
 ## Comandos
 

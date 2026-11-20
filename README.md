@@ -82,8 +82,9 @@ Para testar sozinho com três jogadores, veja
 identifica o projeto e vai dentro de qualquer app publicado; quem protege os dados são as
 [regras do Firestore](firestore.rules).
 
-**Dá para jogar com cartas minhas?** Ainda não. O baralho é fixo; baralhos próprios estão no
-[roadmap](docs/ROADMAP.md).
+**Dá para jogar com cartas minhas?** Ainda não pelo app. As cartas ficam em
+[`assets/baralhos/basico.json`](assets/baralhos/basico.json), e quem roda o projeto pode
+editá-las; baralhos próprios dentro do jogo estão no [roadmap](docs/ROADMAP.md).
 
 ## Solução de problemas
 
