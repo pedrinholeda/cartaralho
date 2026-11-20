@@ -73,7 +73,8 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 - [x] **Cartas sem contração errada**: "fala de ____" virava "fala de o cunhado"; as cartas
   foram reescritas e um teste recusa preposição contraível antes da lacuna (achado no teste
   no navegador)
-- [ ] Baralhos customizados: escolher o baralho ao criar a sala, e depois criar o próprio
+- [x] Escolher os baralhos ao criar a sala (na [Fase 3c](#fase-3c--mais-cartas-e-jogo-para-poucos))
+- [ ] Criar o próprio baralho dentro do jogo
 
 ## Fase 3 — redesign (web primeiro)
 
@@ -126,6 +127,26 @@ explicando o jogo. Entre três direções desenhadas, a escolhida foi a Noite de
 - [ ] Dicas na primeira partida, apontando a mão e o botão de enviar
 - [ ] Ouvir e ajustar os sons (ninguém ouviu ainda)
 - [ ] Revisar o layout de duas colunas em tela larga com o visual novo
+
+## Fase 3c — mais cartas e jogo para poucos
+
+Com 31 pretas, as frases se repetiam em uma ou duas partidas; e o jogo pedia três pessoas,
+cada uma com o seu celular. Ideias vindas de outros jogos do gênero e das regras caseiras
+que a turma inventa. Nenhuma carta é copiada de outro jogo: as licenças deles não combinam
+com a MIT, e o humor tem que ser daqui.
+
+- [x] **Baralhos temáticos**: seis pacotes novos (Brasilidades, Grupo da família, Firma,
+  Rolê, Internet, Amor e desamor), 25 pretas e 62 brancas cada, escolhidos ao criar a sala;
+  todos vêm marcados. Teste confere cada pacote e que nenhum texto se repete entre eles
+- [ ] Pacote Família, sem palavrão, para jogar com criança e com a vó, e pacote Sem filtro
+  (+18), que só entra quando alguém marca, com aviso
+- [ ] Carta em branco: o jogador escreve a própria resposta (uma ou duas por mão)
+- [ ] Avatares engraçados: carinhas desenhadas no próprio jogo (formato, olhos, boca e
+  acessório sorteados pelo id do jogador), com "Sortear outra" na sala de espera
+- [ ] Solo contra a CPU, sem internet: bots com personalidade, que como juiz preferem as
+  cartas de certos pacotes (`pacoteDaCarta`)
+- [ ] Zé Aleatório: com 2 pessoas na sala, um jogador imaginário completa o mínimo e joga
+  uma carta sorteada por rodada
 
 ## Fase 4 — plataformas
 
