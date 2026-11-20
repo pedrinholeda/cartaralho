@@ -8,6 +8,7 @@ import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
+import '../ui/sons.dart';
 import '../ui/tema.dart';
 import '../widgets/black_card_widget.dart';
 import '../widgets/judge_widget.dart';
@@ -28,6 +29,14 @@ class GameScreen extends ConsumerWidget {
     final isJudge = ref.watch(isJudgeProvider);
     final gamePhase = ref.watch(gamePhaseProvider);
 
+    // Cada mudança de fase que todo mundo vê tem um som (lib/ui/sons.dart).
+    ref.listen(gameRoomProvider(roomId), (antes, depois) {
+      final sala = depois.valueOrNull;
+      if (sala == null) return;
+      final som = somDaMudanca(antes?.valueOrNull, sala);
+      if (som != null) ref.read(sonsProvider).tocar(som);
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -35,6 +44,7 @@ class GameScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         actions: [
+          const BotaoDeSom(),
           IconButton(
             tooltip: 'Sair da sala',
             icon: const Icon(Icons.logout),

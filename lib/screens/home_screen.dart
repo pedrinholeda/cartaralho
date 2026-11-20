@@ -7,6 +7,7 @@ import 'create_room_screen.dart';
 import 'join_room_screen.dart';
 import 'game_screen.dart';
 import '../ui/cartas.dart';
+import '../ui/sons.dart';
 import '../ui/tema.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -72,6 +73,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const Align(
+                    alignment: Alignment.topRight,
+                    child: BotaoDeSom(),
+                  ),
                   const Spacer(),
                   const _CartasDaCapa(),
                   const SizedBox(height: 36),
