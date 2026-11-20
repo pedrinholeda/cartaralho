@@ -109,7 +109,11 @@ computador, no tema claro e no escuro, com print no PR.
   `flutter create --platforms=ios .` e conferir num Mac)
 - [ ] **Gradle moderno**: `android/` usa `apply from: flutter.gradle` (formato antigo) e
   Gradle 8.10, que não roda com JDK 25; o build de release assina com a chave de debug
-- [ ] Build de Android e web no CI e na tag de release; publicar a web (Firebase Hosting)
+- [ ] **Publicar a web** no Firebase Hosting a cada merge na `main`: o workflow `deploy-web.yml`
+  está pronto e falta o segredo `FIREBASE_SERVICE_ACCOUNT_CARTARALHO` (ver
+  [FIREBASE.md](FIREBASE.md#publicar-a-web)). O site estava com uma versão publicada à mão,
+  de fora do repositório
+- [ ] Build de Android no CI e na tag de release
 - [ ] macOS: registrar o app no Firebase ou tirar a pasta `macos/`
 
 ## Fase 5 — segurança e robustez

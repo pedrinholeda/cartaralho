@@ -67,3 +67,41 @@ navegador (ou o `flutter run`) mostra a mensagem do Firebase.
 Cada sala é um documento `rooms/{código}`, com o código de seis caracteres como id. Os campos
 são os de [`GameRoom.toJson`](../lib/models/game_room.dart): jogadores, os dois baralhos, a
 carta preta da vez, a fase, o juiz, as cartas enviadas, o vencedor e o limite de pontos.
+
+## Publicar a web
+
+O jogo fica em https://cartaralho.web.app, no Firebase Hosting do projeto `cartaralho`
+(configurado em [`firebase.json`](../firebase.json) e [`.firebaserc`](../.firebaserc)).
+
+**Automático.** O workflow [`deploy-web.yml`](../.github/workflows/deploy-web.yml) monta a
+web e publica a cada merge na `main`. Ele também pode ser disparado à mão na aba Actions
+("Publicar web" → "Run workflow"). Para publicar, ele precisa do segredo
+`FIREBASE_SERVICE_ACCOUNT_CARTARALHO` no repositório; sem o segredo, monta a web e só avisa
+no resumo do run.
+
+Para criar o segredo, uma vez, quem é dono do projeto Firebase roda:
+
+```bash
+npx firebase-tools login
+```
+
+```bash
+npx firebase-tools init hosting:github
+```
+
+O segundo comando pergunta o repositório (`pedrinholeda/cartaralho`), cria uma conta de
+serviço com permissão só de publicar e grava o segredo no GitHub sozinho. Ele também oferece
+criar workflows próprios: responda **não** às perguntas de workflow, porque o
+`deploy-web.yml` já faz isso.
+
+**À mão**, de uma máquina logada:
+
+```bash
+flutter build web --release
+```
+
+```bash
+npx firebase-tools deploy --only hosting
+```
+
+`--only hosting` não mexe nas regras do Firestore. Para publicar as regras, veja o passo 2.
