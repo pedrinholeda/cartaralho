@@ -8,6 +8,7 @@ import '../models/player.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
+import '../ui/sons.dart';
 import '../ui/tema.dart';
 
 /// A mão do jogador. Ele escolhe quantas cartas a carta preta pede, na ordem
@@ -67,6 +68,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
         widget.room.roomId,
         [for (final c in _escolhidas) c.id],
       );
+      ref.read(sonsProvider).tocar(Som.enviar);
     } catch (e) {
       _avisar('Não deu para enviar: $e');
     } finally {

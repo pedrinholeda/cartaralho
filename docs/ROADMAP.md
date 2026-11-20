@@ -89,10 +89,9 @@ computador, no tema claro e no escuro, com print no PR.
   estilo próprio, a lacuna desenhada como linha
 - [x] **Animações**: cartas sendo distribuídas, a carta enviada voando para a mesa, as cartas
   virando para o juiz, transição entre as fases e a revelação do vencedor com confete
-- [ ] **Efeitos sonoros** curtos (distribuir, enviar, virar, vencer a rodada, vencer o jogo),
-  com botão de mudo lembrado entre partidas. Na web o navegador só toca som depois do
-  primeiro toque na página, então o primeiro som vem depois de "Criar Sala" ou "Entrar na
-  Sala". Sons com licença livre (CC0), guardados em `assets/sons/` com a origem anotada
+- [x] **Efeitos sonoros** curtos (distribuir, enviar, virar, vencer a rodada, vencer o jogo),
+  com botão de mudo lembrado entre partidas. Em vez de sons de terceiros, gerados por
+  `tool/gerar_sons.mjs`, sem licença a conferir
 - [ ] **Sala de espera viva**: código grande com botão de copiar e de compartilhar o link,
   jogadores aparecendo conforme entram
 - [x] **Cartão do juiz na lista de jogadores**: a estrela sumia (âmbar sobre âmbar) e o rótulo

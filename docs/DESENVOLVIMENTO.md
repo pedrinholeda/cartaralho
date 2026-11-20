@@ -103,6 +103,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/ui/tema.dart`](../lib/ui/tema.dart) | Tema claro e escuro: as cores (`Cores`), as medidas (`Medidas`) e a tipografia. Ver [DESIGN.md](DESIGN.md). |
 | [`lib/ui/cartas.dart`](../lib/ui/cartas.dart) | `CartaPreta`, `CartaBranca` e `GradeDeCartas`, usadas em todas as telas. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
+| [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |
+| [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese. Rode com `node tool/gerar_sons.mjs`. |
 | [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias

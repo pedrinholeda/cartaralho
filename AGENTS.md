@@ -18,6 +18,8 @@ lib/
   ui/                   tema (cores, medidas, fontes) e os componentes de carta
 test/                   testes (flutter_test), espelhando lib/
 assets/baralhos/        as cartas do jogo, em JSON
+assets/sons/            efeitos sonoros (.wav), gerados por tool/gerar_sons.mjs
+tool/                   scripts de apoio (Node), fora do app
 docs/                   documentação longa, roadmap e imagens
 android/ ios/ macos/ web/  projetos de plataforma
 ```
@@ -76,6 +78,7 @@ dart format lib test
 flutter test
 flutter build web
 dart run flutter_launcher_icons   # regera os ícones depois de trocar o logo
+node tool/gerar_sons.mjs          # regera os sons depois de mexer no script
 ```
 
 ## Faça / Não faça
