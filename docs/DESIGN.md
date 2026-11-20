@@ -143,6 +143,7 @@ mostra o avatar deixa espaço em cima.
 | tela | o que tem |
 |---|---|
 | Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo, com três carinhas espiando entre elas; "Carinhas fofas. Cartas horríveis."; "Criar sala" e "Entrar na sala" embaixo |
+| Jogar sozinho ([`solo_screen.dart`](../lib/screens/solo_screen.dart)) | os sete bots com carinha e nome, para conhecer a mesa; nome, quantos bots (2 a 4) e pontos; "Começar" abre a partida já com você de juiz, e o título vira "Jogo solo" |
 | Tutorial ([`tutorial_screen.dart`](../lib/screens/tutorial_screen.dart)) | três telas (chame a galera, complete a frase, o juiz escolhe) com as cartas de verdade num exemplo; abre sozinho na primeira visita e pelo "Como jogar" ou pelo "?" |
 | Sala de espera | código num painel com "Copiar convite" e copiar código; "Chama a galera" e quantas pessoas faltam ("a mesa já está com fome"); a carinha e o nome de quem entrou, "Sortear outra carinha" e os lugares vazios com olhinhos no escuro; o botão diz quantos faltam |
 | Jogo | placar de avatares; aviso de quem é a vez; carta preta com a frase montada; mão em leque e botão fixo embaixo |
@@ -151,6 +152,7 @@ mostra o avatar deixa espaço em cima.
 
 <img src="imagens/tutorial.png" width="200" alt="Tutorial, segunda tela: carta preta com a frase montada e três cartas brancas em leque, a do meio escolhida; embaixo, Complete a frase e o botão Próximo">
 <img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: Chama a galera, Falta 1 pessoa. A mesa já está com fome.; o código num painel com Copiar convite; as carinhas de Você e Bia e um lugar vazio escuro com dois olhinhos amarelos; Sortear outra carinha">
+<img src="imagens/solo.png" width="200" alt="Jogar sozinho: o texto sobre o gosto de cada bot, as carinhas dos sete bots com nome (Tia do Zap, Coach Quântico, Tio do Pavê, Estagiário, Crush, DJ do Rolê, Zé do Bar), o campo Seu nome, Bots na mesa 2, 3 ou 4, Pontos para vencer e o botão Começar">
 
 Em tela larga (900 px ou mais) o jogo vira duas colunas: carta preta e placar à esquerda, a
 jogada à direita.

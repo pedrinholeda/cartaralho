@@ -11,7 +11,8 @@ lib/
   firebase_options.dart opções do Firebase por plataforma (gerado pelo FlutterFire CLI)
   game/                 regras da partida (funções puras) e os pacotes de cartas
   models/               GameCard, Player, GameRoom: dados e conversão para o Firestore
-  services/             FirebaseService: login anônimo e todas as leituras e escritas da sala
+  services/             FirebaseService: login anônimo e todas as leituras e escritas da sala;
+                        MesaLocal: as partidas solo, no aparelho, com os bots
   providers/            providers Riverpod: usuário logado, sala atual, jogador atual
   screens/              telas: início, criar sala, entrar na sala, jogo
   widgets/              peças da tela de jogo: jogadores, carta preta, mão, escolha do juiz
@@ -42,6 +43,9 @@ android/ ios/ macos/ web/  projetos de plataforma
 - Regra do jogo é função pura em `lib/game/regras.dart`: recebe a `GameRoom`, devolve a
   `GameRoom` nova ou lança `JogadaInvalida`. Nada de Firebase nem de `DateTime.now()` lá
   dentro; sorteio recebe um `Random` opcional, para o teste fixar a semente.
+- Partida solo tem código `SOLO-...` e não toca no Firestore: o `FirebaseService` desvia
+  para a `MesaLocal`. Jogada nova funciona nas duas sem mudar nada, porque as duas rodam
+  as mesmas regras. Bot tem id `bot-...` (`ehBot`).
 - Quem é o juiz vem de `GameRoom.currentJudgeId` (`room.isJudge(id)`), não de um campo
   do jogador.
 - Cor só pelo tema: `Cores.de(context).mesa`, `.acao`, `.carta`... Nada de
