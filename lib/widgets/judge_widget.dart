@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../game/regras.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
 
@@ -22,7 +23,8 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final submittedCards = widget.room.submittedCards.entries.toList();
+    final submittedCards = widget.room.cardsOnTable;
+    final preta = widget.room.currentBlackCard;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -55,7 +57,7 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                       });
                     },
                     title: Text(
-                      card.text,
+                      preta == null ? card.text : fraseCompleta(preta, [card]),
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,

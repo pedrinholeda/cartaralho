@@ -9,6 +9,8 @@ import '../widgets/player_list_widget.dart';
 import '../widgets/black_card_widget.dart';
 import '../widgets/white_cards_widget.dart';
 import '../widgets/judge_widget.dart';
+import '../widgets/round_result_widget.dart';
+import '../widgets/table_widget.dart';
 
 class GameScreen extends ConsumerWidget {
   const GameScreen({super.key});
@@ -107,6 +109,9 @@ class GameScreen extends ConsumerWidget {
 
       case GamePhase.judgeChoosing:
         return _buildJudgeChoosing(context, ref, room, isJudge);
+
+      case GamePhase.roundResult:
+        return RoundResultWidget(room: room, isJudge: isJudge);
 
       case GamePhase.gameComplete:
         return _buildGameComplete(context, ref, room);
@@ -212,18 +217,8 @@ class GameScreen extends ConsumerWidget {
       BuildContext context, WidgetRef ref, GameRoom room, bool isJudge) {
     if (isJudge) {
       return JudgeWidget(room: room);
-    } else {
-      return const Padding(
-        padding: EdgeInsets.all(24.0),
-        child: Center(
-          child: Text(
-            'O juiz está escolhendo a carta vencedora...',
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
     }
+    return TableWidget(room: room);
   }
 
   Widget _buildGameComplete(
@@ -232,6 +227,8 @@ class GameScreen extends ConsumerWidget {
       (p) => p.id == room.winnerId,
       orElse: () => room.players.first,
     );
+    final cartaFinal = room.submittedCards[room.lastRoundWinnerId];
+    final preta = room.currentBlackCard;
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -261,6 +258,14 @@ class GameScreen extends ConsumerWidget {
             'Pontos: ${winner.points}',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
+          if (cartaFinal != null && preta != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              '"${fraseCompleta(preta, [cartaFinal])}"',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,

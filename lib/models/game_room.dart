@@ -12,6 +12,9 @@ enum GamePhase {
   /// Todos enviaram; o juiz escolhe a melhor.
   judgeChoosing,
 
+  /// O juiz escolheu: todos veem a carta vencedora e quem enviou cada uma.
+  roundResult,
+
   /// Alguém chegou a [GameRoom.maxPoints].
   gameComplete,
 }
@@ -35,6 +38,10 @@ class GameRoom {
   /// Carta enviada na rodada atual, pelo id de quem enviou.
   final Map<String, GameCard> submittedCards;
 
+  /// Ids de quem enviou, na ordem sorteada em que as cartas aparecem para o
+  /// juiz e para a mesa. Vazio até todos enviarem.
+  final List<String> revealOrder;
+
   /// Quem ganhou a última rodada, para a tela mostrar.
   final String? lastRoundWinnerId;
   final String? winnerId;
@@ -50,12 +57,24 @@ class GameRoom {
     this.currentJudgeId,
     this.hands = const {},
     this.submittedCards = const {},
+    this.revealOrder = const [],
     this.lastRoundWinnerId,
     this.winnerId,
     this.maxPoints = 5,
   });
 
   bool isJudge(String playerId) => playerId == currentJudgeId;
+
+  /// As cartas enviadas na ordem em que aparecem na mesa, com o id de quem
+  /// enviou. Segue [revealOrder]; antes do sorteio, a ordem do mapa.
+  List<MapEntry<String, GameCard>> get cardsOnTable {
+    final ordem =
+        revealOrder.isNotEmpty ? revealOrder : submittedCards.keys.toList();
+    return [
+      for (final id in ordem)
+        if (submittedCards[id] != null) MapEntry(id, submittedCards[id]!),
+    ];
+  }
 
   factory GameRoom.fromJson(Map<String, dynamic> json) {
     List<GameCard> cartas(Object? lista) => (lista as List<dynamic>? ?? [])
@@ -84,6 +103,7 @@ class GameRoom {
         (key, value) =>
             MapEntry(key, GameCard.fromJson(value as Map<String, dynamic>)),
       ),
+      revealOrder: (json['revealOrder'] as List<dynamic>? ?? []).cast<String>(),
       lastRoundWinnerId: json['lastRoundWinnerId'] as String?,
       winnerId: json['winnerId'] as String?,
       maxPoints: json['maxPoints'] as int? ?? 5,
@@ -104,6 +124,7 @@ class GameRoom {
       ),
       'submittedCards':
           submittedCards.map((key, value) => MapEntry(key, value.toJson())),
+      'revealOrder': revealOrder,
       'lastRoundWinnerId': lastRoundWinnerId,
       'winnerId': winnerId,
       'maxPoints': maxPoints,
@@ -120,6 +141,7 @@ class GameRoom {
     String? currentJudgeId,
     Map<String, List<GameCard>>? hands,
     Map<String, GameCard>? submittedCards,
+    List<String>? revealOrder,
     String? lastRoundWinnerId,
     String? winnerId,
     int? maxPoints,
@@ -134,6 +156,7 @@ class GameRoom {
       currentJudgeId: currentJudgeId ?? this.currentJudgeId,
       hands: hands ?? this.hands,
       submittedCards: submittedCards ?? this.submittedCards,
+      revealOrder: revealOrder ?? this.revealOrder,
       lastRoundWinnerId: lastRoundWinnerId ?? this.lastRoundWinnerId,
       winnerId: winnerId ?? this.winnerId,
       maxPoints: maxPoints ?? this.maxPoints,
