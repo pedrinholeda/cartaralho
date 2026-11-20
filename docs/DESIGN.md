@@ -74,6 +74,8 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
   inteira (mesa, juiz, resultado; com o nome de quem enviou e em amarelo quando venceu).
 - `GradeDeCartas`: a mão, com quantas cartas couberem lado a lado (duas no celular).
 
+<img src="imagens/confete.png" width="220" alt="Resultado da rodada com confete amarelo, branco e preto caindo sobre a carta vencedora">
+
 [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
 
 - `Entrada`: a carta sobe e aparece, uma vez, na primeira vez que é montada (uma `key` por
