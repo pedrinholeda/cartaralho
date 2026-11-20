@@ -43,8 +43,9 @@ mesmo jogador. Uma janela anônima também conta como origem separada.
 
 `test/` cobre o que é código puro: as regras da partida (`test/game/regras_test.dart`:
 distribuir as mãos, enviar carta, escolher o vencedor, rodar o juiz, fim de jogo), o
-baralho e a conversão dos modelos para o formato do Firestore. Não há teste de tela nem de integração com o Firebase: a tela e a transação se
-conferem à mão, numa partida com três jogadores.
+baralho, a conversão dos modelos para o formato do Firestore e as animações
+(`test/ui/`, inclusive com "reduzir movimento"). Não há teste das telas nem de integração
+com o Firebase: elas se conferem à mão, numa partida com três jogadores.
 
 ## Arquitetura
 
@@ -101,6 +102,7 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/screens/game_screen.dart`](../lib/screens/game_screen.dart) | Escolhe o que mostrar pela fase da partida. |
 | [`lib/ui/tema.dart`](../lib/ui/tema.dart) | Tema claro e escuro: as cores (`Cores`), as medidas (`Medidas`) e a tipografia. Ver [DESIGN.md](DESIGN.md). |
 | [`lib/ui/cartas.dart`](../lib/ui/cartas.dart) | `CartaPreta`, `CartaBranca` e `GradeDeCartas`, usadas em todas as telas. |
+| [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias

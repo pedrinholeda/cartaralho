@@ -87,7 +87,7 @@ computador, no tema claro e no escuro, com print no PR.
   escuro, e tudo registrado em [`docs/DESIGN.md`](DESIGN.md)
 - [x] **Cartas com cara de carta**: proporção de carta de baralho, carta preta e branca com
   estilo próprio, a lacuna desenhada como linha
-- [ ] **Animações**: cartas sendo distribuídas, a carta enviada voando para a mesa, as cartas
+- [x] **Animações**: cartas sendo distribuídas, a carta enviada voando para a mesa, as cartas
   virando para o juiz, transição entre as fases e a revelação do vencedor com confete
 - [ ] **Efeitos sonoros** curtos (distribuir, enviar, virar, vencer a rodada, vencer o jogo),
   com botão de mudo lembrado entre partidas. Na web o navegador só toca som depois do

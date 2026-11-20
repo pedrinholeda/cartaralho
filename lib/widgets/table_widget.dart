@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../game/regras.dart';
 import '../models/game_room.dart';
+import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/tema.dart';
 
@@ -39,11 +40,15 @@ class TableWidget extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final brancas = mesa[index].value;
-                return CartaBranca(
-                  larga: true,
-                  texto: preta == null
-                      ? brancas.map((c) => c.text).join(' / ')
-                      : fraseCompleta(preta, brancas),
+                return Virada(
+                  key: ValueKey(mesa[index].key),
+                  atraso: Duration(milliseconds: 160 * index),
+                  child: CartaBranca(
+                    larga: true,
+                    texto: preta == null
+                        ? brancas.map((c) => c.text).join(' / ')
+                        : fraseCompleta(preta, brancas),
+                  ),
                 );
               },
             ),

@@ -6,6 +6,7 @@ import '../models/game_room.dart';
 import '../models/player.dart';
 import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
+import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/tema.dart';
 import '../widgets/black_card_widget.dart';
@@ -63,14 +64,29 @@ class GameScreen extends ConsumerWidget {
                       room.phase != GamePhase.waitingForPlayers)
                     BlackCardWidget(card: room.currentBlackCard!),
                   Expanded(
-                    child: _conteudo(
-                      context,
-                      ref,
-                      room,
-                      currentPlayer,
-                      isHost,
-                      isJudge,
-                      gamePhase,
+                    // Cada fase (e cada rodada) entra com um fade curto, para o
+                    // jogador perceber que a tela mudou.
+                    child: AnimatedSwitcher(
+                      duration: movimentoReduzido(context)
+                          ? Duration.zero
+                          : const Duration(milliseconds: 250),
+                      // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
+                      layoutBuilder: (atual, anteriores) =>
+                          atual ?? const SizedBox.shrink(),
+                      child: KeyedSubtree(
+                        key: ValueKey(
+                          '${room.phase.name}-${room.currentBlackCard?.id}',
+                        ),
+                        child: _conteudo(
+                          context,
+                          ref,
+                          room,
+                          currentPlayer,
+                          isHost,
+                          isJudge,
+                          gamePhase,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -232,56 +248,61 @@ class _FimDeJogo extends ConsumerWidget {
     final cartaFinal = room.submittedCards[room.lastRoundWinnerId];
     final preta = room.currentBlackCard;
 
-    return Padding(
-      padding: const EdgeInsets.all(Medidas.margem),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Spacer(),
-          Text('Jogo Finalizado!', style: textos.titleLarge),
-          Text(
-            'Vencedor: ${winner.name}',
-            style: textos.displaySmall,
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(Medidas.margem),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(),
+              Text('Jogo Finalizado!', style: textos.titleLarge),
+              Text(
+                'Vencedor: ${winner.name}',
+                style: textos.displaySmall,
+              ),
+              Text('Pontos: ${winner.points}', style: textos.bodyLarge),
+              if (cartaFinal != null && preta != null) ...[
+                const SizedBox(height: 16),
+                CartaBranca(
+                  larga: true,
+                  vencedora: true,
+                  texto: '"${fraseCompleta(preta, cartaFinal)}"',
+                  autor: winner.name,
+                ),
+              ],
+              const Spacer(flex: 2),
+              if (isHost) ...[
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await FirebaseService.playAgain(room.roomId);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Não deu para recomeçar: $e')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Jogar de novo'),
+                ),
+              ] else
+                Text(
+                  'O anfitrião pode começar outra partida com o mesmo grupo.',
+                  style: textos.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () => ref.read(roomIdProvider.notifier).state = null,
+                child: const Text('Voltar ao Menu'),
+              ),
+            ],
           ),
-          Text('Pontos: ${winner.points}', style: textos.bodyLarge),
-          if (cartaFinal != null && preta != null) ...[
-            const SizedBox(height: 16),
-            CartaBranca(
-              larga: true,
-              vencedora: true,
-              texto: '"${fraseCompleta(preta, cartaFinal)}"',
-              autor: winner.name,
-            ),
-          ],
-          const Spacer(flex: 2),
-          if (isHost) ...[
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await FirebaseService.playAgain(room.roomId);
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Não deu para recomeçar: $e')),
-                    );
-                  }
-                }
-              },
-              child: const Text('Jogar de novo'),
-            ),
-          ] else
-            Text(
-              'O anfitrião pode começar outra partida com o mesmo grupo.',
-              style: textos.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: () => ref.read(roomIdProvider.notifier).state = null,
-            child: const Text('Voltar ao Menu'),
-          ),
-        ],
-      ),
+        ),
+        const Positioned.fill(child: Confete(quantidade: 140)),
+      ],
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../game/regras.dart';
 import '../models/game_room.dart';
 import '../services/firebase_service.dart';
+import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/tema.dart';
 
@@ -49,13 +50,17 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
               itemBuilder: (context, index) {
                 final cartas = mesa[index].value;
                 final playerId = mesa[index].key;
-                return CartaBranca(
-                  larga: true,
-                  texto: preta == null
-                      ? cartas.map((c) => c.text).join(' / ')
-                      : fraseCompleta(preta, cartas),
-                  selecionada: _selectedWinner == playerId,
-                  aoTocar: () => setState(() => _selectedWinner = playerId),
+                return Virada(
+                  key: ValueKey(playerId),
+                  atraso: Duration(milliseconds: 160 * index),
+                  child: CartaBranca(
+                    larga: true,
+                    texto: preta == null
+                        ? cartas.map((c) => c.text).join(' / ')
+                        : fraseCompleta(preta, cartas),
+                    selecionada: _selectedWinner == playerId,
+                    aoTocar: () => setState(() => _selectedWinner = playerId),
+                  ),
                 );
               },
             ),
