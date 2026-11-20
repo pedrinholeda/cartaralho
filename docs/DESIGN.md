@@ -28,8 +28,10 @@ ficam em `marca/` como registro. Os ícones do app (web e Android) saem dele com
 - **Carta tem cara de carta.** Proporção de baralho (63 × 88 mm) na mão, cantos de 14 px,
   sombra seca embaixo, como papel cartão em cima da mesa. Botão é redondo para não ser
   confundido com carta.
-- **Movimento responde ao jogador.** A carta escolhida sobe; nada se mexe sozinho. Com
-  "reduzir movimento" ligado no sistema, nem isso.
+- **Movimento mostra o que mudou.** A carta escolhida sobe; as cartas novas entram na mão uma
+  a uma; as respostas viram de costas para frente quando o juiz vai escolher; a fase nova
+  entra com um fade curto; quem ganha leva confete. Nada se mexe sem motivo, e com "reduzir
+  movimento" ligado no sistema tudo aparece direto.
 
 ## Tokens
 
@@ -72,6 +74,15 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
   inteira (mesa, juiz, resultado; com o nome de quem enviou e em amarelo quando venceu).
 - `GradeDeCartas`: a mão, com quantas cartas couberem lado a lado (duas no celular).
 
+[`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
+
+- `Entrada`: a carta sobe e aparece, uma vez, na primeira vez que é montada (uma `key` por
+  carta faz só as novas animarem).
+- `Virada`: a carta começa de costas (verso preto com borda da cor da mesa) e vira.
+- `Confete`: papéis amarelos, brancos e pretos caindo por cima da tela, sem capturar toque.
+- `movimentoReduzido(context)`: verdadeiro quando o sistema pede menos movimento; os três
+  componentes já respeitam.
+
 ## Decisões
 
 - **Por que não preto e branco com Helvetica.** É o visual de outro jogo de cartas muito
@@ -85,5 +96,5 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
 
 ## Pendências
 
-No [roadmap](ROADMAP.md), fase 3: animações,
+No [roadmap](ROADMAP.md), fase 3:
 efeitos sonoros, sala de espera com compartilhamento e layout próprio para tela larga.
