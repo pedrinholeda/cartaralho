@@ -1,6 +1,6 @@
 {
   "nome": "Básico",
-  "regras": "Lacuna é ____ (quatro sublinhados); uma carta preta tem de uma a três. Carta branca começa com minúscula, salvo nome próprio: o jogo põe a maiúscula quando a lacuna abre a frase. Sem ponto final na branca. Antes da lacuna, nada de preposição que vira contração (de, em, por, a), porque 'fala de ____' viraria 'fala de o cunhado'.",
+  "descricao": "Um pouco de tudo: o baralho de sempre.",
   "pretas": [
     "____ é a melhor coisa do mundo.",
     "Não consigo viver sem ____.",

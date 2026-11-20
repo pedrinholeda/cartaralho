@@ -81,6 +81,7 @@ void main() {
     test('com gente demais para o baralho, explica o que fazer', () {
       // Um baralho de 50 brancas não dá 7 cartas para 8 jogadores.
       final pequeno = Baralho(
+        id: 'pequeno',
         nome: 'pequeno',
         pretas: baralho.pretas,
         brancas: baralho.brancas.take(50).toList(),

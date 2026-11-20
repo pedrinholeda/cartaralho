@@ -11,9 +11,11 @@ class FirebaseService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static Baralho? _baralho;
 
-  /// O baralho do arquivo em [arquivoDoBaralho], lido uma vez só.
+  /// O pacote básico, lido uma vez só.
   static Future<Baralho> _baralhoPadrao() async => _baralho ??=
-      Baralho.fromJsonString(await rootBundle.loadString(arquivoDoBaralho));
+      Baralho.fromJsonString(
+          await rootBundle.loadString(arquivoDoPacote('basico')),
+          id: 'basico');
 
   // Authentication
   static Future<User?> signInAnonymously() async {
