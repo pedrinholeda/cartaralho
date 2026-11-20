@@ -75,6 +75,7 @@ flutter analyze
 dart format lib test
 flutter test
 flutter build web
+dart run flutter_launcher_icons   # regera os ícones depois de trocar o logo
 ```
 
 ## Faça / Não faça

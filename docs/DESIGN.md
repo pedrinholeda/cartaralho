@@ -10,6 +10,13 @@ o único lugar onde o visual ousa; o resto fica quieto para as frases aparecerem
   <img src="imagens/resultado-escuro.png" width="220" alt="Resultado da rodada no tema escuro: a frase vencedora numa carta amarela com o nome de quem enviou, a outra numa carta clara">
 </p>
 
+## Logo
+
+[`marca/logo-carta-escura.png`](marca/logo-carta-escura.png): a carta branca com cara de
+malandra e o ponto de exclamação vermelho, sobre fundo preto. As outras duas propostas
+ficam em `marca/` como registro. Os ícones do app (web e Android) saem dele com
+`dart run flutter_launcher_icons`, configurado no `pubspec.yaml`; trocou o logo, rode de novo.
+
 ## Princípios
 
 - **Carta é para ler, mesa é para estar.** Texto longo nunca fica direto na mesa: vai numa
@@ -78,5 +85,5 @@ já precisa de internet para falar com o Firebase, então isso não cria uma dep
 
 ## Pendências
 
-No [roadmap](ROADMAP.md), fase 3: escolher o logo final e gerar os ícones, animações,
+No [roadmap](ROADMAP.md), fase 3: animações,
 efeitos sonoros, sala de espera com compartilhamento e layout próprio para tela larga.
