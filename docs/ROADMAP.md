@@ -53,15 +53,15 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
   com mais. Fazer a carta preta saber quantas brancas pede (contando as lacunas), o jogador
   escolher na ordem e o juiz ver o conjunto. Até lá, um teste recusa carta com mais de um
   espaço.
-- [ ] **Resultado da rodada**: o juiz escolhe e a tela já pula para a rodada seguinte;
+- [x] **Resultado da rodada**: o juiz escolhe e a tela já pula para a rodada seguinte;
   ninguém vê qual carta ganhou nem quem a jogou (`lastRoundWinnerId` é gravado e nunca
   mostrado). Uma fase curta de resultado, com a frase completa e o nome do vencedor
-- [ ] **Todos veem as cartas enviadas** enquanto o juiz escolhe (hoje só o juiz vê), para o
+- [x] **Todos veem as cartas enviadas** enquanto o juiz escolhe (hoje só o juiz vê), para o
   grupo ler e rir junto
-- [ ] **Ordem das cartas embaralhada para o juiz**: hoje vêm na ordem do id de quem enviou,
+- [x] **Ordem das cartas embaralhada para o juiz**: hoje vêm na ordem do id de quem enviou,
   sempre igual, e o juiz aprende quem é quem depois de algumas rodadas
-- [ ] **Frase completa na carta**: mostrar a carta preta com a branca encaixada no espaço,
-  na escolha do jogador e na do juiz
+- [ ] **Frase completa na carta**: mostrar a carta preta com a branca encaixada no espaço.
+  Feito na escolha do juiz, na mesa e no resultado; falta na escolha do jogador
 - [ ] **Configurar a partida** ao criar a sala: pontos para vencer (hoje fixo em 5) e
   tamanho da mão
 - [ ] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou
@@ -69,7 +69,10 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 - [ ] **Jogar de novo** com o mesmo grupo, zerando o placar, em vez de "Voltar ao Menu"
 - [ ] **Revisão do baralho**: mais cartas pretas (com 15, elas se repetem depois de 15
   rodadas), cartas brancas mais engraçadas e menos genéricas ("Música", "Tecnologia"),
-  e regras de texto (uma lacuna por espaço, sem ponto final duplo, tamanho máximo)
+  e regras de texto (uma lacuna por espaço, sem ponto final duplo, tamanho máximo). As
+  brancas começam com maiúscula e ficam estranhas no meio da frase ("meu problema é Uma
+  planilha de Excel"): escrever em minúscula, salvo nome próprio, e pôr maiúscula quando a
+  lacuna abre a frase
 - [ ] Baralho num arquivo JSON em `assets/`, fora do código, validado por teste;
   baralhos customizados depois
 

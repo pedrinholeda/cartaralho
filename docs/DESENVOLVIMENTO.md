@@ -62,6 +62,23 @@ flowchart LR
 A tela nunca muda o próprio estado da partida: ela pede ao `FirebaseService`, que lê a sala,
 aplica a regra e grava numa transação; a mudança volta para todos pelo stream.
 
+### Fases da partida
+
+`GamePhase`, em [`lib/models/game_room.dart`](../lib/models/game_room.dart):
+
+```mermaid
+stateDiagram-v2
+  [*] --> waitingForPlayers
+  waitingForPlayers --> playersSubmitting: iniciarJogo
+  playersSubmitting --> judgeChoosing: última carta (enviarCarta)
+  judgeChoosing --> roundResult: escolherVencedor
+  judgeChoosing --> gameComplete: alguém chegou ao máximo de pontos
+  roundResult --> playersSubmitting: proximaRodada (o juiz avança)
+```
+
+Quando a última carta chega, a ordem da mesa é sorteada e gravada em `revealOrder`, para
+todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
+
 ### Módulos
 
 | arquivo | responsabilidade |
@@ -69,14 +86,14 @@ aplica a regra e grava numa transação; a mudança volta para todos pelo stream
 | [`lib/main.dart`](../lib/main.dart) | Inicializa o Firebase (com timeout de 30 s) e abre o app dentro do `ProviderScope`. |
 | [`lib/firebase_options.dart`](../lib/firebase_options.dart) | Opções do Firebase por plataforma, geradas pelo FlutterFire CLI. |
 | [`lib/models/`](../lib/models) | `GameCard`, `Player` e `GameRoom`, imutáveis, com `fromJson`/`toJson`/`copyWith`. `GamePhase` lista as fases da partida. |
-| [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `entrarNaSala`, `iniciarJogo`, `enviarCarta`, `escolherVencedor`, e o sorteio do código da sala. Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
+| [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `entrarNaSala`, `iniciarJogo`, `enviarCarta`, `escolherVencedor`, `proximaRodada`, o sorteio do código da sala e `fraseCompleta` (a carta preta com as brancas no lugar das lacunas). Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
 | [`lib/game/baralho.dart`](../lib/game/baralho.dart) | O baralho com que toda sala começa (15 pretas, 48 brancas, até 8 jogadores). |
 | [`lib/services/firebase_service.dart`](../lib/services/firebase_service.dart) | Login anônimo, criar sala (conferindo numa transação que o código está livre) e o stream da sala. Entrar na sala e as jogadas passam por `_alterarSala`, que roda a regra numa transação. |
 | [`lib/providers/auth_provider.dart`](../lib/providers/auth_provider.dart) | Stream do usuário logado. |
 | [`lib/providers/game_provider.dart`](../lib/providers/game_provider.dart) | Código da sala atual, stream da sala e o que deriva dela: jogador atual, se é anfitrião, se é juiz, fase. |
 | [`lib/screens/home_screen.dart`](../lib/screens/home_screen.dart) | Faz o login anônimo (três tentativas) e mostra criar/entrar; com uma sala escolhida, mostra a `GameScreen`. |
 | [`lib/screens/game_screen.dart`](../lib/screens/game_screen.dart) | Escolhe o que mostrar pela fase da partida. |
-| [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz. |
+| [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias
 

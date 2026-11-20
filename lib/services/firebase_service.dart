@@ -111,6 +111,14 @@ class FirebaseService {
     );
   }
 
+  static Future<void> nextRound(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(
+      roomId,
+      (sala) => regras.proximaRodada(sala, user.uid),
+    );
+  }
+
   static User _usuarioLogado() {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuário não autenticado');

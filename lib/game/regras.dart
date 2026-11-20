@@ -67,8 +67,14 @@ GameRoom iniciarJogo(GameRoom sala, String quemPediu, {Random? random}) {
 }
 
 /// Um jogador envia uma carta da própria mão. Quando todos menos o juiz
-/// enviaram, a sala passa para a escolha do juiz.
-GameRoom enviarCarta(GameRoom sala, String jogadorId, String cartaId) {
+/// enviaram, a sala passa para a escolha do juiz, com as cartas numa ordem
+/// sorteada ([GameRoom.revealOrder]) para ninguém saber quem enviou qual.
+GameRoom enviarCarta(
+  GameRoom sala,
+  String jogadorId,
+  String cartaId, {
+  Random? random,
+}) {
   if (sala.phase != GamePhase.playersSubmitting) {
     throw JogadaInvalida('Não é hora de enviar cartas');
   }
@@ -96,16 +102,20 @@ GameRoom enviarCarta(GameRoom sala, String jogadorId, String cartaId) {
       .where((p) => p.id != sala.currentJudgeId)
       .any((p) => !enviadas.containsKey(p.id));
 
+  if (faltam) {
+    return sala.copyWith(submittedCards: enviadas, hands: maos);
+  }
   return sala.copyWith(
     submittedCards: enviadas,
     hands: maos,
-    phase: faltam ? GamePhase.playersSubmitting : GamePhase.judgeChoosing,
+    revealOrder: enviadas.keys.toList()..shuffle(random ?? Random()),
+    phase: GamePhase.judgeChoosing,
   );
 }
 
-/// O juiz escolhe a carta vencedora. O dono ganha um ponto; se chegou a
-/// [GameRoom.maxPoints] o jogo acaba, senão o juiz passa para o próximo
-/// jogador, as mãos são completadas e uma nova carta preta é virada.
+/// O juiz escolhe a carta vencedora e o dono ganha um ponto. Se chegou a
+/// [GameRoom.maxPoints] o jogo acaba; senão a sala mostra o resultado da
+/// rodada até o juiz chamar [proximaRodada].
 GameRoom escolherVencedor(GameRoom sala, String juizId, String vencedorId) {
   if (sala.phase != GamePhase.judgeChoosing) {
     throw JogadaInvalida('Não é hora de escolher o vencedor');
@@ -132,10 +142,28 @@ GameRoom escolherVencedor(GameRoom sala, String juizId, String vencedorId) {
     );
   }
 
+  return sala.copyWith(
+    players: jogadores,
+    lastRoundWinnerId: vencedorId,
+    phase: GamePhase.roundResult,
+  );
+}
+
+/// Fecha o resultado da rodada: o juiz passa para o próximo jogador, as mãos
+/// são completadas e uma nova carta preta é virada. Quem chama é o juiz da
+/// rodada que acabou, quando o grupo terminou de ler.
+GameRoom proximaRodada(GameRoom sala, String quemPediu) {
+  if (sala.phase != GamePhase.roundResult) {
+    throw JogadaInvalida('A rodada ainda não terminou');
+  }
+  if (quemPediu != sala.currentJudgeId) {
+    throw JogadaInvalida('Só o juiz começa a próxima rodada');
+  }
+
   // As cartas usadas voltam para o fim do baralho, para ele nunca acabar.
   final brancas = [...sala.whiteCards, ...sala.submittedCards.values];
   final maos = <String, List<GameCard>>{};
-  for (final p in jogadores) {
+  for (final p in sala.players) {
     final mao = [...?sala.hands[p.id]];
     while (mao.length < tamanhoDaMao && brancas.isNotEmpty) {
       mao.add(brancas.removeAt(0));
@@ -148,16 +176,28 @@ GameRoom escolherVencedor(GameRoom sala, String juizId, String vencedorId) {
   ];
 
   return sala.copyWith(
-    players: jogadores,
     whiteCards: brancas,
     blackCards: pretas.sublist(1),
     currentBlackCard: pretas.first,
-    currentJudgeId: proximoJuiz(jogadores, sala.currentJudgeId),
+    currentJudgeId: proximoJuiz(sala.players, sala.currentJudgeId),
     hands: maos,
     submittedCards: const {},
-    lastRoundWinnerId: vencedorId,
+    revealOrder: const [],
     phase: GamePhase.playersSubmitting,
   );
+}
+
+/// A carta preta com as brancas no lugar de cada `____`, na ordem. Se a preta
+/// não tem lacuna (uma pergunta), as brancas vêm depois do texto.
+String fraseCompleta(GameCard preta, List<GameCard> brancas) {
+  var i = 0;
+  final frase = preta.text.replaceAllMapped(RegExp('_{2,}'), (m) {
+    return i < brancas.length ? brancas[i++].text : m[0]!;
+  });
+  if (i < brancas.length) {
+    return '$frase ${brancas.skip(i).map((c) => c.text).join(' / ')}';
+  }
+  return frase;
 }
 
 /// O jogador seguinte ao juiz atual, voltando ao primeiro depois do último.

@@ -34,6 +34,13 @@ GameRoom todosEnviam(GameRoom sala) {
   return s;
 }
 
+/// Juiz escolhe o primeiro que enviou e começa a próxima rodada.
+GameRoom fecharRodada(GameRoom sala) {
+  final juiz = sala.currentJudgeId!;
+  final alguem = sala.submittedCards.keys.first;
+  return proximaRodada(escolherVencedor(sala, juiz, alguem), juiz);
+}
+
 void main() {
   group('iniciarJogo', () {
     test('dá uma mão a cada jogador e abre o envio de cartas', () {
@@ -87,6 +94,22 @@ void main() {
       expect(todas.submittedCards.keys, unorderedEquals(['p1', 'p2']));
     });
 
+    test('quando todos enviam, sorteia a ordem das cartas na mesa', () {
+      final ordens = <String>{};
+      for (var semente = 0; semente < 20; semente++) {
+        var s =
+            iniciarJogo(salaDeEspera(jogadores: 5), 'p0', random: Random(1));
+        for (final p in s.players.where((p) => p.id != 'p0')) {
+          s = enviarCarta(s, p.id, s.hands[p.id]!.first.id,
+              random: Random(semente));
+        }
+        expect(s.revealOrder, unorderedEquals(['p1', 'p2', 'p3', 'p4']));
+        ordens.add(s.revealOrder.join());
+      }
+      expect(ordens.length, greaterThan(1),
+          reason: 'a ordem não pode ser sempre a mesma');
+    });
+
     test('a carta enviada sai da mão', () {
       final carta = sala.hands['p1']!.first;
       final depois = enviarCarta(sala, 'p1', carta.id);
@@ -117,50 +140,21 @@ void main() {
       sala = todosEnviam(iniciarJogo(salaDeEspera(), 'p0', random: Random(1)));
     });
 
-    test('dá o ponto e passa o juiz para o próximo jogador', () {
+    test('dá o ponto e mostra o resultado da rodada', () {
       final depois = escolherVencedor(sala, 'p0', 'p2');
 
       expect(depois.players.firstWhere((p) => p.id == 'p2').points, 1);
-      expect(depois.currentJudgeId, 'p1');
-      expect(depois.phase, GamePhase.playersSubmitting);
-      expect(depois.submittedCards, isEmpty);
+      expect(depois.phase, GamePhase.roundResult);
       expect(depois.lastRoundWinnerId, 'p2');
     });
 
-    test('o juiz roda por todos e volta ao primeiro', () {
-      var s = sala;
-      final juizes = <String>[s.currentJudgeId!];
-      for (var rodada = 0; rodada < 3; rodada++) {
-        final alguem = s.players.firstWhere((p) => p.id != s.currentJudgeId).id;
-        s = escolherVencedor(s, s.currentJudgeId!, alguem);
-        juizes.add(s.currentJudgeId!);
-        s = todosEnviam(s);
-      }
-      expect(juizes, ['p0', 'p1', 'p2', 'p0']);
-    });
+    test('no resultado a mesa continua com as cartas e o juiz não muda', () {
+      final depois = escolherVencedor(sala, 'p0', 'p2');
 
-    test('completa as mãos e vira uma carta preta nova', () {
-      final pretaAntes = sala.currentBlackCard!.id;
-      final depois = escolherVencedor(sala, 'p0', 'p1');
-
-      for (final p in depois.players) {
-        expect(depois.hands[p.id], hasLength(tamanhoDaMao));
-      }
-      expect(depois.currentBlackCard!.id, isNot(pretaAntes));
-    });
-
-    test('o baralho não acaba: as cartas jogadas voltam para o fim', () {
-      // 3 jogadores x 5 cartas = 15: o baralho começa vazio depois de dar as mãos.
-      var s = iniciarJogo(salaDeEspera(brancas: 15), 'p0', random: Random(2));
-      expect(s.whiteCards, isEmpty);
-      for (var rodada = 0; rodada < 4; rodada++) {
-        s = todosEnviam(s);
-        final alguem = s.players.firstWhere((p) => p.id != s.currentJudgeId).id;
-        s = escolherVencedor(s, s.currentJudgeId!, alguem);
-        for (final p in s.players) {
-          expect(s.hands[p.id], hasLength(tamanhoDaMao));
-        }
-      }
+      expect(depois.submittedCards.keys, unorderedEquals(['p1', 'p2']));
+      expect(depois.cardsOnTable, hasLength(2));
+      expect(depois.currentJudgeId, 'p0');
+      expect(depois.currentBlackCard!.id, sala.currentBlackCard!.id);
     });
 
     test('termina o jogo quando alguém chega ao máximo de pontos', () {
@@ -182,6 +176,92 @@ void main() {
     test('não escolhe quem não enviou carta', () {
       expect(() => escolherVencedor(sala, 'p0', 'p0'),
           throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
+  group('proximaRodada', () {
+    late GameRoom resultado;
+    setUp(() {
+      final sala =
+          todosEnviam(iniciarJogo(salaDeEspera(), 'p0', random: Random(1)));
+      resultado = escolherVencedor(sala, 'p0', 'p2');
+    });
+
+    test('passa o juiz para o próximo jogador e limpa a mesa', () {
+      final depois = proximaRodada(resultado, 'p0');
+
+      expect(depois.currentJudgeId, 'p1');
+      expect(depois.phase, GamePhase.playersSubmitting);
+      expect(depois.submittedCards, isEmpty);
+      expect(depois.revealOrder, isEmpty);
+    });
+
+    test('completa as mãos e vira uma carta preta nova', () {
+      final depois = proximaRodada(resultado, 'p0');
+
+      for (final p in depois.players) {
+        expect(depois.hands[p.id], hasLength(tamanhoDaMao));
+      }
+      expect(
+          depois.currentBlackCard!.id, isNot(resultado.currentBlackCard!.id));
+    });
+
+    test('o juiz roda por todos e volta ao primeiro', () {
+      var s = iniciarJogo(salaDeEspera(), 'p0', random: Random(1));
+      final juizes = <String>[s.currentJudgeId!];
+      for (var rodada = 0; rodada < 3; rodada++) {
+        s = fecharRodada(todosEnviam(s));
+        juizes.add(s.currentJudgeId!);
+      }
+      expect(juizes, ['p0', 'p1', 'p2', 'p0']);
+    });
+
+    test('o baralho não acaba: as cartas jogadas voltam para o fim', () {
+      // 3 jogadores x 5 cartas = 15: o baralho começa vazio depois de dar as mãos.
+      var s = iniciarJogo(salaDeEspera(brancas: 15), 'p0', random: Random(2));
+      expect(s.whiteCards, isEmpty);
+      for (var rodada = 0; rodada < 4; rodada++) {
+        s = fecharRodada(todosEnviam(s));
+        for (final p in s.players) {
+          expect(s.hands[p.id], hasLength(tamanhoDaMao));
+        }
+      }
+    });
+
+    test('só o juiz da rodada que acabou começa a próxima', () {
+      expect(
+          () => proximaRodada(resultado, 'p1'), throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('não pula a escolha do juiz', () {
+      final semResultado =
+          todosEnviam(iniciarJogo(salaDeEspera(), 'p0', random: Random(1)));
+      expect(() => proximaRodada(semResultado, 'p0'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
+  group('fraseCompleta', () {
+    GameCard preta(String t) =>
+        GameCard(id: 'b', text: t, type: CardType.black);
+    GameCard branca(String t) => GameCard(id: t, text: t, type: CardType.white);
+
+    test('põe a branca no lugar da lacuna', () {
+      expect(fraseCompleta(preta('Não vivo sem ____.'), [branca('café')]),
+          'Não vivo sem café.');
+    });
+
+    test('várias lacunas são preenchidas na ordem', () {
+      expect(
+        fraseCompleta(preta('____ e ____ são iguais.'),
+            [branca('Pão'), branca('pastel')]),
+        'Pão e pastel são iguais.',
+      );
+    });
+
+    test('pergunta sem lacuna recebe a resposta no fim', () {
+      expect(fraseCompleta(preta('O que estraga a festa?'), [branca('O tio')]),
+          'O que estraga a festa? O tio');
     });
   });
 

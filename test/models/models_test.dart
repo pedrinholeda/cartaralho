@@ -53,6 +53,7 @@ void main() {
             'u2': [GameCard(id: 'w3', text: 'TikTok', type: CardType.white)],
           },
           lastRoundWinnerId: 'u2',
+          revealOrder: ['u2'],
         );
 
     test('ida e volta pelo JSON preserva a sala', () {
@@ -67,6 +68,7 @@ void main() {
       expect(lida.submittedCards['u2']!.text, 'Café');
       expect(lida.hands['u2']!.single.text, 'TikTok');
       expect(lida.lastRoundWinnerId, 'u2');
+      expect(lida.revealOrder, ['u2']);
       expect(lida.maxPoints, 5);
     });
 
