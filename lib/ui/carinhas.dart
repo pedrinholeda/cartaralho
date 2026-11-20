@@ -93,13 +93,26 @@ class PintorDeCarinha extends CustomPainter {
   final Color bochecha;
   final Color branco;
 
+  /// Na madrugada: cor desbotada e olhos fundos, seja qual for a carinha.
+  final bool assombrada;
+
   const PintorDeCarinha({
     required this.carinha,
     required this.fundo,
     required this.tinta,
     required this.bochecha,
     required this.branco,
+    this.assombrada = false,
   });
+
+  /// A cor do avatar quase sem cor e um pouco mais escura.
+  static Color desbotar(Color cor) {
+    final hsl = HSLColor.fromColor(cor);
+    return hsl
+        .withSaturation(hsl.saturation * .25)
+        .withLightness(hsl.lightness * .8)
+        .toColor();
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -109,7 +122,8 @@ class PintorDeCarinha extends CustomPainter {
     // Daqui em diante tudo é desenhado num quadrado de 1 x 1.
     final circulo = Path()
       ..addOval(Rect.fromCircle(center: const Offset(.5, .5), radius: .5));
-    canvas.drawPath(circulo, Paint()..color = fundo);
+    canvas.drawPath(
+        circulo, Paint()..color = assombrada ? desbotar(fundo) : fundo);
     canvas.save();
     canvas.clipPath(circulo);
 
@@ -121,7 +135,7 @@ class PintorDeCarinha extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
     final cheio = Paint()..color = tinta;
 
-    if (carinha.bochechas) {
+    if (carinha.bochechas && !assombrada) {
       final p = Paint()..color = bochecha.withValues(alpha: .45);
       canvas.drawOval(
           Rect.fromCenter(
@@ -133,7 +147,11 @@ class PintorDeCarinha extends CustomPainter {
           p);
     }
 
-    _olhos(canvas, traco, cheio);
+    if (assombrada) {
+      _olhosFundos(canvas, cheio);
+    } else {
+      _olhos(canvas, traco, cheio);
+    }
     _boca(canvas, traco, cheio);
     _enfeite(canvas, traco, cheio);
     canvas.restore();
@@ -194,6 +212,18 @@ class PintorDeCarinha extends CustomPainter {
         c.drawPath(p, cheio);
       default:
         break;
+    }
+  }
+
+  /// Dois buracos escuros com um pontinho de luz; cada carinha olha um pouco
+  /// para um lado.
+  void _olhosFundos(Canvas c, Paint cheio) {
+    final desvio = (carinha.olhos.index - 3.5) * .006;
+    for (final x in [.34, .66]) {
+      c.drawOval(
+          Rect.fromCenter(center: Offset(x, .46), width: .2, height: .24),
+          cheio);
+      c.drawCircle(Offset(x + desvio, .47), .022, Paint()..color = branco);
     }
   }
 
@@ -389,5 +419,6 @@ class PintorDeCarinha extends CustomPainter {
       old.fundo != fundo ||
       old.tinta != tinta ||
       old.bochecha != bochecha ||
-      old.branco != branco;
+      old.branco != branco ||
+      old.assombrada != assombrada;
 }

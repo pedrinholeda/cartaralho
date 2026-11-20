@@ -15,7 +15,8 @@ lib/
   providers/            providers Riverpod: usuário logado, sala atual, jogador atual
   screens/              telas: início, criar sala, entrar na sala, jogo
   widgets/              peças da tela de jogo: jogadores, carta preta, mão, escolha do juiz
-  ui/                   tema (cores, medidas, fonte), cartas, avatares, animações e sons
+  ui/                   tema (cores, medidas, fonte), cartas, carinhas, ícones, animações,
+                        sons e os momentos creepy (assombro.dart)
 test/                   testes (flutter_test), espelhando lib/
 assets/baralhos/        as cartas do jogo, um JSON por pacote
 assets/sons/            efeitos sonoros (.wav), gerados por tool/gerar_sons.mjs
@@ -47,6 +48,8 @@ android/ ios/ macos/ web/  projetos de plataforma
   `Color(0x...)` nem `Colors.xxx` (fora `Colors.transparent`) em tela ou widget. Carta se
   desenha com `CartaPreta` e `CartaBranca` (`lib/ui/cartas.dart`). Regras visuais em
   `docs/DESIGN.md`.
+- Ícone é `IconeFofo(Desenho.xxx)` (`lib/ui/icones.dart`), não `Icons.xxx`. Precisa de um
+  novo? Desenhe no mesmo traço e com olhinhos, se couber.
 - Rótulo de botão em frase normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 - Texto de interface em português do Brasil. Comentário explica por quê, não o quê.
 

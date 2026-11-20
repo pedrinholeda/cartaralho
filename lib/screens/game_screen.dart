@@ -11,6 +11,7 @@ import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
+import '../ui/icones.dart';
 import '../ui/jogadores.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
@@ -51,13 +52,13 @@ class GameScreen extends ConsumerWidget {
         actions: [
           IconButton(
             tooltip: 'Como jogar',
-            icon: const Icon(Icons.help_outline_rounded),
+            icon: const IconeFofo(Desenho.ajuda, tamanho: 26),
             onPressed: () => abrirTutorial(context),
           ),
           const BotaoDeSom(),
           IconButton(
             tooltip: 'Sair da sala',
-            icon: const Icon(Icons.logout),
+            icon: const IconeFofo(Desenho.sair, tamanho: 26),
             onPressed: () {
               ref.read(roomIdProvider.notifier).state = null;
               FirebaseService.signOut();
@@ -95,6 +96,10 @@ class GameScreen extends ConsumerWidget {
                   card: room.currentBlackCard!,
                   respostas:
                       _respostasNaCarta(ref, room, currentPlayer, isJudge),
+                  esperando: room.phase == GamePhase.playersSubmitting &&
+                      currentPlayer != null &&
+                      !isJudge &&
+                      !room.submittedCards.containsKey(currentPlayer.id),
                 ),
             ];
             // Cada fase (e cada rodada) entra com um fade curto, para o
@@ -188,20 +193,20 @@ class GameScreen extends ConsumerWidget {
         if (isJudge) {
           return const AvisoDaVez(
             'Você é o juiz desta rodada',
-            icone: Icons.gavel_rounded,
+            icone: Desenho.juiz,
             destaque: true,
           );
         }
-        return AvisoDaVez('Juiz da rodada: $juiz', icone: Icons.gavel_rounded);
+        return AvisoDaVez('Juiz da rodada: $juiz', icone: Desenho.juiz);
       case GamePhase.judgeChoosing:
         if (isJudge) {
           return const AvisoDaVez(
             'Sua vez de julgar',
-            icone: Icons.gavel_rounded,
+            icone: Desenho.juiz,
             destaque: true,
           );
         }
-        return AvisoDaVez('Juiz da rodada: $juiz', icone: Icons.gavel_rounded);
+        return AvisoDaVez('Juiz da rodada: $juiz', icone: Desenho.juiz);
       case GamePhase.waitingForPlayers:
       case GamePhase.roundResult:
       case GamePhase.gameComplete:
@@ -313,14 +318,13 @@ class _SalaDeEspera extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Aguardando jogadores...', style: textos.headlineSmall),
+          Text('Chama a galera', style: textos.headlineSmall),
           const SizedBox(height: 4),
           Text(
             faltam > 0
-                ? 'São precisos ao menos $minimoDeJogadores para começar. '
-                    'Passe o código da sala: ${room.roomId}'
-                : 'Jogadores na sala: ${room.players.length}. '
-                    'Já dá para começar.',
+                ? '${faltam == 1 ? 'Falta 1 pessoa' : 'Faltam $faltam pessoas'}. '
+                    'A mesa já está com fome.'
+                : '${room.players.length} na mesa. Já dá para começar.',
             style: textos.bodyLarge?.copyWith(color: cores.tintaSuave),
           ),
           const SizedBox(height: 16),
@@ -352,7 +356,7 @@ class _SalaDeEspera extends StatelessWidget {
                           textoDoConvite(Uri.base, room.roomId),
                           'Convite copiado. Cole no grupo da galera.',
                         ),
-                        icon: const Icon(Icons.link_rounded),
+                        icon: const IconeFofo(Desenho.convite, tamanho: 24),
                         label: const Text('Copiar convite'),
                       ),
                     ),
@@ -366,7 +370,7 @@ class _SalaDeEspera extends StatelessWidget {
                       ),
                       onPressed: () =>
                           _copiar(context, room.roomId, 'Código copiado.'),
-                      icon: const Icon(Icons.copy_rounded),
+                      icon: const IconeFofo(Desenho.copiar, tamanho: 24),
                     ),
                   ],
                 ),
@@ -374,10 +378,7 @@ class _SalaDeEspera extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'Jogadores na sala: ${room.players.length}',
-            style: textos.titleMedium,
-          ),
+          Text('Na mesa', style: textos.titleMedium),
           // Espaço para o chapéu e o topete que saem da cabeça.
           const SizedBox(height: 24),
           Wrap(
@@ -392,20 +393,7 @@ class _SalaDeEspera extends StatelessWidget {
                   aoSortear: () => _sortearCarinha(context),
                 ),
               // Os lugares que ainda faltam para dar o mínimo.
-              for (var i = 0; i < faltam; i++)
-                Container(
-                  width: 62,
-                  height: 62,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: cores.superficie, width: 2),
-                  ),
-                  child: Icon(
-                    Icons.person_add_alt_1_rounded,
-                    size: 20,
-                    color: cores.tintaSuave,
-                  ),
-                ),
+              for (var i = 0; i < faltam; i++) const _LugarVazio(),
             ],
           ),
           if (meuId != null && room.players.any((p) => p.id == meuId)) ...[
@@ -414,7 +402,7 @@ class _SalaDeEspera extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: () => _sortearCarinha(context),
-                icon: const Icon(Icons.casino_rounded, size: 20),
+                icon: const IconeFofo(Desenho.dado, tamanho: 24),
                 label: const Text('Sortear outra carinha'),
               ),
             ),
@@ -442,7 +430,7 @@ class _SalaDeEspera extends StatelessWidget {
                     },
               child: Text(
                 faltam > 0
-                    ? 'Faltam $faltam para iniciar jogo'
+                    ? 'Falta${faltam == 1 ? '' : 'm'} $faltam para começar'
                     : 'Iniciar jogo',
               ),
             )
@@ -467,6 +455,8 @@ class _FimDeJogo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textos = Theme.of(context).textTheme;
+    final cores = Cores.de(context);
+    final eu = ref.watch(currentPlayerProvider);
     final winner = room.players.firstWhere(
       (p) => p.id == room.winnerId,
       orElse: () => room.players.first,
@@ -482,12 +472,44 @@ class _FimDeJogo extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              Text('Fim de jogo!', style: textos.titleLarge),
               Text(
-                'Vencedor: ${winner.name}',
-                style: textos.displaySmall,
+                'Fim de jogo',
+                style: textos.titleMedium?.copyWith(color: cores.tintaSuave),
               ),
-              Text('Pontos: ${winner.points}', style: textos.bodyLarge),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const _CoroaQueDerrete(),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          winner.id == eu?.id
+                              ? 'Você venceu.'
+                              : '${winner.name} venceu.',
+                          style: textos.headlineMedium,
+                        ),
+                        // Quem venceu se orgulha; o resto lamenta.
+                        Text(
+                          winner.id == eu?.id ? 'Que orgulho.' : 'Que pena.',
+                          style: textos.headlineMedium
+                              ?.copyWith(color: cores.destaque),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          winner.points == 1
+                              ? '1 ponto'
+                              : '${winner.points} pontos',
+                          style: textos.bodyLarge
+                              ?.copyWith(color: cores.tintaSuave),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               if (cartaFinal != null && preta != null) ...[
                 const SizedBox(height: 16),
                 CartaBranca(
@@ -585,6 +607,136 @@ class _JogadorNaEspera extends StatelessWidget {
                 ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Um lugar que ainda falta na mesa: um buraco escuro onde dois olhinhos
+/// esperam, e piscam de vez em quando.
+class _LugarVazio extends StatefulWidget {
+  const _LugarVazio();
+
+  @override
+  State<_LugarVazio> createState() => _LugarVazioState();
+}
+
+class _LugarVazioState extends State<_LugarVazio>
+    with SingleTickerProviderStateMixin {
+  late final _piscar = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 3600),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (movimentoReduzido(context)) {
+      _piscar.stop();
+    } else if (!_piscar.isAnimating) {
+      _piscar.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _piscar.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Cores.de(context);
+    final olho = Container(
+      width: 7,
+      height: 7,
+      decoration: BoxDecoration(
+        color: cores.destaque,
+        shape: BoxShape.circle,
+      ),
+    );
+    return Semantics(
+      label: 'Lugar vazio',
+      child: SizedBox(
+        width: 72,
+        child: Column(
+          children: [
+            Container(
+              width: 62,
+              height: 62,
+              decoration: BoxDecoration(
+                color: Color.lerp(cores.mesa, cores.cartaPreta, .45),
+                shape: BoxShape.circle,
+                border: Border.all(color: cores.superficie, width: 2),
+              ),
+              child: AnimatedBuilder(
+                animation: _piscar,
+                // Fecha os olhos num instante perto do fim de cada volta.
+                builder: (context, filho) => Transform.scale(
+                  scaleY: _piscar.value > .94 ? .15 : 1,
+                  child: filho,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [olho, const SizedBox(width: 8), olho],
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Vazio…',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: cores.tintaSuave,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A coroa de quem venceu: sorri e derrete devagar enquanto o confete cai.
+class _CoroaQueDerrete extends StatefulWidget {
+  const _CoroaQueDerrete();
+
+  @override
+  State<_CoroaQueDerrete> createState() => _CoroaQueDerreteState();
+}
+
+class _CoroaQueDerreteState extends State<_CoroaQueDerrete>
+    with SingleTickerProviderStateMixin {
+  late final _gotejo = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 5),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (movimentoReduzido(context)) {
+      _gotejo.value = 1;
+    } else if (_gotejo.value == 0 && !_gotejo.isAnimating) {
+      _gotejo.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _gotejo.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _gotejo,
+      builder: (context, _) => IconeFofo(
+        Desenho.coroa,
+        tamanho: 84,
+        cor: Cores.de(context).destaque,
+        gotejo: Curves.easeIn.transform(_gotejo.value),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'animacoes.dart';
 import 'tema.dart';
 
 /// Texto de carta: Figtree pesada, como impresso em papel cartão.
@@ -25,11 +26,20 @@ class CartaPreta extends StatelessWidget {
   final int pede;
   final List<String> respostas;
 
+  /// A primeira lacuna vazia abre um olho (para quem demora a escolher).
+  final bool olho;
+
+  /// Uma linha pequena embaixo da frase, como o "ainda acordado?" da
+  /// madrugada.
+  final String? rodape;
+
   const CartaPreta({
     super.key,
     required this.texto,
     this.pede = 1,
     this.respostas = const [],
+    this.olho = false,
+    this.rodape,
   });
 
   @override
@@ -40,10 +50,21 @@ class CartaPreta extends StatelessWidget {
     // Partes do texto entre lacunas; cada lacuna vira a resposta ou um traço.
     final partes = texto.split(_lacuna);
     final spans = <InlineSpan>[];
+    var olhoPosto = false;
     for (var i = 0; i < partes.length; i++) {
       spans.add(TextSpan(text: partes[i]));
       if (i < partes.length - 1) {
         final resposta = i < respostas.length ? respostas[i] : null;
+        if (resposta == null && olho && !olhoPosto) {
+          olhoPosto = true;
+          spans.add(
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: OlhoNaLacuna(cor: cores.tintaNaCartaPreta),
+            ),
+          );
+          continue;
+        }
         spans.add(
           resposta == null
               ? TextSpan(
@@ -72,7 +93,8 @@ class CartaPreta extends StatelessWidget {
 
     return Semantics(
       label: 'Carta preta: ${texto.replaceAll(_lacuna, 'lacuna')}'
-          '${pede > 1 ? '. Escolha $pede cartas.' : ''}',
+          '${pede > 1 ? '. Escolha $pede cartas.' : ''}'
+          '${rodape != null ? '. $rodape' : ''}',
       excludeSemantics: true,
       child: Container(
         width: double.infinity,
@@ -98,6 +120,18 @@ class CartaPreta extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text.rich(TextSpan(style: estilo, children: spans)),
+                  if (rodape != null) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      rodape!,
+                      style: GoogleFonts.figtree(
+                        color: cores.tintaSuave,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                   if (pede > 1) ...[
                     const SizedBox(height: 14),
                     Container(
@@ -354,4 +388,110 @@ class MaoEmLeque extends StatelessWidget {
       ),
     );
   }
+}
+
+/// O olho que se abre na lacuna da carta preta: a pálpebra sobe e a pupila
+/// vermelha olha de um lado para o outro, devagar.
+class OlhoNaLacuna extends StatefulWidget {
+  final Color cor;
+
+  const OlhoNaLacuna({super.key, required this.cor});
+
+  @override
+  State<OlhoNaLacuna> createState() => _OlhoNaLacunaState();
+}
+
+class _OlhoNaLacunaState extends State<OlhoNaLacuna>
+    with TickerProviderStateMixin {
+  late final _abrir = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  );
+  late final _olhar = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2600),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (movimentoReduzido(context)) {
+      _abrir.value = 1;
+      _olhar.value = .5;
+    } else if (!_abrir.isAnimating && _abrir.value == 0) {
+      _abrir.forward();
+      _olhar.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _abrir.dispose();
+    _olhar.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Cores.de(context);
+    return Container(
+      width: 66,
+      height: 26,
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: widget.cor, width: 2)),
+      ),
+      child: AnimatedBuilder(
+        animation: Listenable.merge([_abrir, _olhar]),
+        builder: (context, _) => CustomPaint(
+          painter: _PintorDoOlho(
+            abertura: Curves.easeOutBack.transform(_abrir.value),
+            olhar: Curves.easeInOut.transform(_olhar.value) * 2 - 1,
+            branco: widget.cor,
+            iris: cores.acao,
+            pupila: cores.cartaPreta,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PintorDoOlho extends CustomPainter {
+  final double abertura;
+  final double olhar;
+  final Color branco;
+  final Color iris;
+  final Color pupila;
+
+  const _PintorDoOlho({
+    required this.abertura,
+    required this.olhar,
+    required this.branco,
+    required this.iris,
+    required this.pupila,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = Offset(size.width / 2, size.height / 2);
+    final meiaLargura = size.width * .3;
+    final meiaAltura = size.height * .38 * abertura.clamp(0.0, 1.2);
+    if (meiaAltura <= .5) return;
+    final olho = Path()
+      ..moveTo(c.dx - meiaLargura, c.dy)
+      ..quadraticBezierTo(c.dx, c.dy - meiaAltura * 2, c.dx + meiaLargura, c.dy)
+      ..quadraticBezierTo(c.dx, c.dy + meiaAltura * 2, c.dx - meiaLargura, c.dy)
+      ..close();
+    canvas.drawPath(olho, Paint()..color = branco);
+    canvas.save();
+    canvas.clipPath(olho);
+    final centro = c + Offset(olhar * meiaLargura * .45, 0);
+    canvas.drawCircle(centro, size.height * .26, Paint()..color = iris);
+    canvas.drawCircle(centro, size.height * .11, Paint()..color = pupila);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_PintorDoOlho old) =>
+      old.abertura != abertura || old.olhar != olhar;
 }

@@ -1,3 +1,4 @@
+import 'package:cartaralho/ui/carinhas.dart';
 import 'package:cartaralho/ui/tema.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,6 +51,14 @@ void main() {
   test('os traços da carinha se leem sobre a cor do avatar', () {
     for (final (fundo, tinta) in coresDeJogador) {
       expect(contraste(tinta, fundo), greaterThanOrEqualTo(4.5));
+    }
+  });
+
+  test('na madrugada, os olhos fundos ainda aparecem na carinha desbotada', () {
+    // Olho é forma, não texto: basta 3:1.
+    for (final (fundo, tinta) in coresDeJogador) {
+      expect(contraste(tinta, PintorDeCarinha.desbotar(fundo)),
+          greaterThanOrEqualTo(3));
     }
   });
 }

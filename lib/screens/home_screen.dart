@@ -9,6 +9,8 @@ import 'join_room_screen.dart';
 import 'tutorial_screen.dart';
 import 'game_screen.dart';
 import '../ui/cartas.dart';
+import '../ui/icones.dart';
+import '../ui/jogadores.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 
@@ -103,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     children: [
                       TextButton.icon(
                         onPressed: () => abrirTutorial(context),
-                        icon: const Icon(Icons.help_outline_rounded, size: 20),
+                        icon: const IconeFofo(Desenho.ajuda, tamanho: 24),
                         label: const Text('Como jogar'),
                       ),
                       const Spacer(),
@@ -114,7 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const _CartasDaCapa(),
                   const SizedBox(height: 36),
                   Text(
-                    'Frases absurdas, completadas com as piores cartas da mão. '
+                    'Carinhas fofas. Cartas horríveis. '
                     'Cada um joga no seu celular.',
                     style: textos.titleMedium?.copyWith(
                       color: Cores.de(context).tintaSuave,
@@ -184,6 +186,23 @@ class _CartasDaCapa extends StatelessWidget {
               child: Transform.rotate(
                 angle: -0.06,
                 child: const CartaPreta(texto: 'O jogo de hoje é ____.'),
+              ),
+            ),
+            // Três carinhas espiam por trás da carta do nome.
+            Positioned(
+              left: 96,
+              top: 86,
+              child: Transform.rotate(
+                angle: 0.05,
+                child: const Row(
+                  children: [
+                    AvatarDeJogador(nome: 'Ana', indice: 0, tamanho: 52),
+                    SizedBox(width: 4),
+                    AvatarDeJogador(nome: 'Bia', indice: 1, tamanho: 52),
+                    SizedBox(width: 4),
+                    AvatarDeJogador(nome: 'Caio', indice: 2, tamanho: 52),
+                  ],
+                ),
               ),
             ),
             Positioned(
