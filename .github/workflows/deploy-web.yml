@@ -1,0 +1,49 @@
+name: Publicar web
+
+# Monta a web e publica em https://cartaralho.web.app a cada merge na main (o CI já
+# passou no PR) ou quando alguém dispara à mão na aba Actions.
+# Precisa do segredo FIREBASE_SERVICE_ACCOUNT_CARTARALHO (ver docs/FIREBASE.md); sem
+# ele o job monta a web e pula a publicação, avisando no resumo.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Em PR que mexe na publicação, só monta, para conferir que o workflow funciona.
+  pull_request:
+    paths:
+      - .github/workflows/deploy-web.yml
+      - firebase.json
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    env:
+      TEM_SEGREDO: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARTARALHO != '' }}
+      PUBLICA: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      - run: flutter build web --release
+      - name: Publicar no Firebase Hosting
+        if: env.TEM_SEGREDO == 'true' && env.PUBLICA == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARTARALHO }}
+          projectId: cartaralho
+          channelId: live
+      - name: Aviso sem segredo
+        if: env.TEM_SEGREDO != 'true' && env.PUBLICA == 'true'
+        run: >
+          echo "Publicação pulada: falta o segredo FIREBASE_SERVICE_ACCOUNT_CARTARALHO
+          (ver docs/FIREBASE.md)." >> "$GITHUB_STEP_SUMMARY"
