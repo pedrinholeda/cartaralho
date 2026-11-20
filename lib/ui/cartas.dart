@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'tema.dart';
@@ -194,19 +195,69 @@ class CartaBranca extends StatelessWidget {
     return Semantics(
       button: aoTocar != null,
       selected: selecionada,
+      // Leitor de tela e Enter no navegador acionam a carta por aqui.
+      onTap: aoTocar,
       label: [
         texto,
         if (autor != null) 'enviada por $autor',
         if (vencedora) 'vencedora',
       ].join(', '),
       excludeSemantics: true,
+      child:
+          aoTocar == null ? carta : _Tocavel(aoTocar: aoTocar!, child: carta),
+    );
+  }
+}
+
+/// Torna a carta tocável pelo dedo, pelo mouse e pelo teclado (Tab até ela,
+/// Enter ou Espaço para escolher), com um contorno amarelo quando ela tem o
+/// foco do teclado.
+class _Tocavel extends StatefulWidget {
+  final VoidCallback aoTocar;
+  final Widget child;
+
+  const _Tocavel({required this.aoTocar, required this.child});
+
+  @override
+  State<_Tocavel> createState() => _TocavelState();
+}
+
+class _TocavelState extends State<_Tocavel> {
+  bool _foco = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Cores.de(context);
+    return FocusableActionDetector(
+      mouseCursor: SystemMouseCursors.click,
+      // Na web o Flutter só liga Espaço ao "ativar"; Enter também tem que escolher.
+      shortcuts: const {
+        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+      },
+      onShowFocusHighlight: (v) => setState(() => _foco = v),
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            widget.aoTocar();
+            return null;
+          },
+        ),
+      },
       child: GestureDetector(
-        onTap: aoTocar,
+        onTap: widget.aoTocar,
         behavior: HitTestBehavior.opaque,
-        child: MouseRegion(
-          cursor:
-              aoTocar == null ? MouseCursor.defer : SystemMouseCursors.click,
-          child: carta,
+        child: DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Medidas.raioCarta + 3),
+            border: Border.all(
+              color: _foco ? cores.destaque : Colors.transparent,
+              width: 3,
+            ),
+          ),
+          child: widget.child,
         ),
       ),
     );
