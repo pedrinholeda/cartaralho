@@ -49,6 +49,16 @@ void main() {
     }
   });
 
+  test('sem preposição que vira contração antes da lacuna', () {
+    // As brancas trazem o artigo ("o cunhado"), então "fala de ____" vira
+    // "fala de o cunhado" em vez de "do cunhado".
+    final contrai =
+        RegExp('(^|[^a-zà-ú])(de|em|por|a) +____', caseSensitive: false);
+    for (final c in baralho.pretas) {
+      expect(c.text, isNot(matches(contrai)), reason: c.text);
+    }
+  });
+
   test('carta branca não termina em ponto final', () {
     for (final c in baralho.brancas) {
       expect(c.text, isNot(endsWith('.')), reason: c.text);
