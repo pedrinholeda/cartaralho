@@ -78,7 +78,8 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 ## Fase 3 — redesign (web primeiro)
 
 Deixar o jogo bonito e animado. Tudo testado no navegador, em tela de celular e de
-computador, no tema claro e no escuro, com print no PR.
+computador, com print no PR. A primeira versão (mesa vermelha, 0.4 e 0.5) foi refeita na
+fase 3b.
 
 - [x] **Identidade**: paleta e tipografia (vermelho, preto e branco dos logos, Archivo), logo
   escolhido (`docs/marca/logo-carta-escura.png`) e ícones da web e do Android gerados dele;
@@ -102,6 +103,29 @@ computador, no tema claro e no escuro, com print no PR.
 - [x] **Acessibilidade**: cartas, placar e carta preta com rótulo; cartas escolhidas pelo
   teclado (Tab até a carta, Enter ou Espaço), com contorno amarelo de foco; contraste das
   cores do tema conferido por teste (WCAG AA); animações respeitam "reduzir movimento"
+
+## Fase 3b — Noite de jogo
+
+A mesa vermelha ainda tinha cara de app Android básico: componentes padrão do Material,
+vermelho demais, amarelo berrante, mão em grade com metade da tela vazia e ninguém
+explicando o jogo. Entre três direções desenhadas, a escolhida foi a Noite de jogo
+([DESIGN.md](DESIGN.md)).
+
+- [x] **Mesa escura** com as cartas em destaque, vermelho só na ação e amarelo no juiz;
+  um tema só; contraste conferido por teste
+- [x] **Figtree** no lugar da Archivo; botões em frase normal, mais altos, que encolhem ao
+  apertar
+- [x] **Placar de avatares** com a inicial na cor de cada jogador e o juiz com anel amarelo
+- [x] **Aviso de quem é a vez** embaixo do placar
+- [x] **Frase montada ao vivo** na carta preta enquanto o jogador escolhe
+- [x] **Mão em leque** que se arrasta, com o botão de enviar fixo embaixo
+- [x] **Sala de espera** com o código num painel, convite em destaque e lugares vazios até o
+  mínimo
+- [x] **Tutorial** de três telas, na primeira visita e pelo "Como jogar" na capa e "?" no jogo
+- [x] Vibração leve ao escolher e enviar carta (no celular)
+- [ ] Dicas na primeira partida, apontando a mão e o botão de enviar
+- [ ] Ouvir e ajustar os sons (ninguém ouviu ainda)
+- [ ] Revisar o layout de duas colunas em tela larga com o visual novo
 
 ## Fase 4 — plataformas
 

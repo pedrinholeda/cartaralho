@@ -57,7 +57,7 @@ O plugin `com.google.gms.google-services` já está aplicado em `android/app/bui
 flutter run -d chrome
 ```
 
-A tela inicial deve mostrar os botões **Criar Sala** e **Entrar na Sala**. Se aparecer
+A tela inicial deve mostrar os botões **Criar sala** e **Entrar na sala**. Se aparecer
 **Erro ao conectar**, o login anônimo falhou: confira se ele está ativo no console e se
 `lib/firebase_options.dart` tem as opções da plataforma em que você está rodando. O log do
 navegador (ou o `flutter run`) mostra a mensagem do Firebase.

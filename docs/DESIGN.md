@@ -1,13 +1,13 @@
 # Design do Cartaralho
 
-O jogo acontece numa mesa. Tudo que se lê fica numa carta: a carta preta com a frase, as
-brancas com as respostas. A mesa é vermelha, a cor dos três logos em [`marca/`](marca), e é
-o único lugar onde o visual ousa; o resto fica quieto para as frases aparecerem.
+**Noite de jogo.** O jogo acontece numa mesa escura, como uma sala com a luz baixa no fim
+da festa. As cartas brilham em cima dela; o vermelho do logo aparece só onde há uma ação a
+fazer; o amarelo marca o juiz e quem ganhou. Tudo é arredondado, macio e responde ao toque.
 
 <p>
-  <img src="imagens/inicio.png" width="220" alt="Tela inicial: carta preta 'O jogo de hoje é ____.' e, inclinada embaixo, uma carta branca escrita Cartaralho, sobre a mesa vermelha">
-  <img src="imagens/escolha-2.png" width="220" alt="Mão do jogador numa carta Escolha 2: duas cartas brancas escolhidas com contorno preto e os números 1 e 2, e a frase montada acima">
-  <img src="imagens/resultado-escuro.png" width="220" alt="Resultado da rodada no tema escuro: a frase vencedora numa carta amarela com o nome de quem enviou, a outra numa carta clara">
+  <img src="imagens/inicio.png" width="200" alt="Capa: carta preta 'O jogo de hoje é ____.' com faixa vermelha e, inclinada embaixo, uma carta branca escrita Cartaralho, sobre a mesa escura; botões Criar sala em vermelho e Entrar na sala">
+  <img src="imagens/escolha-2.png" width="200" alt="Mão do jogador numa carta Escolha 2: a frase aparece montada na carta preta com as respostas em vermelho; embaixo, a mão em leque com duas cartas escolhidas, numeradas 1 e 2, e o botão Enviar cartas">
+  <img src="imagens/resultado.png" width="200" alt="Resultado da rodada: a frase vencedora numa carta amarela com o nome de quem enviou, a outra numa carta branca, e confete caindo">
 </p>
 
 ## Logo
@@ -19,71 +19,104 @@ ficam em `marca/` como registro. Os ícones do app (web e Android) saem dele com
 
 ## Princípios
 
-- **Carta é para ler, mesa é para estar.** Texto longo nunca fica direto na mesa: vai numa
-  carta. Na mesa só ficam títulos curtos e avisos.
-- **Uma ousadia só.** A mesa vermelha de ponta a ponta. Cartas, botões e placar ficam em
-  preto, branco e, raramente, amarelo.
-- **Amarelo quer dizer "é você" ou "ganhou".** Só o juiz da rodada e a carta vencedora usam
-  o amarelo do confete. Nada mais.
-- **Carta tem cara de carta.** Proporção de baralho (63 × 88 mm) na mão, cantos de 14 px,
-  sombra seca embaixo, como papel cartão em cima da mesa. Botão é redondo para não ser
-  confundido com carta.
+- **A carta é a estrela.** A mesa escura some e as cartas aparecem. Texto longo vai numa
+  carta; na mesa ficam só títulos curtos, avisos e o placar.
+- **Vermelho é ação.** O botão que faz o jogo andar, a carta escolhida e a resposta montada
+  na frase. Se algo é vermelho, dá para tocar ou foi você que escolheu.
+- **Amarelo quer dizer "é você" ou "ganhou".** O juiz da rodada e a carta vencedora.
+- **Sempre dá para saber de quem é a vez.** Um aviso curto embaixo do placar diz quem julga
+  e o que fazer agora.
+- **A frase pronta antes de enviar.** Enquanto o jogador escolhe, a resposta aparece em
+  vermelho dentro da carta preta.
 - **Movimento mostra o que mudou.** A carta escolhida sobe; as cartas novas entram na mão uma
-  a uma; as respostas viram de costas para frente quando o juiz vai escolher; a fase nova
-  entra com um fade curto; quem ganha leva confete. Nada se mexe sem motivo, e com "reduzir
+  a uma; as respostas viram para o juiz; a fase nova entra com um fade curto; quem ganha leva
+  confete; o botão encolhe um pouco ao ser apertado. Nada se mexe sem motivo, e com "reduzir
   movimento" ligado no sistema tudo aparece direto.
 
-## Tokens
+## Cores
 
-Em [`lib/ui/tema.dart`](../lib/ui/tema.dart), na extensão `Cores` do tema. Widget nenhum usa
-cor em hexadecimal: pede `Cores.de(context)`.
+Em [`lib/ui/tema.dart`](../lib/ui/tema.dart), na extensão `Cores` (`Cores.noite`). Widget
+nenhum usa cor em hexadecimal: pede `Cores.de(context)`. O tema é um só, escuro: a noite é a
+identidade do jogo, não uma preferência do sistema.
 
-| token | claro | escuro | uso |
-|---|---|---|---|
-| `mesa` | `#D7282F` | `#2B0B0E` | fundo de todas as telas |
-| `tintaNaMesa` | `#FFFFFF` | `#F4DADB` | texto e ícones sobre a mesa |
-| `carta` | `#FFFFFF` | `#ECECEC` | carta branca, campos de texto, ficha do placar |
-| `tintaNaCarta` | `#000000` | `#000000` | texto da carta branca |
-| `cartaPreta` | `#000000` | `#000000` | carta preta, botão principal, contorno da carta escolhida |
-| `tintaNaCartaPreta` | `#FFFFFF` | `#FFFFFF` | texto da carta preta e do botão |
-| `destaque` | `#FFC23A` | `#FFC23A` | juiz da rodada, carta vencedora |
+| token | cor | uso |
+|---|---|---|
+| `mesa` | `#1B1522` | fundo de todas as telas |
+| `superficie` | `#2A2233` | um degrau acima: painéis, avisos, campos, botão secundário |
+| `tintaNaMesa` | `#F3EEF7` | texto e ícones sobre a mesa |
+| `tintaSuave` | `#B9AFC4` | texto de apoio: legendas, dicas, nomes no placar |
+| `carta` | `#FFFFFF` | carta branca |
+| `tintaNaCarta` | `#16121A` | texto da carta branca |
+| `cartaPreta` | `#000000` | carta preta |
+| `tintaNaCartaPreta` | `#FFFFFF` | texto da carta preta |
+| `acao` | `#D7282F` | botão principal, carta escolhida, resposta na frase (o vermelho do logo) |
+| `tintaNaAcao` | `#FFFFFF` | texto no botão principal |
+| `destaque` | `#FFC23A` | juiz da rodada, carta vencedora, foco do teclado |
+| `tintaNoDestaque` | `#2B1A00` | texto sobre o amarelo |
 
-No tema escuro a mesa vira vinho e a carta branca perde um pouco de brilho, para não
-ofuscar numa sala escura; a carta preta continua preta.
+Cada jogador tem uma cor fixa no avatar, pela posição na sala (`coresDeJogador`): oito tons
+que aparecem bem na mesa escura e não se confundem com o vermelho da ação nem com o amarelo
+do juiz. [`test/ui/contraste_test.dart`](../test/ui/contraste_test.dart) confere que todo par
+de texto passa de 4,5:1 (WCAG AA), que bordas e foco passam de 3:1 e que a inicial de cada
+avatar se lê sobre a cor dele. Foi esse teste que trocou o vermelho mais claro da proposta
+(`#E5484D`, 3,9:1 com texto branco) pelo vermelho do logo.
 
-Medidas em `Medidas`: espaço de 8, margem de 20, raio de carta 14, raio de botão 28,
-largura máxima do conteúdo 560 (em tela larga o jogo fica centralizado).
+Medidas em `Medidas`: espaço de 8, margem de 20, raio de carta 16, de painel 22 e de botão
+18, largura máxima do conteúdo 560.
 
 ## Tipografia
 
-- **Archivo Narrow 700** nos títulos e no nome do jogo: estreita e pesada como as letras
-  dos logos.
-- **Archivo 800** no texto das cartas; **Archivo** normal no resto.
-
-As fontes vêm do Google Fonts pelo pacote `google_fonts`, baixadas no primeiro uso. O jogo
-já precisa de internet para falar com o Firebase, então isso não cria uma dependência nova.
+**Figtree** em tudo, pelo pacote `google_fonts`: arredondada e amigável. 800 nos títulos e
+no texto das cartas, 700 nos botões, 400 a 600 no resto. Os rótulos de botão vão em frase
+normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 
 ## Componentes
 
 [`lib/ui/cartas.dart`](../lib/ui/cartas.dart):
 
-- `CartaPreta`: a frase da rodada. A lacuna `____` vira uma linha longa; a carta que pede
-  mais de uma branca mostra "Escolha 2".
-- `CartaBranca`: carta da mão (proporção de baralho; sobe e ganha contorno preto quando
+- `CartaPreta`: a frase da rodada, com a faixa vermelha no topo. Recebe `respostas`, que
+  aparecem em vermelho no lugar das lacunas; a carta que pede mais de uma branca mostra
+  "Escolha 2".
+- `CartaBranca`: carta da mão (proporção de baralho; sobe e ganha contorno vermelho quando
   escolhida; mostra a ordem quando a preta pede mais de uma) ou carta larga com a frase
   inteira (mesa, juiz, resultado; com o nome de quem enviou e em amarelo quando venceu).
-- `GradeDeCartas`: a mão, com quantas cartas couberem lado a lado (duas no celular).
+  Funciona pelo toque, pelo mouse e pelo teclado (Tab, Enter ou Espaço), com contorno
+  amarelo de foco.
+- `MaoEmLeque`: a mão numa faixa horizontal que se arrasta para os lados, com as cartas
+  levemente inclinadas.
 
-<img src="imagens/confete.png" width="220" alt="Resultado da rodada com confete amarelo, branco e preto caindo sobre a carta vencedora">
+[`lib/ui/jogadores.dart`](../lib/ui/jogadores.dart):
+
+- `AvatarDeJogador`: círculo com a inicial na cor do jogador; o juiz ganha anel amarelo e
+  martelo.
+- `AvisoDaVez`: a pílula de "Juiz da rodada: Ana" ou "Sua vez de julgar".
 
 [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
 
 - `Entrada`: a carta sobe e aparece, uma vez, na primeira vez que é montada (uma `key` por
   carta faz só as novas animarem).
 - `Virada`: a carta começa de costas (verso preto com borda da cor da mesa) e vira.
-- `Confete`: papéis amarelos, brancos e pretos caindo por cima da tela, sem capturar toque.
+- `Confete`: papéis amarelos, brancos e vermelhos caindo por cima da tela, sem capturar
+  toque.
 - `movimentoReduzido(context)`: verdadeiro quando o sistema pede menos movimento; os três
   componentes já respeitam.
+
+## Telas
+
+| tela | o que tem |
+|---|---|
+| Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo; "Criar sala" e "Entrar na sala" embaixo |
+| Tutorial ([`tutorial_screen.dart`](../lib/screens/tutorial_screen.dart)) | três telas (chame a galera, complete a frase, o juiz escolhe) com as cartas de verdade num exemplo; abre sozinho na primeira visita e pelo "Como jogar" ou pelo "?" |
+| Sala de espera | código num painel com "Copiar convite" e copiar código; avatares de quem entrou e lugares vazios até o mínimo; o botão diz quantos faltam |
+| Jogo | placar de avatares; aviso de quem é a vez; carta preta com a frase montada; mão em leque e botão fixo embaixo |
+| Juiz e mesa | as frases viram uma a uma; o juiz toca e confirma |
+| Resultado | a frase vencedora em amarelo, com confete, e o que cada um jogou |
+
+<img src="imagens/tutorial.png" width="200" alt="Tutorial, segunda tela: carta preta com a frase montada e três cartas brancas em leque, a do meio escolhida; embaixo, Complete a frase e o botão Próximo">
+<img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: código da sala num painel, botão Copiar convite em vermelho, o avatar de quem entrou e dois lugares vazios">
+
+Em tela larga (900 px ou mais) o jogo vira duas colunas: carta preta e placar à esquerda, a
+jogada à direita.
 
 ## Som
 
@@ -100,28 +133,21 @@ Cinco efeitos curtos, em `assets/sons/`, gerados por [`tool/gerar_sons.mjs`](../
 
 O botão de som fica na capa e na barra de cima da tela de jogo; a escolha é lembrada entre
 partidas (`shared_preferences`, localStorage na web). Na web o navegador só deixa tocar
-depois do primeiro toque na página, e todo som vem depois de "Criar Sala" ou "Entrar na
-Sala". Se o navegador recusar, o jogo segue em silêncio.
-
-## Tela larga e teclado
-
-- A partir de 900 px (`Medidas.larguraDuasColunas`) a tela de jogo vira duas colunas: carta
-  preta e placar à esquerda, a jogada à direita.
-- Carta tocável funciona pelo teclado: Tab chega nela, Enter ou Espaço escolhe, e o foco
-  aparece num contorno amarelo (`destaque`). `test/ui/contraste_test.dart` confere que
-  cada par de cores do tema passa de 4,5:1 e que o contorno passa de 3:1 sobre a mesa.
+depois do primeiro toque na página, e todo som vem depois de "Criar sala" ou "Entrar na
+sala". Se o navegador recusar, o jogo segue em silêncio. No celular, escolher e enviar
+carta também vibram de leve.
 
 ## Decisões
 
+- **Por que escuro.** As cartas são brancas e pretas; numa mesa escura elas são o que mais
+  aparece, e o logo já é uma carta sobre fundo preto. A mesa vermelha das versões 0.4 e 0.5
+  cansava a vista e deixava o amarelo do juiz berrante.
+- **Por que um tema só.** Um tema claro precisaria de outra paleta inteira e outra revisão
+  de contraste para pouco ganho; a noite é a identidade.
 - **Por que não preto e branco com Helvetica.** É o visual de outro jogo de cartas muito
-  conhecido; o Cartaralho precisa ser reconhecido como ele mesmo. A mesa vermelha e a
-  Archivo fazem isso.
-- **Por que não feltro verde.** É mesa de cassino, não de festa em casa.
-- **Sombra seca, sem desfoque.** Lembra papel em cima de mesa e não o cartão flutuante
-  genérico de app.
+  conhecido; o Cartaralho precisa ser reconhecido como ele mesmo.
+- **A mão em leque, não em grade.** Na grade cada carta ocupava meia tela e era quase toda
+  espaço vazio; no leque cabem mais cartas, o polegar arrasta, e a carta preta continua à
+  vista em cima.
 - **Brancas em minúscula.** O texto da carta branca vai para o meio da frase; o jogo põe a
   maiúscula quando ela abre a frase (`fraseCompleta`).
-
-## Pendências
-
-A fase 3 do [roadmap](ROADMAP.md) está feita.
