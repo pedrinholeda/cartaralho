@@ -250,6 +250,21 @@ GameRoom entrarNaSala(GameRoom sala, Player jogador) {
   return sala.copyWith(players: [...sala.players, jogador]);
 }
 
+/// Troca a carinha do jogador pela próxima do sorteio. Vale só na sala de
+/// espera: na partida, a carinha é como o grupo reconhece cada um.
+GameRoom sortearOutraCarinha(GameRoom sala, String jogadorId) {
+  if (sala.phase != GamePhase.waitingForPlayers) {
+    throw JogadaInvalida('A carinha só muda antes de o jogo começar');
+  }
+  if (!sala.players.any((p) => p.id == jogadorId)) {
+    throw JogadaInvalida('Você não está nesta sala');
+  }
+  return sala.copyWith(players: [
+    for (final p in sala.players)
+      p.id == jogadorId ? p.copyWith(avatar: p.avatar + 1) : p,
+  ]);
+}
+
 /// Letras e números sem os que se confundem ao ditar ou ler (0/O, 1/I/L).
 const _alfabetoDoCodigo = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 

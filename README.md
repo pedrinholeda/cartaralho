@@ -40,6 +40,7 @@ passa a vez de juiz.
 - Entrada só com o código e um nome: sem cadastro, o login é anônimo.
 
 **Partida**
+- Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
 - Sete baralhos para misturar: Básico, Brasilidades, Grupo da família, Firma, Rolê,
   Internet e Amor e desamor, com mais de 600 cartas ao todo.
 - Lista de jogadores com os pontos e quem é o juiz da vez.

@@ -353,6 +353,25 @@ void main() {
     });
   });
 
+  group('sortearOutraCarinha', () {
+    test('passa para a próxima carinha só de quem pediu', () {
+      final s = sortearOutraCarinha(salaDeEspera(), 'p1');
+      expect([for (final p in s.players) p.avatar], [0, 1, 0]);
+      expect(sortearOutraCarinha(s, 'p1').players[1].avatar, 2);
+    });
+
+    test('depois que o jogo começou, recusa', () {
+      final s = iniciarJogo(salaDeEspera(), 'p0', random: Random(1));
+      expect(
+          () => sortearOutraCarinha(s, 'p1'), throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('quem não está na sala não troca nada', () {
+      expect(() => sortearOutraCarinha(salaDeEspera(), 'intruso'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
   group('gerarCodigoSala', () {
     test('tem 6 caracteres do alfabeto sem ambíguos', () {
       final rng = Random(3);

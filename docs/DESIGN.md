@@ -57,8 +57,8 @@ identidade do jogo, não uma preferência do sistema.
 Cada jogador tem uma cor fixa no avatar, pela posição na sala (`coresDeJogador`): oito tons
 que aparecem bem na mesa escura e não se confundem com o vermelho da ação nem com o amarelo
 do juiz. [`test/ui/contraste_test.dart`](../test/ui/contraste_test.dart) confere que todo par
-de texto passa de 4,5:1 (WCAG AA), que bordas e foco passam de 3:1 e que a inicial de cada
-avatar se lê sobre a cor dele. Foi esse teste que trocou o vermelho mais claro da proposta
+de texto passa de 4,5:1 (WCAG AA), que bordas e foco passam de 3:1 e que os traços de cada
+carinha se leem sobre a cor do avatar. Foi esse teste que trocou o vermelho mais claro da proposta
 (`#E5484D`, 3,9:1 com texto branco) pelo vermelho do logo.
 
 Medidas em `Medidas`: espaço de 8, margem de 20, raio de carta 16, de painel 22 e de botão
@@ -87,8 +87,19 @@ normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 
 [`lib/ui/jogadores.dart`](../lib/ui/jogadores.dart):
 
-- `AvatarDeJogador`: círculo com a inicial na cor do jogador; o juiz ganha anel amarelo e
-  martelo.
+- `AvatarDeJogador`: a carinha do jogador num círculo da cor dele; o juiz ganha anel
+  amarelo e martelo.
+
+[`lib/ui/carinhas.dart`](../lib/ui/carinhas.dart): cada jogador tem uma carinha, desenhada
+pelo próprio jogo, sem imagem nem biblioteca. São oito olhos (pontos, sono, feliz, vesgo,
+arregalados, piscando, apaixonado, malandro), oito bocas (sorriso, risada, susto, língua de
+fora, reta, enjoada, dentuça, de lado), oito enfeites (nada, óculos escuros, boné, chapéu de
+festa, bigode, fone, topete, gravata-borboleta) e bochechas ou não: 1.024 carinhas. Os
+traços vão na tinta do jogador, e só a língua e as bochechas pegam o vermelho. A carinha sai
+do id do jogador e de quantas vezes ele pediu outra (`Player.avatar`), então é a mesma em
+todos os aparelhos; na sala de espera, tocar na própria carinha ou em "Sortear outra
+carinha" troca, com um pulinho. Chapéu, topete, fone e aba do boné saem do círculo, e quem
+mostra o avatar deixa espaço em cima.
 - `AvisoDaVez`: a pílula de "Juiz da rodada: Ana" ou "Sua vez de julgar".
 
 [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
@@ -107,13 +118,13 @@ normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 |---|---|
 | Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo; "Criar sala" e "Entrar na sala" embaixo |
 | Tutorial ([`tutorial_screen.dart`](../lib/screens/tutorial_screen.dart)) | três telas (chame a galera, complete a frase, o juiz escolhe) com as cartas de verdade num exemplo; abre sozinho na primeira visita e pelo "Como jogar" ou pelo "?" |
-| Sala de espera | código num painel com "Copiar convite" e copiar código; avatares de quem entrou e lugares vazios até o mínimo; o botão diz quantos faltam |
+| Sala de espera | código num painel com "Copiar convite" e copiar código; a carinha e o nome de quem entrou, "Sortear outra carinha" e lugares vazios até o mínimo; o botão diz quantos faltam |
 | Jogo | placar de avatares; aviso de quem é a vez; carta preta com a frase montada; mão em leque e botão fixo embaixo |
 | Juiz e mesa | as frases viram uma a uma; o juiz toca e confirma |
 | Resultado | a frase vencedora em amarelo, com confete, e o que cada um jogou |
 
 <img src="imagens/tutorial.png" width="200" alt="Tutorial, segunda tela: carta preta com a frase montada e três cartas brancas em leque, a do meio escolhida; embaixo, Complete a frase e o botão Próximo">
-<img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: código da sala num painel, botão Copiar convite em vermelho, o avatar de quem entrou e dois lugares vazios">
+<img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: código da sala num painel, botão Copiar convite em vermelho e as carinhas de Você, Bia e Caio, uma piscando de gravata-borboleta, outra de chapéu de festa e língua de fora; embaixo, Sortear outra carinha">
 
 Em tela larga (900 px ou mais) o jogo vira duas colunas: carta preta e placar à esquerda, a
 jogada à direita.

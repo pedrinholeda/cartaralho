@@ -83,6 +83,14 @@ class FirebaseService {
     );
   }
 
+  static Future<void> sortearOutraCarinha(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(
+      roomId,
+      (sala) => regras.sortearOutraCarinha(sala, user.uid),
+    );
+  }
+
   static Stream<GameRoom?> watchRoom(String roomId) {
     return _firestore
         .collection('rooms')
