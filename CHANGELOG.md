@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.0](https://github.com/pedrinholeda/cartaralho/compare/v0.7.0...v0.8.0) (2026-11-20)
+
+
+### Novidades
+
+* **sala:** sortear outra carinha na sala de espera ([fc6ef2b](https://github.com/pedrinholeda/cartaralho/commit/fc6ef2b88ccb226e999e53a511b6a89ac702fe9d))
+* **ui:** carinhas sorteadas no lugar da inicial ([43ea1c6](https://github.com/pedrinholeda/cartaralho/commit/43ea1c615ad28648a9c7c97bea57d1b83f9c6cce))
+* **ui:** fofo por fora, ácido por dentro ([5363026](https://github.com/pedrinholeda/cartaralho/commit/536302692fda2e788c54b99c9778fd3327fd24d5))
+* **ui:** ícones desenhados no traço das carinhas ([907145d](https://github.com/pedrinholeda/cartaralho/commit/907145da5c7ca0cdfc66cda613882e15d08d5d30))
+
 ## [0.7.0](https://github.com/pedrinholeda/cartaralho/compare/v0.6.0...v0.7.0) (2026-11-20)
 
 
