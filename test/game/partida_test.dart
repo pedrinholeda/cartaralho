@@ -6,12 +6,22 @@ import 'package:cartaralho/models/game_room.dart';
 import 'package:cartaralho/models/player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../apoio.dart';
+
 /// Configuração da sala, troca de mão e jogar de novo.
 
-GameRoom salaCom(int jogadores, {int maxPoints = 5, int handSize = 5}) {
+final baralho = baralhoDoArquivo();
+
+GameRoom salaCom(
+  int jogadores, {
+  int maxPoints = 5,
+  int handSize = 5,
+  Baralho? deck,
+}) {
   var sala = novaSala(
     roomId: 'ABC234',
     anfitriao: Player(id: 'p0', name: 'Ana'),
+    baralho: deck ?? baralho,
     maxPoints: maxPoints,
     handSize: handSize,
   );
@@ -34,8 +44,8 @@ void main() {
       expect(sala.maxPoints, 7);
       expect(sala.handSize, 7);
       expect(sala.players.single.isHost, isTrue);
-      expect(sala.whiteCards, hasLength(cartasBrancas().length));
-      expect(sala.blackCards, hasLength(cartasPretas().length));
+      expect(sala.whiteCards, hasLength(baralho.brancas.length));
+      expect(sala.blackCards, hasLength(baralho.pretas.length));
     });
 
     test('recusa valores fora das opções', () {
@@ -69,9 +79,14 @@ void main() {
     });
 
     test('com gente demais para o baralho, explica o que fazer', () {
-      // 48 brancas não dão 7 cartas para 8 jogadores.
+      // Um baralho de 50 brancas não dá 7 cartas para 8 jogadores.
+      final pequeno = Baralho(
+        nome: 'pequeno',
+        pretas: baralho.pretas,
+        brancas: baralho.brancas.take(50).toList(),
+      );
       expect(
-        () => iniciarJogo(salaCom(8, handSize: 7), 'p0'),
+        () => iniciarJogo(salaCom(8, handSize: 7, deck: pequeno), 'p0'),
         throwsA(isA<JogadaInvalida>()
             .having((e) => e.mensagem, 'mensagem', contains('Diminua a mão'))),
       );
@@ -147,9 +162,9 @@ void main() {
     test('todas as cartas voltam ao baralho', () {
       final denovo = jogarDeNovo(fim, 'p0');
       expect(denovo.whiteCards.map((c) => c.id).toSet(),
-          cartasBrancas().map((c) => c.id).toSet());
+          baralho.brancas.map((c) => c.id).toSet());
       expect(denovo.blackCards.map((c) => c.id).toSet(),
-          cartasPretas().map((c) => c.id).toSet());
+          baralho.pretas.map((c) => c.id).toSet());
     });
 
     test('dá para iniciar de novo em seguida', () {

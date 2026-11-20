@@ -17,6 +17,9 @@ const tamanhoDaMao = 5;
 const opcoesDePontos = [3, 5, 7, 10];
 const opcoesDeMao = [5, 7];
 
+/// Máximo de jogadores numa sala.
+const maximoDeJogadores = 8;
+
 /// Mínimo de jogadores para começar: um juiz e ao menos dois que jogam cartas.
 const minimoDeJogadores = 3;
 
@@ -215,7 +218,13 @@ GameRoom proximaRodada(GameRoom sala, String quemPediu) {
 String fraseCompleta(GameCard preta, List<GameCard> brancas) {
   var i = 0;
   final frase = preta.text.replaceAllMapped(RegExp('_{2,}'), (m) {
-    return i < brancas.length ? brancas[i++].text : m[0]!;
+    if (i >= brancas.length) return m[0]!;
+    final texto = brancas[i++].text;
+    // As brancas são escritas em minúscula para caber no meio da frase; no
+    // começo dela (ou depois de . ? ! ou de aspas abrindo), ganham maiúscula.
+    final antes = preta.text.substring(0, m.start).trimRight();
+    final abreFrase = antes.isEmpty || '.?!"'.contains(antes[antes.length - 1]);
+    return abreFrase ? _maiuscula(texto) : texto;
   });
   if (i < brancas.length) {
     return '$frase ${brancas.skip(i).map((c) => c.text).join(' / ')}';
@@ -258,6 +267,7 @@ String gerarCodigoSala({Random? random, int tamanho = 6}) {
 GameRoom novaSala({
   required String roomId,
   required Player anfitriao,
+  required Baralho baralho,
   int maxPoints = 5,
   int handSize = tamanhoDaMao,
 }) {
@@ -270,8 +280,8 @@ GameRoom novaSala({
   return GameRoom(
     roomId: roomId,
     players: [anfitriao.copyWith(isHost: true, points: 0)],
-    blackCards: cartasPretas(),
-    whiteCards: cartasBrancas(),
+    blackCards: baralho.pretas,
+    whiteCards: baralho.brancas,
     currentJudgeId: anfitriao.id,
     maxPoints: maxPoints,
     handSize: handSize,
@@ -334,3 +344,6 @@ GameRoom jogarDeNovo(GameRoom sala, String quemPediu) {
     handSize: sala.handSize,
   );
 }
+
+String _maiuscula(String texto) =>
+    texto.isEmpty ? texto : texto[0].toUpperCase() + texto.substring(1);

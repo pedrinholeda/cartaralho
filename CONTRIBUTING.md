@@ -52,6 +52,13 @@ Firebase: mudança no fluxo do jogo precisa de uma partida de teste com três jo
 - Comentário explica **por quê**, não o quê.
 - Sem dependência nova sem motivo, e o motivo no PR.
 
+## Cartas
+
+Quer sugerir carta? Edite [`assets/baralhos/basico.json`](assets/baralhos/basico.json) e rode
+`flutter test test/game/baralho_test.dart`. Carta preta tem de uma a três lacunas `____`;
+carta branca começa com minúscula (o jogo põe a maiúscula quando ela abre a frase) e não
+termina em ponto. Humor ácido é bem-vindo; ataque a grupos de pessoas, não.
+
 ## Docs
 
 Mudou comportamento ou configuração? Atualize no mesmo PR o README, o arquivo certo em

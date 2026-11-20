@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:cartaralho/game/baralho.dart';
 import 'package:cartaralho/game/regras.dart';
 import 'package:cartaralho/models/card.dart';
 import 'package:cartaralho/models/game_room.dart';
@@ -305,6 +304,22 @@ void main() {
             [branca('Pão'), branca('pastel')]),
         'Pão e pastel são iguais.',
       );
+    });
+
+    test('a branca ganha maiúscula quando a lacuna abre a frase', () {
+      expect(fraseCompleta(preta('____ é tudo.'), [branca('pizza fria')]),
+          'Pizza fria é tudo.');
+      expect(fraseCompleta(preta('Quem chegou? ____.'), [branca('o tio')]),
+          'Quem chegou? O tio.');
+      expect(fraseCompleta(preta('Ele gritou: "____!"'), [branca('socorro')]),
+          'Ele gritou: "Socorro!"');
+    });
+
+    test('no meio da frase a branca fica como foi escrita', () {
+      expect(
+          fraseCompleta(
+              preta('Vi ____ e ____.'), [branca('o tio'), branca('TikTok')]),
+          'Vi o tio e TikTok.');
     });
 
     test('pergunta sem lacuna recebe a resposta no fim', () {

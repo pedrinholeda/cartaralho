@@ -92,7 +92,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/firebase_options.dart`](../lib/firebase_options.dart) | Opções do Firebase por plataforma, geradas pelo FlutterFire CLI. |
 | [`lib/models/`](../lib/models) | `GameCard`, `Player` e `GameRoom`, imutáveis, com `fromJson`/`toJson`/`copyWith`. `GamePhase` lista as fases da partida. |
 | [`lib/game/regras.dart`](../lib/game/regras.dart) | As regras como funções puras: `novaSala`, `entrarNaSala`, `iniciarJogo`, `enviarCarta`, `trocarMao`, `escolherVencedor`, `proximaRodada`, `jogarDeNovo`, o sorteio do código da sala e `fraseCompleta` (a carta preta com as brancas no lugar das lacunas). Recebem a sala e devolvem a sala nova, ou lançam `JogadaInvalida`. |
-| [`lib/game/baralho.dart`](../lib/game/baralho.dart) | O baralho com que toda sala começa (19 pretas, 4 delas "Escolha 2" ou "Escolha 3"; 48 brancas; até 8 jogadores). |
+| [`lib/game/baralho.dart`](../lib/game/baralho.dart) | Lê o baralho do JSON (`Baralho.fromJsonString`). |
+| [`assets/baralhos/basico.json`](../assets/baralhos/basico.json) | As cartas com que toda sala começa: 31 pretas (6 de duas ou três lacunas) e 82 brancas, para até 8 jogadores com mão de 7. As regras de escrita estão no próprio arquivo e em `test/game/baralho_test.dart`. |
 | [`lib/services/firebase_service.dart`](../lib/services/firebase_service.dart) | Login anônimo, criar sala (conferindo numa transação que o código está livre) e o stream da sala. Entrar na sala e as jogadas passam por `_alterarSala`, que roda a regra numa transação. |
 | [`lib/providers/auth_provider.dart`](../lib/providers/auth_provider.dart) | Stream do usuário logado. |
 | [`lib/providers/game_provider.dart`](../lib/providers/game_provider.dart) | Código da sala atual, stream da sala e o que deriva dela: jogador atual, se é anfitrião, se é juiz, fase. |

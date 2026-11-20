@@ -64,14 +64,13 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 - [x] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou
   só carta ruim
 - [x] **Jogar de novo** com o mesmo grupo, zerando o placar, em vez de "Voltar ao Menu"
-- [ ] **Revisão do baralho**: mais cartas pretas (com 15, elas se repetem depois de 15
-  rodadas), cartas brancas mais engraçadas e menos genéricas ("Música", "Tecnologia"),
-  e regras de texto (uma lacuna por espaço, sem ponto final duplo, tamanho máximo). As
-  brancas começam com maiúscula e ficam estranhas no meio da frase ("meu problema é Uma
-  planilha de Excel"): escrever em minúscula, salvo nome próprio, e pôr maiúscula quando a
-  lacuna abre a frase
-- [ ] Baralho num arquivo JSON em `assets/`, fora do código, validado por teste;
-  baralhos customizados depois
+- [x] **Revisão do baralho**: 31 pretas (eram 15 e se repetiam depois de 15 rodadas), 82
+  brancas menos genéricas, escritas em minúscula salvo nome próprio, com maiúscula automática
+  quando a lacuna abre a frase (antes saía "meu problema é Uma planilha de Excel"). Regras
+  do arquivo conferidas por teste; tamanho máximo do texto ainda não
+- [x] **Baralho num arquivo JSON** em `assets/baralhos/basico.json`, fora do código, validado
+  por teste
+- [ ] Baralhos customizados: escolher o baralho ao criar a sala, e depois criar o próprio
 
 ## Fase 3 — redesign (web primeiro)
 
