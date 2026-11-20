@@ -34,6 +34,8 @@ passa a vez de juiz.
 **Partida**
 - Lista de jogadores com os pontos e quem é o juiz da vez.
 - Cinco cartas brancas na mão, completadas a cada rodada.
+- Cartas pretas com duas ou três lacunas pedem duas ou três brancas, na ordem, e a frase
+  aparece montada antes de enviar.
 - A vez de juiz passa de jogador em jogador, e a rodada só vai para o juiz quando todos
   enviaram a carta.
 - As cartas aparecem já encaixadas na frase, numa ordem sorteada para o juiz não saber quem

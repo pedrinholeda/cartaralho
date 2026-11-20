@@ -48,8 +48,8 @@ class _RoundResultWidgetState extends State<RoundResultWidget> {
     final vencedorId = room.lastRoundWinnerId;
     final juiz = _nome(room.currentJudgeId ?? '');
     String frase(String id) => preta == null
-        ? room.submittedCards[id]!.text
-        : fraseCompleta(preta, [room.submittedCards[id]!]);
+        ? room.submittedCards[id]!.map((c) => c.text).join(' / ')
+        : fraseCompleta(preta, room.submittedCards[id]!);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),

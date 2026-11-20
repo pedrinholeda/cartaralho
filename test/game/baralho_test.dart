@@ -19,13 +19,15 @@ void main() {
     expect(brancas.every((c) => c.type == CardType.white), isTrue);
   });
 
-  test('toda carta preta tem exatamente uma lacuna', () {
-    // O jogo só aceita uma carta branca por jogador. Uma carta preta com dois
-    // ou três espaços não teria como ser respondida até as cartas "Escolha 2"
-    // existirem (docs/ROADMAP.md, fase 2).
+  test('toda carta preta pede de uma a três brancas, e cabe na mão', () {
     for (final c in cartasPretas()) {
-      expect(RegExp('____').allMatches(c.text), hasLength(1), reason: c.text);
+      expect(c.pick, inInclusiveRange(1, 3), reason: c.text);
+      expect(c.pick, lessThanOrEqualTo(tamanhoDaMao), reason: c.text);
     }
+  });
+
+  test('há cartas "Escolha 2" no baralho', () {
+    expect(cartasPretas().where((c) => c.pick > 1), isNotEmpty);
   });
 
   test('o texto das cartas brancas não se repete', () {

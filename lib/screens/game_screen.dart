@@ -261,7 +261,7 @@ class GameScreen extends ConsumerWidget {
           if (cartaFinal != null && preta != null) ...[
             const SizedBox(height: 16),
             Text(
-              '"${fraseCompleta(preta, [cartaFinal])}"',
+              '"${fraseCompleta(preta, cartaFinal)}"',
               style: Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),

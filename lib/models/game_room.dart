@@ -35,8 +35,9 @@ class GameRoom {
   /// Mão de cada jogador, pelo id.
   final Map<String, List<GameCard>> hands;
 
-  /// Carta enviada na rodada atual, pelo id de quem enviou.
-  final Map<String, GameCard> submittedCards;
+  /// Cartas enviadas na rodada atual, na ordem das lacunas, pelo id de quem
+  /// enviou.
+  final Map<String, List<GameCard>> submittedCards;
 
   /// Ids de quem enviou, na ordem sorteada em que as cartas aparecem para o
   /// juiz e para a mesa. Vazio até todos enviarem.
@@ -67,7 +68,7 @@ class GameRoom {
 
   /// As cartas enviadas na ordem em que aparecem na mesa, com o id de quem
   /// enviou. Segue [revealOrder]; antes do sorteio, a ordem do mapa.
-  List<MapEntry<String, GameCard>> get cardsOnTable {
+  List<MapEntry<String, List<GameCard>>> get cardsOnTable {
     final ordem =
         revealOrder.isNotEmpty ? revealOrder : submittedCards.keys.toList();
     return [
@@ -98,10 +99,16 @@ class GameRoom {
       currentJudgeId: json['currentJudgeId'] as String?,
       hands: (json['hands'] as Map<String, dynamic>? ?? {})
           .map((key, value) => MapEntry(key, cartas(value))),
+      // Até a 0.2 cada jogador enviava uma carta só, gravada como mapa; daí em
+      // diante é uma lista na ordem das lacunas. Lê os dois formatos.
       submittedCards:
           (json['submittedCards'] as Map<String, dynamic>? ?? {}).map(
-        (key, value) =>
-            MapEntry(key, GameCard.fromJson(value as Map<String, dynamic>)),
+        (key, value) => MapEntry(
+          key,
+          value is List
+              ? cartas(value)
+              : [GameCard.fromJson(value as Map<String, dynamic>)],
+        ),
       ),
       revealOrder: (json['revealOrder'] as List<dynamic>? ?? []).cast<String>(),
       lastRoundWinnerId: json['lastRoundWinnerId'] as String?,
@@ -122,8 +129,9 @@ class GameRoom {
       'hands': hands.map(
         (key, value) => MapEntry(key, value.map((c) => c.toJson()).toList()),
       ),
-      'submittedCards':
-          submittedCards.map((key, value) => MapEntry(key, value.toJson())),
+      'submittedCards': submittedCards.map(
+        (key, value) => MapEntry(key, value.map((c) => c.toJson()).toList()),
+      ),
       'revealOrder': revealOrder,
       'lastRoundWinnerId': lastRoundWinnerId,
       'winnerId': winnerId,
@@ -140,7 +148,7 @@ class GameRoom {
     GamePhase? phase,
     String? currentJudgeId,
     Map<String, List<GameCard>>? hands,
-    Map<String, GameCard>? submittedCards,
+    Map<String, List<GameCard>>? submittedCards,
     List<String>? revealOrder,
     String? lastRoundWinnerId,
     String? winnerId,

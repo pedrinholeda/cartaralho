@@ -95,11 +95,14 @@ class FirebaseService {
     await _alterarSala(roomId, (sala) => regras.iniciarJogo(sala, user.uid));
   }
 
-  static Future<void> submitWhiteCard(String roomId, String cardId) async {
+  static Future<void> submitWhiteCards(
+    String roomId,
+    List<String> cardIds,
+  ) async {
     final user = _usuarioLogado();
     await _alterarSala(
       roomId,
-      (sala) => regras.enviarCarta(sala, user.uid, cardId),
+      (sala) => regras.enviarCarta(sala, user.uid, cardIds),
     );
   }
 

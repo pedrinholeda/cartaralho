@@ -47,7 +47,7 @@ void main() {
           currentJudgeId: 'u1',
           phase: GamePhase.judgeChoosing,
           submittedCards: {
-            'u2': GameCard(id: 'w2', text: 'Café', type: CardType.white),
+            'u2': [GameCard(id: 'w2', text: 'Café', type: CardType.white)],
           },
           hands: {
             'u2': [GameCard(id: 'w3', text: 'TikTok', type: CardType.white)],
@@ -65,7 +65,7 @@ void main() {
       expect(lida.whiteCards.single.id, 'w1');
       expect(lida.phase, GamePhase.judgeChoosing);
       expect(lida.currentJudgeId, 'u1');
-      expect(lida.submittedCards['u2']!.text, 'Café');
+      expect(lida.submittedCards['u2']!.single.text, 'Café');
       expect(lida.hands['u2']!.single.text, 'TikTok');
       expect(lida.lastRoundWinnerId, 'u2');
       expect(lida.revealOrder, ['u2']);
@@ -75,6 +75,14 @@ void main() {
     test('fase desconhecida volta para a espera', () {
       final json = sala().toJson()..['phase'] = 'faseQueNaoExiste';
       expect(GameRoom.fromJson(json).phase, GamePhase.waitingForPlayers);
+    });
+
+    test('lê cartas enviadas no formato antigo, uma carta por jogador', () {
+      final json = sala().toJson()
+        ..['submittedCards'] = {
+          'u2': {'id': 'w2', 'text': 'Café', 'type': 'white'},
+        };
+      expect(GameRoom.fromJson(json).submittedCards['u2']!.single.text, 'Café');
     });
 
     test('sem submittedCards no documento, a sala lê um mapa vazio', () {

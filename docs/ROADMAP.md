@@ -47,12 +47,9 @@ Legenda: `[ ]` pendente · `[x]` feito
 
 O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 
-- [ ] **Cartas pretas com mais de um espaço** ("Escolha 2"): o jogo só aceita uma carta
-  branca por jogador, então uma carta preta com dois ou três `____` não tem como ser
-  respondida. O baralho de hoje só tem cartas de um espaço, mas nada impede uma carta nova
-  com mais. Fazer a carta preta saber quantas brancas pede (contando as lacunas), o jogador
-  escolher na ordem e o juiz ver o conjunto. Até lá, um teste recusa carta com mais de um
-  espaço.
+- [x] **Cartas pretas com mais de um espaço** ("Escolha 2"): o jogo só aceitava uma carta
+  branca por jogador. Agora a carta preta conta as lacunas, o jogador escolhe na ordem e vê
+  a frase montada, e o juiz vê o conjunto
 - [x] **Resultado da rodada**: o juiz escolhe e a tela já pula para a rodada seguinte;
   ninguém vê qual carta ganhou nem quem a jogou (`lastRoundWinnerId` é gravado e nunca
   mostrado). Uma fase curta de resultado, com a frase completa e o nome do vencedor
@@ -60,8 +57,8 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
   grupo ler e rir junto
 - [x] **Ordem das cartas embaralhada para o juiz**: hoje vêm na ordem do id de quem enviou,
   sempre igual, e o juiz aprende quem é quem depois de algumas rodadas
-- [ ] **Frase completa na carta**: mostrar a carta preta com a branca encaixada no espaço.
-  Feito na escolha do juiz, na mesa e no resultado; falta na escolha do jogador
+- [x] **Frase completa na carta**: a carta preta com as brancas encaixadas nos espaços, na
+  escolha do jogador, na do juiz, na mesa e no resultado
 - [ ] **Configurar a partida** ao criar a sala: pontos para vencer (hoje fixo em 5) e
   tamanho da mão
 - [ ] **Trocar cartas**: uma vez por partida, descartar a mão e pegar outra, para quem tirou

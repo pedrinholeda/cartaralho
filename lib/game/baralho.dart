@@ -1,6 +1,7 @@
 import '../models/card.dart';
 
-/// Baralho com que toda sala nova começa.
+/// Baralho com que toda sala nova começa. Uma carta preta com duas ou três
+/// lacunas pede duas ou três brancas ("Escolha 2").
 ///
 /// Dá para até [maximoDeJogadores] jogadores: cada mão tem 5 cartas e sobram
 /// algumas no monte. Baralhos num arquivo próprio e baralhos customizados estão
@@ -24,6 +25,10 @@ const _pretas = [
   'O que estraga qualquer churrasco? ____.',
   'Minha próxima tatuagem vai ser ____.',
   'Nada como ____ numa segunda-feira de manhã.',
+  '____ + ____ = festa garantida.',
+  'Primeiro veio ____, depois ____, e aí a família parou de se falar.',
+  'Minha receita secreta: ____ com ____.',
+  'Na minha autobiografia: capítulo 1, ____; capítulo 2, ____; capítulo 3, ____.',
 ];
 
 const _brancas = [

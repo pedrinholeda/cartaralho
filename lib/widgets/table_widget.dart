@@ -30,14 +30,14 @@ class TableWidget extends StatelessWidget {
             child: ListView.builder(
               itemCount: cartas.length,
               itemBuilder: (context, index) {
-                final carta = cartas[index].value;
+                final brancas = cartas[index].value;
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: ListTile(
                     title: Text(
                       preta == null
-                          ? carta.text
-                          : fraseCompleta(preta, [carta]),
+                          ? brancas.map((c) => c.text).join(' / ')
+                          : fraseCompleta(preta, brancas),
                     ),
                   ),
                 );
