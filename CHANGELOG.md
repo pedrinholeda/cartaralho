@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.0](https://github.com/pedrinholeda/cartaralho/compare/v0.8.0...v0.9.0) (2026-11-20)
+
+
+### Novidades
+
+* **jogo:** bots com personalidade ([d312046](https://github.com/pedrinholeda/cartaralho/commit/d312046a4b4f3e162c99798b723ddc00b8eda6b0))
+* **jogo:** jogar sozinho contra bots ([01029d8](https://github.com/pedrinholeda/cartaralho/commit/01029d822612afe6ac9fb5fd238af00b93bf681b))
+
+
+### Correções
+
+* **jogo:** providers da sala sem quebrar ao voltar ao menu ([57cb10a](https://github.com/pedrinholeda/cartaralho/commit/57cb10aecb67e01fe86acb5d5cae3d5b7c91138c))
+
 ## [0.8.0](https://github.com/pedrinholeda/cartaralho/compare/v0.7.0...v0.8.0) (2026-11-20)
 
 
