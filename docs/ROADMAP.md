@@ -80,9 +80,9 @@ O que hoje atrapalha uma partida entre amigos, achado jogando e lendo o código.
 Deixar o jogo bonito e animado. Tudo testado no navegador, em tela de celular e de
 computador, no tema claro e no escuro, com print no PR.
 
-- [ ] **Identidade**: paleta e tipografia feitas (vermelho, preto e branco dos logos, Archivo).
-  Falta escolher o logo entre as propostas em [`docs/marca/`](marca) e gerar os ícones e as
-  cores do `manifest.json` da web
+- [x] **Identidade**: paleta e tipografia (vermelho, preto e branco dos logos, Archivo), logo
+  escolhido (`docs/marca/logo-carta-escura.png`) e ícones da web e do Android gerados dele;
+  o `manifest.json` apontava para ícones que não existiam
 - [x] **Tema e tokens**: cores, espaçamentos, raios e tipografia em `lib/ui/tema.dart`, tema
   escuro, e tudo registrado em [`docs/DESIGN.md`](DESIGN.md)
 - [x] **Cartas com cara de carta**: proporção de carta de baralho, carta preta e branca com

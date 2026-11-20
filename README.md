@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/marca/logo-cartas-confete.png" width="128" alt="Ícone do Cartaralho: uma carta branca sorrindo na frente de uma carta preta, sobre fundo vermelho"></p>
+<p align="center"><img src="docs/marca/logo-carta-escura.png" width="128" alt="Ícone do Cartaralho: uma carta branca com cara de malandra e um ponto de exclamação vermelho, sobre fundo preto"></p>
 <h1 align="center">Cartaralho</h1>
 <p align="center"><em>O jogo de completar frases absurdas, para jogar com os amigos, cada um no seu celular.</em></p>
 <p align="center">
