@@ -89,12 +89,18 @@ npx firebase-tools login
 npx firebase-tools init hosting:github
 ```
 
-O segundo comando pergunta o repositório (`pedrinholeda/cartaralho`), cria uma conta de
-serviço com permissão só de publicar e grava o segredo no GitHub sozinho. Ele também oferece
-criar workflows próprios: responda **não** às perguntas de workflow, porque o
-`deploy-web.yml` já faz isso.
+O segundo comando, rodado **dentro da pasta do projeto**, pergunta o repositório
+(`pedrinholeda/cartaralho`), cria uma conta de serviço com permissão de publicar no Hosting e
+grava o segredo no GitHub sozinho. Responda **não** às perguntas de workflow, porque o
+`deploy-web.yml` já faz isso. Mesmo assim ele cria
+`.github/workflows/firebase-hosting-pull-request.yml` e reformata o `firebase.json`: apague o
+workflow (ele publicaria uma prévia sem montar a web) e desfaça o `firebase.json`. No fim, dá
+para revogar a autorização que o comando pediu no GitHub, em *Settings → Applications*.
 
-**À mão**, de uma máquina logada:
+O segredo já existe (criado em 21/11/2026): todo merge na `main` publica o site.
+
+**À mão**, de uma máquina logada (para publicar sem esperar um merge, prefira disparar o
+workflow na aba Actions):
 
 ```bash
 flutter build web --release
