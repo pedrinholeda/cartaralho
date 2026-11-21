@@ -1,7 +1,13 @@
 // Gera os efeitos sonoros do jogo em assets/sons/, sintetizados aqui mesmo:
 // sem arquivo de terceiros, sem licença a conferir. Rode com
 //   node tool/gerar_sons.mjs
-// e confira o resultado ouvindo os .wav. Mono, 22 050 Hz, 16 bits.
+// e confira o resultado ouvindo os .wav (e medindo: node tool/medir_sons.mjs).
+// Mono, 22 050 Hz, 16 bits.
+//
+// Volume: cada som sai num volume médio-alvo (RMS da parte que soa, em dBFS),
+// não no pico. Os que tocam toda hora (distribuir, enviar, virar) ficam mais
+// baixos; a vitória, que é rara, mais alta. O pico nunca passa de -1 dBFS, e
+// todo som começa e termina no zero, para não estalar.
 import { writeFileSync } from 'node:fs';
 
 const TAXA = 22050;
@@ -38,9 +44,13 @@ function nota(amostras, inicio, freq, duracao, volume = 0.35) {
     const t = i / TAXA;
     const fase = (t * freq) % 1;
     const triangulo = 4 * Math.abs(fase - 0.5) - 1;
+    // Os últimos 15 ms descem até o zero: sem isso a nota acaba num degrau,
+    // que soa como estalo.
+    const soltura = Math.min(1, (duracao - t) / 0.015);
     const valor =
       (triangulo * 0.8 + Math.sin(2 * Math.PI * freq * 2 * t) * 0.2) *
       envelope(t, 0.008, duracao / 3) *
+      soltura *
       volume;
     const j = Math.round(inicio * TAXA) + i;
     if (j < amostras.length) amostras[j] += valor;
@@ -59,14 +69,52 @@ function sopro(amostras, duracao, semente) {
   }
 }
 
-function wav(nome, segundos, desenhar) {
+/** Volume médio da parte que soa (janelas de 10 ms acima de 5% do pico). */
+function volumeMedio(amostras) {
+  const pico = Math.max(...amostras.map(Math.abs)) || 1;
+  const janela = Math.round(TAXA / 100);
+  let soma = 0;
+  let conta = 0;
+  for (let i = 0; i + janela <= amostras.length; i += janela) {
+    let q = 0;
+    for (let k = i; k < i + janela; k++) q += amostras[k] * amostras[k];
+    const rms = Math.sqrt(q / janela);
+    if (rms > pico * 0.05) {
+      soma += rms * rms;
+      conta++;
+    }
+  }
+  return Math.sqrt(soma / Math.max(conta, 1));
+}
+
+const deDb = (db) => 10 ** (db / 20);
+
+function wav(nome, segundos, alvoDb, desenhar) {
   const amostras = new Float32Array(Math.round(segundos * TAXA));
   desenhar(amostras);
-  const pico = Math.max(...amostras.map(Math.abs)) || 1;
+  // Começa e termina no zero: 2 ms de entrada e 10 ms de saída.
+  const entrada = Math.round(0.002 * TAXA);
+  const saida = Math.round(0.01 * TAXA);
+  for (let i = 0; i < entrada; i++) amostras[i] *= i / entrada;
+  for (let i = 0; i < saida; i++) amostras[amostras.length - 1 - i] *= i / saida;
+  // Leva ao volume-alvo. Acima de 0,6 um limitador suave achata os picos
+  // (curva tanh), e o pico nunca passa de -1 dBFS; o ganho é refeito algumas
+  // vezes porque o limitador baixa um pouco o volume médio.
+  const teto = deDb(-1);
+  const joelho = 0.6;
+  const limitar = (v) => {
+    const m = Math.abs(v);
+    if (m <= joelho) return v;
+    return Math.sign(v) * (joelho + (teto - joelho) * Math.tanh((m - joelho) / (teto - joelho)));
+  };
+  let ganho = deDb(alvoDb) / volumeMedio(amostras);
+  let limitado = amostras.map((v) => limitar(v * ganho));
+  for (let passo = 0; passo < 4; passo++) {
+    ganho *= deDb(alvoDb) / volumeMedio(limitado);
+    limitado = amostras.map((v) => limitar(v * ganho));
+  }
   const dados = Buffer.alloc(amostras.length * 2);
-  amostras.forEach((v, i) =>
-    dados.writeInt16LE(Math.round((v / pico) * 0.85 * 32767), i * 2),
-  );
+  limitado.forEach((v, i) => dados.writeInt16LE(Math.round(v * 32767), i * 2));
   const cab = Buffer.alloc(44);
   cab.write('RIFF', 0);
   cab.writeUInt32LE(36 + dados.length, 4);
@@ -87,23 +135,23 @@ function wav(nome, segundos, desenhar) {
 // Notas (Hz): dó, mi, sol, dó agudo, mi agudo.
 const [DO, MI, SOL, DO2, MI2] = [523.25, 659.25, 783.99, 1046.5, 1318.5];
 
-wav('distribuir', 0.32, (a) => {
+wav('distribuir', 0.32, -16, (a) => {
   for (let k = 0; k < 4; k++) estalo(a, k * 0.06, 11 + k, 0.5 + k * 0.05);
 });
-wav('enviar', 0.26, (a) => {
+wav('enviar', 0.26, -16, (a) => {
   sopro(a, 0.2, 7);
   estalo(a, 0.18, 3, 0.4);
 });
-wav('virar', 0.2, (a) => {
+wav('virar', 0.2, -16, (a) => {
   estalo(a, 0, 21, 0.65, 0.05);
   estalo(a, 0.08, 22, 0.45, 0.06);
 });
-wav('rodada', 0.6, (a) => {
+wav('rodada', 0.6, -14, (a) => {
   nota(a, 0, DO, 0.25);
   nota(a, 0.11, MI, 0.25);
   nota(a, 0.22, SOL, 0.38);
 });
-wav('vitoria', 1.2, (a) => {
+wav('vitoria', 1.2, -11, (a) => {
   nota(a, 0, SOL, 0.18);
   nota(a, 0.14, SOL, 0.18);
   nota(a, 0.28, DO2, 0.3);

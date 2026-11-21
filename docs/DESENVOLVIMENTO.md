@@ -115,7 +115,8 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/ui/assombro.dart`](../lib/ui/assombro.dart) | Os momentos creepy: `ehMadrugada`, `esperaDaLacuna` e a hora em `agora()`, que os testes trocam. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |
-| [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese. Rode com `node tool/gerar_sons.mjs`. |
+| [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese, cada um no seu volume combinado, com limitador suave e as pontas no zero. Rode com `node tool/gerar_sons.mjs`. |
+| [`tool/medir_sons.mjs`](../tool/medir_sons.mjs) | Mede os `.wav`: duração, pico, volume médio da parte que soa, desvio do zero e as pontas. Rode com `node tool/medir_sons.mjs`. |
 | [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias
