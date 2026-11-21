@@ -27,12 +27,17 @@ const bots = [
   Bot('bot-ze', 'Zé do Bar', 'brasilidades'),
 ];
 
+/// O Zé Aleatório: completa uma sala online de duas pessoas. Não tem gosto
+/// nenhum (pacote vazio), então joga e julga no puro sorteio.
+const zeAleatorio = Bot('bot-ze-aleatorio', 'Zé Aleatório', '');
+
 /// Opções de quantos bots jogam contra você.
 const opcoesDeAdversarios = [2, 3, 4];
 
 bool ehBot(String jogadorId) => jogadorId.startsWith('bot-');
 
-Bot? botPorId(String id) => bots.where((b) => b.id == id).firstOrNull;
+Bot? botPorId(String id) =>
+    [...bots, zeAleatorio].where((b) => b.id == id).firstOrNull;
 
 /// O quanto o bot gosta de uma carta: bastante se ela é do pacote dele, e um
 /// tanto de sorte, para ele não ser previsível.
@@ -120,4 +125,42 @@ GameRoom salaSolo({
     sala = entrarNaSala(sala, Player(id: b.id, name: b.nome));
   }
   return iniciarJogo(sala, voce.id, random: rng);
+}
+
+/// Quanto o bot espera antes de jogar: rápido para mandar carta, mais devagar
+/// para julgar, e o juiz bot deixa o resultado na tela uns segundos antes de
+/// virar a rodada.
+Duration pausaDosBots(GamePhase fase, Random rng) => switch (fase) {
+      GamePhase.playersSubmitting =>
+        Duration(milliseconds: 900 + rng.nextInt(1400)),
+      GamePhase.judgeChoosing => const Duration(milliseconds: 2800),
+      _ => const Duration(milliseconds: 5000),
+    };
+
+/// O anfitrião chama o Zé Aleatório para a sala, na espera, para dar o mínimo
+/// de jogadores com duas pessoas.
+GameRoom chamarZe(GameRoom sala, String quemPediu) {
+  if (!sala.players.any((p) => p.id == quemPediu && p.isHost)) {
+    throw JogadaInvalida('Só o anfitrião chama o Zé Aleatório');
+  }
+  if (sala.players.any((p) => p.id == zeAleatorio.id)) {
+    throw JogadaInvalida('O Zé Aleatório já está na mesa');
+  }
+  return entrarNaSala(sala, Player(id: zeAleatorio.id, name: zeAleatorio.nome));
+}
+
+/// O anfitrião dispensa o Zé, ainda na espera (chegou a terceira pessoa).
+GameRoom dispensarZe(GameRoom sala, String quemPediu) {
+  if (!sala.players.any((p) => p.id == quemPediu && p.isHost)) {
+    throw JogadaInvalida('Só o anfitrião dispensa o Zé Aleatório');
+  }
+  if (sala.phase != GamePhase.waitingForPlayers) {
+    throw JogadaInvalida('Com o jogo começado, o Zé fica até o fim');
+  }
+  return sala.copyWith(
+    players: [
+      for (final p in sala.players)
+        if (p.id != zeAleatorio.id) p,
+    ],
+  );
 }

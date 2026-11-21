@@ -180,4 +180,81 @@ void main() {
       }
     });
   });
+
+  group('Zé Aleatório', () {
+    GameRoom dupla() => entrarNaSala(
+          novaSala(
+            roomId: 'K7PX2M',
+            anfitriao: Player(id: 'ana', name: 'Ana'),
+            baralho: _todos,
+          ),
+          Player(id: 'bia', name: 'Bia'),
+        );
+
+    test('o anfitrião chama o Zé e a sala chega a três', () {
+      final s = chamarZe(dupla(), 'ana');
+      expect(s.players.map((p) => p.id), ['ana', 'bia', zeAleatorio.id]);
+      expect(iniciarJogo(s, 'ana').phase, GamePhase.playersSubmitting);
+    });
+
+    test('só o anfitrião chama, e uma vez só', () {
+      expect(() => chamarZe(dupla(), 'bia'), throwsA(isA<JogadaInvalida>()));
+      final s = chamarZe(dupla(), 'ana');
+      expect(() => chamarZe(s, 'ana'), throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('dispensar o Zé só antes do jogo', () {
+      final s = chamarZe(dupla(), 'ana');
+      expect(dispensarZe(s, 'ana').players, hasLength(2));
+      expect(() => dispensarZe(s, 'bia'), throwsA(isA<JogadaInvalida>()));
+      expect(() => dispensarZe(iniciarJogo(s, 'ana'), 'ana'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('o Zé não entra no sorteio do modo solo', () {
+      expect(bots, isNot(contains(zeAleatorio)));
+      expect(botPorId(zeAleatorio.id), zeAleatorio);
+      for (var seed = 0; seed < 20; seed++) {
+        expect(_solo(seed: seed, adversarios: 4).players.map((p) => p.id),
+            isNot(contains(zeAleatorio.id)));
+      }
+    });
+
+    test('numa sala online, o Zé joga e julga como bot', () {
+      var s = iniciarJogo(chamarZe(dupla(), 'ana'), 'ana');
+      // Ana julga: o Zé envia; a Bia ainda não, então a vez é dela.
+      s = passoDosBots(s, Random(1))!;
+      expect(s.submittedCards.keys, [zeAleatorio.id]);
+      expect(passoDosBots(s, Random(2)), isNull);
+      // Até o Zé ser o juiz e escolher sozinho.
+      final rng = Random(3);
+      var passos = 0;
+      while (s.currentJudgeId != zeAleatorio.id ||
+          s.phase != GamePhase.judgeChoosing) {
+        s = passoDosBots(s, rng) ?? _jogadaDeQuem(s);
+        expect(++passos, lessThan(200));
+      }
+      final depois = passoDosBots(s, rng)!;
+      expect(
+          depois.phase, anyOf(GamePhase.roundResult, GamePhase.gameComplete));
+    });
+  });
+}
+
+/// Na sala online do Zé, as pessoas (Ana e Bia) jogam a primeira carta, o
+/// juiz pessoa escolhe o primeiro e passa a rodada.
+GameRoom _jogadaDeQuem(GameRoom s) {
+  final juiz = s.currentJudgeId!;
+  switch (s.phase) {
+    case GamePhase.playersSubmitting:
+      final quem = s.players.firstWhere((p) =>
+          !ehBot(p.id) && p.id != juiz && !s.submittedCards.containsKey(p.id));
+      final pede = s.currentBlackCard!.pick;
+      return enviarCarta(
+          s, quem.id, [for (final c in s.hands[quem.id]!.take(pede)) c.id]);
+    case GamePhase.judgeChoosing:
+      return escolherVencedor(s, juiz, s.submittedCards.keys.first);
+    default:
+      return proximaRodada(s, juiz);
+  }
 }

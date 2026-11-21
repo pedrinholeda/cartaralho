@@ -57,19 +57,12 @@ class _Mesa {
     agendar();
   }
 
-  /// Se for a vez de algum bot, ele joga depois de uma pausa: rápido para
-  /// mandar carta, mais devagar para julgar, e o juiz bot deixa o resultado
-  /// na tela uns segundos antes de virar a rodada.
+  /// Se for a vez de algum bot, ele joga depois de uma pausa
+  /// ([pausaDosBots]).
   void agendar() {
     _proxima?.cancel();
     if (passoDosBots(sala, Random(0)) == null) return;
-    final pausa = switch (sala.phase) {
-      GamePhase.playersSubmitting =>
-        Duration(milliseconds: 900 + rng.nextInt(1400)),
-      GamePhase.judgeChoosing => const Duration(milliseconds: 2800),
-      _ => const Duration(milliseconds: 5000),
-    };
-    _proxima = Timer(pausa, () {
+    _proxima = Timer(pausaDosBots(sala.phase, rng), () {
       final nova = passoDosBots(sala, rng);
       if (nova != null) publicar(nova);
     });
