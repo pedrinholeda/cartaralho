@@ -33,6 +33,10 @@ class CartaPreta extends StatelessWidget {
   /// madrugada.
   final String? rodape;
 
+  /// Tamanho da letra da frase: maior no computador, onde a carta tem a
+  /// coluna dela.
+  final double tamanhoDoTexto;
+
   const CartaPreta({
     super.key,
     required this.texto,
@@ -40,12 +44,13 @@ class CartaPreta extends StatelessWidget {
     this.respostas = const [],
     this.olho = false,
     this.rodape,
+    this.tamanhoDoTexto = 21,
   });
 
   @override
   Widget build(BuildContext context) {
     final cores = Cores.de(context);
-    final estilo = _textoDeCarta(cores.tintaNaCartaPreta, 21);
+    final estilo = _textoDeCarta(cores.tintaNaCartaPreta, tamanhoDoTexto);
 
     // Partes do texto entre lacunas; cada lacuna vira a resposta ou um traço.
     final partes = texto.split(_lacuna);
@@ -371,10 +376,22 @@ class MaoEmLeque extends StatelessWidget {
   });
 
   static const larguraDaCarta = 128.0;
-  static const alturaDaCarta = larguraDaCarta / Medidas.proporcaoCarta;
+
+  /// No computador (mão com 640 px ou mais), a carta cresce.
+  static const larguraDaCartaGrande = 168.0;
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, espaco) => _leque(
+        context,
+        espaco.maxWidth >= 640 ? larguraDaCartaGrande : larguraDaCarta,
+      ),
+    );
+  }
+
+  Widget _leque(BuildContext context, double larguraDaCarta) {
+    final alturaDaCarta = larguraDaCarta / Medidas.proporcaoCarta;
     final reduzir = MediaQuery.of(context).disableAnimations;
     final meio = (quantidade - 1) / 2;
     return SizedBox(
