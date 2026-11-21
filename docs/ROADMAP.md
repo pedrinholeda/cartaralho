@@ -186,7 +186,8 @@ deixava escolher o baralho.
 - [x] **Reações rápidas**: tocar na própria carinha no placar abre cinco reações desenhadas
   (risada, choro, caveira, coração, chocado); a escolhida sobe da carinha na tela de todos.
   Passa pela regra `reagir`, então vale também no modo solo; uma por segundo, no máximo
-- [ ] Cartas com vida: inclinam em 3D sob o mouse (ou o dedo) e a enviada voa para a mesa
+- [x] **Cartas com vida**: as cartas da mão inclinam em 3D sob o mouse (no celular, sob o
+  dedo), as largas de leve, e as enviadas voam em arco até a carta preta
 - [ ] Música de fundo por fase, com volume e opção de desligar; desafinada na madrugada
 
 ## Fase 4 — plataformas

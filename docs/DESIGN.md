@@ -122,6 +122,9 @@ normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
   inteira (mesa, juiz, resultado; com o nome de quem enviou e em amarelo quando venceu).
   A carta em branco aparece com o convite "carta em branco: toque para escrever", apagado e
   em itálico; ao tocar, um diálogo pede a resposta, que entra na frase como qualquer carta.
+  Inclina em 3D seguindo o mouse (no celular, o dedo enquanto está em cima): bem na mão, de
+  leve nas largas. Ao enviar, as escolhidas voam em arco até a carta preta, girando,
+  encolhendo e sumindo (`voarCartas`, numa camada por cima de tudo).
   Funciona pelo toque, pelo mouse e pelo teclado (Tab, Enter ou Espaço), com contorno
   amarelo de foco.
 - `MaoEmLeque`: a mão numa faixa horizontal que se arrasta para os lados, com as cartas

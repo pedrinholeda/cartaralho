@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -298,8 +299,14 @@ class CartaBranca extends StatelessWidget {
         if (vencedora) 'vencedora',
       ].join(', '),
       excludeSemantics: true,
-      child:
-          aoTocar == null ? carta : _Tocavel(aoTocar: aoTocar!, child: carta),
+      child: aoTocar == null
+          ? carta
+          : _Tocavel(
+              aoTocar: aoTocar!,
+              // A carta da mão inclina bem; a larga (mesa, juiz), de leve.
+              inclinacao: larga ? .05 : .2,
+              child: carta,
+            ),
     );
   }
 }
@@ -311,7 +318,14 @@ class _Tocavel extends StatefulWidget {
   final VoidCallback aoTocar;
   final Widget child;
 
-  const _Tocavel({required this.aoTocar, required this.child});
+  /// Quanto a carta inclina em 3D sob o ponteiro, em radianos.
+  final double inclinacao;
+
+  const _Tocavel({
+    required this.aoTocar,
+    required this.child,
+    this.inclinacao = 0,
+  });
 
   @override
   State<_Tocavel> createState() => _TocavelState();
@@ -320,9 +334,60 @@ class _Tocavel extends StatefulWidget {
 class _TocavelState extends State<_Tocavel> {
   bool _foco = false;
 
+  /// Onde está o ponteiro sobre a carta, de -1 a 1 em cada eixo (zero: fora).
+  Offset _ponteiro = Offset.zero;
+
+  void _seguir(Offset local) {
+    final caixa = context.findRenderObject();
+    if (caixa is! RenderBox || !caixa.hasSize) return;
+    final s = caixa.size;
+    setState(() => _ponteiro = Offset(
+          (local.dx / s.width * 2 - 1).clamp(-1, 1),
+          (local.dy / s.height * 2 - 1).clamp(-1, 1),
+        ));
+  }
+
+  void _soltar() => setState(() => _ponteiro = Offset.zero);
+
   @override
   Widget build(BuildContext context) {
     final cores = Cores.de(context);
+    final inclinar = widget.inclinacao > 0 && !movimentoReduzido(context);
+    final carta = !inclinar
+        ? widget.child
+        : TweenAnimationBuilder<Offset>(
+            tween: Tween(end: _ponteiro),
+            duration: const Duration(milliseconds: 140),
+            builder: (context, p, filho) => Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, .0015)
+                ..rotateX(-p.dy * widget.inclinacao)
+                ..rotateY(p.dx * widget.inclinacao),
+              child: filho,
+            ),
+            child: widget.child,
+          );
+    // No computador segue o mouse; no celular, o dedo enquanto está em cima.
+    final comPonteiro = !inclinar
+        ? carta
+        : MouseRegion(
+            onHover: (e) => _seguir(e.localPosition),
+            onExit: (_) => _soltar(),
+            child: Listener(
+              onPointerDown: (e) {
+                if (e.kind == PointerDeviceKind.touch) _seguir(e.localPosition);
+              },
+              onPointerMove: (e) {
+                if (e.kind == PointerDeviceKind.touch) _seguir(e.localPosition);
+              },
+              onPointerUp: (e) {
+                if (e.kind == PointerDeviceKind.touch) _soltar();
+              },
+              onPointerCancel: (_) => _soltar(),
+              child: carta,
+            ),
+          );
     return FocusableActionDetector(
       mouseCursor: SystemMouseCursors.click,
       // Na web o Flutter só liga Espaço ao "ativar"; Enter também tem que escolher.
@@ -355,7 +420,7 @@ class _TocavelState extends State<_Tocavel> {
               width: 3,
             ),
           ),
-          child: widget.child,
+          child: comPonteiro,
         ),
       ),
     );
@@ -523,4 +588,103 @@ class _PintorDoOlho extends CustomPainter {
   @override
   bool shouldRepaint(_PintorDoOlho old) =>
       old.abertura != abertura || old.olhar != olhar;
+}
+
+/// Onde está a carta preta na tela, para a carta enviada voar até ela. O
+/// `BlackCardWidget` anota a cada quadro em que aparece.
+final retanguloDaCartaPreta = ValueNotifier<Rect?>(null);
+
+/// Faz cartas brancas voarem de [origens] (os retângulos delas na mão) até
+/// [destino], girando, encolhendo e sumindo. Não bloqueia nada: é uma camada
+/// por cima de tudo, que some sozinha.
+void voarCartas(
+    BuildContext context, List<(Rect, String)> origens, Rect destino) {
+  if (origens.isEmpty || movimentoReduzido(context)) return;
+  final camada = Overlay.maybeOf(context, rootOverlay: true);
+  if (camada == null) return;
+  late final OverlayEntry entrada;
+  entrada = OverlayEntry(
+    builder: (_) => IgnorePointer(
+      child: VooDasCartas(
+        origens: origens,
+        destino: destino,
+        aoTerminar: () => entrada.remove(),
+      ),
+    ),
+  );
+  camada.insert(entrada);
+}
+
+class VooDasCartas extends StatefulWidget {
+  final List<(Rect, String)> origens;
+  final Rect destino;
+  final VoidCallback aoTerminar;
+
+  const VooDasCartas({
+    super.key,
+    required this.origens,
+    required this.destino,
+    required this.aoTerminar,
+  });
+
+  @override
+  State<VooDasCartas> createState() => _VooDasCartasState();
+}
+
+class _VooDasCartasState extends State<VooDasCartas>
+    with SingleTickerProviderStateMixin {
+  late final _voo = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 600),
+  )
+    ..addStatusListener((s) {
+      if (s == AnimationStatus.completed) widget.aoTerminar();
+    })
+    ..forward();
+
+  @override
+  void dispose() {
+    _voo.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _voo,
+      builder: (context, _) {
+        final v = Curves.easeInCubic.transform(_voo.value);
+        return Stack(
+          children: [
+            for (var i = 0; i < widget.origens.length; i++)
+              () {
+                final (de, texto) = widget.origens[i];
+                final para = widget.destino.center;
+                final centro = Offset.lerp(de.center, para, v)!
+                    // Um arco: sobe um pouco antes de chegar.
+                    -
+                    Offset(0, sin(v * pi) * 60);
+                final escala = 1 - .65 * v;
+                return Positioned(
+                  left: centro.dx - de.width / 2,
+                  top: centro.dy - de.height / 2,
+                  width: de.width,
+                  height: de.height,
+                  child: Opacity(
+                    opacity: v < .8 ? 1 : (1 - v) / .2,
+                    child: Transform.rotate(
+                      angle: (i.isEven ? 1 : -1) * v * .9,
+                      child: Transform.scale(
+                        scale: escala,
+                        child: CartaBranca(texto: texto),
+                      ),
+                    ),
+                  ),
+                );
+              }(),
+          ],
+        );
+      },
+    );
+  }
 }
