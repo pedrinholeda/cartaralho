@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'icones.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/game_room.dart';
@@ -93,18 +91,3 @@ final mudoProvider =
 
 final sonsProvider =
     Provider<Sons>((ref) => Sons(() => ref.read(mudoProvider)));
-
-/// Liga e desliga o som. Fica na barra de cima da tela de jogo e na capa.
-class BotaoDeSom extends ConsumerWidget {
-  const BotaoDeSom({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mudo = ref.watch(mudoProvider);
-    return IconButton(
-      tooltip: mudo ? 'Ligar som' : 'Desligar som',
-      icon: IconeFofo(mudo ? Desenho.mudo : Desenho.som),
-      onPressed: () => ref.read(mudoProvider.notifier).alternar(),
-    );
-  }
-}

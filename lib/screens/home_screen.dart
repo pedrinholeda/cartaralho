@@ -13,7 +13,7 @@ import '../ui/cartas.dart';
 import '../ui/icones.dart';
 import '../ui/jogadores.dart';
 import '../ui/olhar.dart';
-import '../ui/sons.dart';
+import '../ui/musica.dart';
 import '../ui/tema.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -90,6 +90,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (roomId != null) {
       return const GameScreen();
     }
+    // Fora da partida, sem música.
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => ref.read(musicaProvider).parar());
 
     final textos = Theme.of(context).textTheme;
 

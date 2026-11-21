@@ -188,7 +188,10 @@ deixava escolher o baralho.
   Passa pela regra `reagir`, então vale também no modo solo; uma por segundo, no máximo
 - [x] **Cartas com vida**: as cartas da mão inclinam em 3D sob o mouse (no celular, sob o
   dedo), as largas de leve, e as enviadas voam em arco até a carta preta
-- [ ] Música de fundo por fase, com volume e opção de desligar; desafinada na madrugada
+- [x] **Música de fundo**: três loops sintetizados (`tool/gerar_musicas.mjs`), um lo-fi
+  calmo enquanto escolhem, um com tique-taque enquanto o juiz decide e a versão lenta e
+  desafinada na madrugada; para no fim de jogo. O botão de som abre o painel com efeitos,
+  música e volume da música, guardados no aparelho. Ninguém ouviu ainda
 
 ## Fase 4 — plataformas
 
