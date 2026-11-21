@@ -10,6 +10,26 @@ import 'icones.dart';
 import 'olhar.dart';
 import 'tema.dart';
 
+/// O que a carinha está sentindo na partida.
+enum Humor {
+  normal,
+
+  /// Escolhendo a carta: balão de "…".
+  pensando,
+
+  /// Já enviou: uma cartinha branca na mão.
+  enviou,
+
+  /// Juiz decidindo: olhos para cima.
+  julgando,
+
+  /// O juiz está demorando: treme e solta um "!".
+  impaciente,
+
+  /// Ganhou a rodada: pulinhos.
+  comemorando,
+}
+
 /// Avatar redondo com a carinha do jogador, numa cor fixa pela posição dele
 /// na sala ([coresDeJogador]). A carinha sai de [semente] (o id do jogador) e
 /// [variacao] (quantas vezes ele pediu outra); sem semente, sai do nome. O
@@ -29,6 +49,12 @@ class AvatarDeJogador extends StatefulWidget {
   /// Força (ou impede) a carinha da madrugada; sem valor, vale a hora certa.
   final bool? assombrado;
 
+  /// O que a carinha mostra sobre a partida.
+  final Humor humor;
+
+  /// Quem lidera a partida usa a coroa derretendo.
+  final bool lider;
+
   const AvatarDeJogador({
     super.key,
     required this.nome,
@@ -38,6 +64,8 @@ class AvatarDeJogador extends StatefulWidget {
     this.semente,
     this.variacao = 0,
     this.assombrado,
+    this.humor = Humor.normal,
+    this.lider = false,
   });
 
   @override
@@ -166,6 +194,20 @@ class _AvatarDeJogadorState extends State<AvatarDeJogador>
               tonta = g < .95;
             }
           }
+          final humor = widget.humor;
+          if (!_parado) {
+            if (humor == Humor.comemorando) {
+              // Pulinhos: quatro por volta.
+              deslocar += Offset(0, -sin(t * 8 * pi).abs() * tamanho * .22);
+            } else if (humor == Humor.impaciente) {
+              deslocar += Offset(sin(t * 60 * pi) * 2.2, 0);
+            }
+          }
+          final olhar = humor == Humor.julgando
+              ? const Offset(.5, -1)
+              : humor == Humor.pensando
+                  ? const Offset(-.6, -.9)
+                  : _olhar(ondeOlhar.value);
           final piscando = !_parado &&
               _voltas % (_voltasEntrePiscadas + 2) == 0 &&
               t > .6 &&
@@ -213,12 +255,62 @@ class _AvatarDeJogadorState extends State<AvatarDeJogador>
                         bochecha: cores.acao,
                         branco: cores.carta,
                         assombrada: widget.assombrado ?? ehMadrugada(agora()),
-                        olhar: _olhar(ondeOlhar.value),
+                        olhar: olhar,
                         piscando: piscando,
                         tonta: tonta,
                       ),
                     ),
                   ),
+                  if (widget.lider)
+                    Positioned(
+                      top: -tamanho * .42,
+                      child: IconeFofo(
+                        Desenho.coroa,
+                        tamanho: tamanho * .5,
+                        cor: cores.destaque,
+                        gotejo: .6,
+                      ),
+                    ),
+                  if (humor == Humor.pensando)
+                    Positioned(
+                      right: -tamanho * .32,
+                      top: -tamanho * .18,
+                      child: _Balao(
+                        texto: '…',
+                        cores: cores,
+                        tamanho: tamanho,
+                        pulo: _parado ? 0 : sin(t * 6 * pi),
+                      ),
+                    ),
+                  if (humor == Humor.impaciente)
+                    Positioned(
+                      right: -tamanho * .28,
+                      top: -tamanho * .2,
+                      child: _Balao(
+                        texto: '!',
+                        cores: cores,
+                        tamanho: tamanho,
+                        pulo: 0,
+                        destaque: true,
+                      ),
+                    ),
+                  if (humor == Humor.enviou)
+                    Positioned(
+                      left: -tamanho * .12,
+                      bottom: -tamanho * .06,
+                      child: Transform.rotate(
+                        angle: -.25,
+                        child: Container(
+                          width: tamanho * .26,
+                          height: tamanho * .36,
+                          decoration: BoxDecoration(
+                            color: cores.carta,
+                            borderRadius: BorderRadius.circular(tamanho * .05),
+                            border: Border.all(color: cores.mesa, width: 1.5),
+                          ),
+                        ),
+                      ),
+                    ),
                   if (widget.juiz)
                     Positioned(
                       right: -4,
@@ -242,6 +334,52 @@ class _AvatarDeJogadorState extends State<AvatarDeJogador>
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// O balãozinho sobre a carinha ("…" pensando, "!" impaciente).
+class _Balao extends StatelessWidget {
+  final String texto;
+  final Cores cores;
+  final double tamanho;
+  final double pulo;
+  final bool destaque;
+
+  const _Balao({
+    required this.texto,
+    required this.cores,
+    required this.tamanho,
+    required this.pulo,
+    this.destaque = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fundo = destaque ? cores.destaque : cores.carta;
+    final tinta = destaque ? cores.tintaNoDestaque : cores.tintaNaCarta;
+    return Transform.translate(
+      offset: Offset(0, pulo * 1.5),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: tamanho * .1,
+          vertical: tamanho * .01,
+        ),
+        decoration: BoxDecoration(
+          color: fundo,
+          borderRadius: BorderRadius.circular(tamanho * .3),
+          border: Border.all(color: cores.mesa, width: 1.5),
+        ),
+        child: Text(
+          texto,
+          style: GoogleFonts.figtree(
+            color: tinta,
+            fontSize: tamanho * .3,
+            fontWeight: FontWeight.w900,
+            height: 1.1,
+          ),
+        ),
       ),
     );
   }

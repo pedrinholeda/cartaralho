@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../models/game_room.dart';
 import '../models/player.dart';
 import '../ui/animacoes.dart';
 import '../ui/jogadores.dart';
@@ -9,9 +12,49 @@ import '../ui/tema.dart';
 
 /// Placar: um avatar por jogador, com o nome e os pontos embaixo. O juiz da
 /// rodada tem o anel amarelo e o martelo.
-class PlayerListWidget extends StatelessWidget {
+/// Quanto o juiz pode pensar antes de os outros ficarem impacientes.
+const pacienciaComOJuiz = Duration(seconds: 20);
+
+/// O humor de cada carinha no placar, pela fase da partida.
+Humor humorNoPlacar(GameRoom? sala, String jogadorId,
+    {bool juizDemorando = false}) {
+  if (sala == null) return Humor.normal;
+  final juiz = sala.currentJudgeId == jogadorId;
+  switch (sala.phase) {
+    case GamePhase.playersSubmitting:
+      if (juiz) return Humor.julgando;
+      return sala.submittedCards.containsKey(jogadorId)
+          ? Humor.enviou
+          : Humor.pensando;
+    case GamePhase.judgeChoosing:
+      if (juiz) return Humor.julgando;
+      return juizDemorando ? Humor.impaciente : Humor.enviou;
+    case GamePhase.roundResult:
+      return sala.lastRoundWinnerId == jogadorId
+          ? Humor.comemorando
+          : Humor.normal;
+    case GamePhase.gameComplete:
+      return sala.winnerId == jogadorId ? Humor.comemorando : Humor.normal;
+    case GamePhase.waitingForPlayers:
+      return Humor.normal;
+  }
+}
+
+/// Quem lidera a partida sozinho, com ao menos um ponto; empate não tem coroa.
+String? liderDaSala(List<Player> jogadores) {
+  if (jogadores.isEmpty) return null;
+  final maior = jogadores.map((p) => p.points).reduce((a, b) => a > b ? a : b);
+  if (maior == 0) return null;
+  final lideres = jogadores.where((p) => p.points == maior).toList();
+  return lideres.length == 1 ? lideres.single.id : null;
+}
+
+class PlayerListWidget extends StatefulWidget {
   final List<Player> players;
   final String? judgeId;
+
+  /// A sala, para cada carinha reagir à partida. Sem ela, todas ficam normais.
+  final GameRoom? sala;
 
   /// No computador: uma linha por jogador, com o nome inteiro.
   final bool vertical;
@@ -21,7 +64,59 @@ class PlayerListWidget extends StatelessWidget {
     required this.players,
     required this.judgeId,
     this.vertical = false,
+    this.sala,
   });
+
+  @override
+  State<PlayerListWidget> createState() => _PlayerListWidgetState();
+}
+
+class _PlayerListWidgetState extends State<PlayerListWidget> {
+  Timer? _paciencia;
+  String? _chaveDaEspera;
+  bool _juizDemorando = false;
+
+  List<Player> get players => widget.players;
+  String? get judgeId => widget.judgeId;
+  bool get vertical => widget.vertical;
+
+  /// Conta o tempo do juiz a cada vez que a mesa vai para ele.
+  void _vigiarJuiz() {
+    final sala = widget.sala;
+    final chave = sala != null && sala.phase == GamePhase.judgeChoosing
+        ? '${sala.roomId}-${sala.currentBlackCard?.id}'
+        : null;
+    if (chave == _chaveDaEspera) return;
+    _chaveDaEspera = chave;
+    _paciencia?.cancel();
+    _juizDemorando = false;
+    if (chave != null) {
+      _paciencia = Timer(pacienciaComOJuiz, () {
+        if (mounted) setState(() => _juizDemorando = true);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _vigiarJuiz();
+  }
+
+  @override
+  void didUpdateWidget(PlayerListWidget antes) {
+    super.didUpdateWidget(antes);
+    _vigiarJuiz();
+  }
+
+  @override
+  void dispose() {
+    _paciencia?.cancel();
+    super.dispose();
+  }
+
+  Humor _humor(String id) =>
+      humorNoPlacar(widget.sala, id, juizDemorando: _juizDemorando);
 
   Widget _emLista(BuildContext context) {
     final cores = Cores.de(context);
@@ -55,6 +150,8 @@ class PlayerListWidget extends StatelessWidget {
                           semente: players[i].id,
                           variacao: players[i].avatar,
                           tamanho: 38,
+                          humor: _humor(players[i].id),
+                          lider: players[i].id == liderDaSala(players),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -128,6 +225,8 @@ class PlayerListWidget extends StatelessWidget {
                         juiz: juiz,
                         semente: player.id,
                         variacao: player.avatar,
+                        humor: _humor(player.id),
+                        lider: player.id == liderDaSala(players),
                       ),
                       const SizedBox(height: 4),
                       Text(
