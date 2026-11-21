@@ -12,14 +12,77 @@ class PlayerListWidget extends StatelessWidget {
   final List<Player> players;
   final String? judgeId;
 
+  /// No computador: uma linha por jogador, com o nome inteiro.
+  final bool vertical;
+
   const PlayerListWidget({
     super.key,
     required this.players,
     required this.judgeId,
+    this.vertical = false,
   });
+
+  Widget _emLista(BuildContext context) {
+    final cores = Cores.de(context);
+    final textos = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Medidas.margem, 8, Medidas.margem, 4),
+      child: Column(
+        children: [
+          for (var i = 0; i < players.length; i++)
+            Entrada(
+              key: ValueKey(players[i].id),
+              deslocamento: 12,
+              child: Semantics(
+                label: '${players[i].name}, '
+                    '${players[i].points == 1 ? '1 ponto' : '${players[i].points} pontos'}'
+                    '${players[i].id == judgeId ? ', juiz da rodada' : ''}',
+                excludeSemantics: true,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      AvatarDeJogador(
+                        nome: players[i].name,
+                        indice: i,
+                        juiz: players[i].id == judgeId,
+                        semente: players[i].id,
+                        variacao: players[i].avatar,
+                        tamanho: 38,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          players[i].name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textos.titleSmall?.copyWith(
+                            color: cores.tintaNaMesa,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '${players[i].points}',
+                        style: GoogleFonts.figtree(
+                          color: cores.tintaNaMesa,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (vertical) return _emLista(context);
     final cores = Cores.de(context);
     return SizedBox(
       height: 102,

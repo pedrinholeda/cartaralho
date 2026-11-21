@@ -17,11 +17,15 @@ class BlackCardWidget extends StatefulWidget {
   /// um olho.
   final bool esperando;
 
+  /// No computador, na coluna da esquerda: letra maior.
+  final bool grande;
+
   const BlackCardWidget({
     super.key,
     required this.card,
     this.respostas = const [],
     this.esperando = false,
+    this.grande = false,
   });
 
   @override
@@ -79,6 +83,7 @@ class _BlackCardWidgetState extends State<BlackCardWidget> {
         respostas: widget.respostas,
         olho: _olhando && widget.esperando,
         rodape: ehMadrugada(agora()) ? rodapeDaMadrugada : null,
+        tamanhoDoTexto: widget.grande ? 27 : 21,
       ),
     );
   }

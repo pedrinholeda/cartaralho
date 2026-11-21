@@ -81,35 +81,38 @@ class GameScreen extends ConsumerWidget {
                 return const _Aviso('Essa sala não existe mais.');
               }
               final aviso = _avisoDaVez(room, currentPlayer, isJudge);
-              final topo = [
-                const SizedBox(height: 4),
-                if (room.phase != GamePhase.waitingForPlayers)
-                  PlayerListWidget(
-                    players: room.players,
-                    judgeId: room.currentJudgeId,
-                  ),
-                if (aviso != null)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      Medidas.margem,
-                      4,
-                      Medidas.margem,
-                      8,
-                    ),
-                    child: Align(alignment: Alignment.centerLeft, child: aviso),
-                  ),
-                if (room.currentBlackCard != null &&
-                    room.phase != GamePhase.waitingForPlayers)
-                  BlackCardWidget(
-                    card: room.currentBlackCard!,
-                    respostas:
-                        _respostasNaCarta(ref, room, currentPlayer, isJudge),
-                    esperando: room.phase == GamePhase.playersSubmitting &&
-                        currentPlayer != null &&
-                        !isJudge &&
-                        !room.submittedCards.containsKey(currentPlayer.id),
-                  ),
-              ];
+              List<Widget> topoDe({required bool largo}) => [
+                    const SizedBox(height: 4),
+                    if (room.phase != GamePhase.waitingForPlayers)
+                      PlayerListWidget(
+                        players: room.players,
+                        judgeId: room.currentJudgeId,
+                        vertical: largo,
+                      ),
+                    if (aviso != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          Medidas.margem,
+                          4,
+                          Medidas.margem,
+                          8,
+                        ),
+                        child: Align(
+                            alignment: Alignment.centerLeft, child: aviso),
+                      ),
+                    if (room.currentBlackCard != null &&
+                        room.phase != GamePhase.waitingForPlayers)
+                      BlackCardWidget(
+                        card: room.currentBlackCard!,
+                        respostas: _respostasNaCarta(
+                            ref, room, currentPlayer, isJudge),
+                        esperando: room.phase == GamePhase.playersSubmitting &&
+                            currentPlayer != null &&
+                            !isJudge &&
+                            !room.submittedCards.containsKey(currentPlayer.id),
+                        grande: largo,
+                      ),
+                  ];
               // Cada fase (e cada rodada) entra com um fade curto, para o
               // jogador perceber que a tela mudou.
               final conteudo = AnimatedSwitcher(
@@ -145,9 +148,12 @@ class GameScreen extends ConsumerWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Com oito jogadores o placar cresce: a coluna rola.
                           SizedBox(
-                            width: 400,
-                            child: Column(children: topo),
+                            width: 420,
+                            child: SingleChildScrollView(
+                              child: Column(children: topoDe(largo: true)),
+                            ),
                           ),
                           Expanded(child: conteudo),
                         ],
@@ -158,7 +164,10 @@ class GameScreen extends ConsumerWidget {
                     constraints:
                         const BoxConstraints(maxWidth: Medidas.larguraMaxima),
                     child: Column(
-                      children: [...topo, Expanded(child: conteudo)],
+                      children: [
+                        ...topoDe(largo: false),
+                        Expanded(child: conteudo),
+                      ],
                     ),
                   );
                 },

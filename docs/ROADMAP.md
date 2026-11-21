@@ -132,7 +132,9 @@ explicando o jogo. Entre três direções desenhadas, a escolhida foi a Noite de
   (-14) e a vitória, que estava a mais baixa, mais alta (-11); as notas terminam com fade e
   todo som começa e acaba no zero. Um teste confere os arquivos
 - [ ] Ouvir os sons num celular de verdade (o ajuste foi por medida; ninguém ouviu ainda)
-- [ ] Revisar o layout de duas colunas em tela larga com o visual novo
+- [x] **Layout de duas colunas revisado**: no computador o placar vira lista (nome inteiro e
+  pontos), a carta preta ganha letra maior na coluna dela e as cartas da mão crescem (168 px)
+  quando a mão tem 640 px ou mais
 
 ## Fase 3c — mais cartas e jogo para poucos
 

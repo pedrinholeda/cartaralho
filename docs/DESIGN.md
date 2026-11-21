@@ -170,8 +170,10 @@ mostra o avatar deixa espaço em cima.
 <img src="imagens/sala-de-espera.png" width="200" alt="Sala de espera: Chama a galera, Falta 1 pessoa. A mesa já está com fome.; o código num painel com Copiar convite; as carinhas de Você e Bia e um lugar vazio escuro com dois olhinhos amarelos; Sortear outra carinha">
 <img src="imagens/solo.png" width="200" alt="Jogar sozinho: o texto sobre o gosto de cada bot, as carinhas dos sete bots com nome (Tia do Zap, Coach Quântico, Tio do Pavê, Estagiário, Crush, DJ do Rolê, Zé do Bar), o campo Seu nome, Bots na mesa 2, 3 ou 4, Pontos para vencer e o botão Começar">
 
-Em tela larga (900 px ou mais) o jogo vira duas colunas: carta preta e placar à esquerda, a
-jogada à direita.
+Em tela larga (900 px ou mais) o jogo vira duas colunas. À esquerda, numa coluna de 420 px
+que rola: o placar em lista (uma linha por jogador, com o nome inteiro e os pontos), o aviso
+de quem é a vez e a carta preta com letra maior (27 em vez de 21). À direita, a jogada; a mão
+usa cartas de 168 px quando tem 640 px ou mais de largura.
 
 ## Momentos creepy
 
