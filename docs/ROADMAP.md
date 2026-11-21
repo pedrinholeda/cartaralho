@@ -140,7 +140,9 @@ com a MIT, e o humor tem que ser daqui.
   todos vêm marcados. Teste confere cada pacote e que nenhum texto se repete entre eles
 - [ ] Pacote Família, sem palavrão, para jogar com criança e com a vó, e pacote Sem filtro
   (+18), que só entra quando alguém marca, com aviso
-- [ ] Carta em branco: o jogador escreve a própria resposta (uma ou duas por mão)
+- [x] **Carta em branco**: o monte de toda sala ganha cartas em branco (uma para cada 12
+  brancas, ao menos 4); quem tira uma escreve a resposta (até 60 caracteres) e ela vai para
+  a mesa com o texto; depois da rodada volta vazia. Os bots só jogam a em branco sem saída
 - [x] **Carinhas**: cada jogador ganha uma carinha desenhada pelo jogo (olhos, boca, enfeite
   e bochechas sorteados pelo id, 1.024 combinações), a mesma em todos os aparelhos, com
   "Sortear outra carinha" na sala de espera

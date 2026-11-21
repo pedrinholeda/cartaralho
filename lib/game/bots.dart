@@ -42,7 +42,17 @@ Bot? botPorId(String id) =>
 /// O quanto o bot gosta de uma carta: bastante se ela é do pacote dele, e um
 /// tanto de sorte, para ele não ser previsível.
 double _gosto(Bot bot, GameCard carta, Random rng) =>
-    (pacoteDaCarta(carta) == bot.pacote ? 2 : 0) + rng.nextDouble() * 2.6;
+    // Bot não escreve: a carta em branco só vai quando não sobra outra.
+    (carta.emBranco ? -10 : 0) +
+    (pacoteDaCarta(carta) == bot.pacote ? 2 : 0) +
+    rng.nextDouble() * 2.6;
+
+/// O que o bot escreve se for obrigado a jogar uma carta em branco.
+const _falasDoBot = [
+  'um silêncio constrangedor',
+  'a resposta que eu esqueci',
+  'algo que não posso dizer aqui',
+];
 
 /// As cartas que o bot envia: as que ele mais gosta, quantas a preta pedir.
 List<String> jogadaDoBot(GameRoom sala, String botId, Random rng) {
@@ -82,7 +92,12 @@ GameRoom? passoDosBots(GameRoom sala, Random rng) {
         if (ehBot(p.id) &&
             p.id != juiz &&
             !sala.submittedCards.containsKey(p.id)) {
-          return enviarCarta(sala, p.id, jogadaDoBot(sala, p.id, rng));
+          final ids = jogadaDoBot(sala, p.id, rng);
+          return enviarCarta(sala, p.id, ids, textos: {
+            for (final id in ids)
+              if (id.startsWith('livre-'))
+                id: _falasDoBot[rng.nextInt(_falasDoBot.length)],
+          });
         }
       }
       return null;

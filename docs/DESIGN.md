@@ -106,6 +106,8 @@ normal ("Criar sala", "Enviar carta"), nunca em Caixa De Título.
 - `CartaBranca`: carta da mão (proporção de baralho; sobe e ganha contorno vermelho quando
   escolhida; mostra a ordem quando a preta pede mais de uma) ou carta larga com a frase
   inteira (mesa, juiz, resultado; com o nome de quem enviou e em amarelo quando venceu).
+  A carta em branco aparece com o convite "carta em branco: toque para escrever", apagado e
+  em itálico; ao tocar, um diálogo pede a resposta, que entra na frase como qualquer carta.
   Funciona pelo toque, pelo mouse e pelo teclado (Tab, Enter ou Espaço), com contorno
   amarelo de foco.
 - `MaoEmLeque`: a mão numa faixa horizontal que se arrasta para os lados, com as cartas

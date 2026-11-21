@@ -47,6 +47,7 @@ mesa e joga uma carta qualquer por rodada (e às vezes ganha).
 - Entrada só com o código e um nome: sem cadastro, o login é anônimo.
 
 **Partida**
+- Cartas em branco no monte: quem tira uma escreve a própria resposta.
 - Modo solo contra bots com personalidade, que jogam e julgam pelo próprio gosto.
 - Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
 - Fofo por fora, ácido por dentro: ícones com olhinhos, cartas sem dó, e alguns sustos

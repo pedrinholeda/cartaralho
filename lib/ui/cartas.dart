@@ -186,9 +186,13 @@ class CartaBranca extends StatelessWidget {
 
   final VoidCallback? aoTocar;
 
+  /// Carta em branco ainda não escrita: texto apagado e em itálico.
+  final bool emBranco;
+
   const CartaBranca({
     super.key,
     required this.texto,
+    this.emBranco = false,
     this.selecionada = false,
     this.ordem,
     this.autor,
@@ -208,7 +212,15 @@ class CartaBranca extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(texto, style: _textoDeCarta(tinta, larga ? 17 : 15)),
+        Text(
+          texto,
+          style: emBranco
+              ? _textoDeCarta(tinta.withValues(alpha: .55), 14).copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w600,
+                )
+              : _textoDeCarta(tinta, larga ? 17 : 15),
+        ),
         if (autor != null) ...[
           const SizedBox(height: 8),
           Text(
