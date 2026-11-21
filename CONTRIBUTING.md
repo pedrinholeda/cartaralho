@@ -58,7 +58,9 @@ Quer sugerir carta? Edite o baralho do tema em [`assets/baralhos/`](assets/baral
 `flutter test test/game/baralho_test.dart`. Carta preta tem de uma a três lacunas `____`;
 carta branca começa com minúscula (o jogo põe a maiúscula quando ela abre a frase) e não
 termina em ponto. Antes da lacuna, nada de preposição que vira contração (`de`, `em`, `por`,
-`a`): "fala de ____" viraria "fala de o cunhado". Um texto não se repete em outro baralho. Humor ácido é bem-vindo; ataque a grupos de pessoas, não. Sexo e bebida vão no Sem filtro
+`a`): "fala de ____" viraria "fala de o cunhado". Um texto não se repete em outro baralho. Humor ácido é bem-vindo; ataque a grupos de pessoas, não. Nada de pessoas reais com nome
+(envelhece mal e pode ofender): prefira o tipo ("o narrador emocionado demais"). Carta de
+outro jogo não entra, nem traduzida: as licenças não combinam com a MIT. Sexo e bebida vão no Sem filtro
 (+18), nunca em cena sem consentimento; o Para toda a família não tem palavrão.
 
 ## Docs
