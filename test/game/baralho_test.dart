@@ -156,4 +156,12 @@ void main() {
       expect(Baralho.juntar([pacoteDoArquivo('leve')]).adulto, isFalse);
     });
   });
+
+  test('juntarEscolhidos junta só os pacotes marcados, na ordem do catálogo',
+      () {
+    final todos = [for (final id in pacotes) pacoteDoArquivo(id)];
+    final junto = juntarEscolhidos(todos, {'amor', 'basico'});
+    expect(junto.nome, 'Básico, Amor e desamor');
+    expect(junto.brancas.map(pacoteDaCarta).toSet(), {'basico', 'amor'});
+  });
 }

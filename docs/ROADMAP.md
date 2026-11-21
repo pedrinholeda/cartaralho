@@ -170,6 +170,21 @@ com a MIT, e o humor tem que ser daqui.
   e joga e julga no sorteio. O aparelho do anfitrião faz as jogadas dele (`MaestroDosBots`);
   se o anfitrião sair, o Zé para
 
+## Fase 3d — mais vida
+
+Ajustes pedidos jogando: o app parecia parado demais, faltava trilha e o modo solo não
+deixava escolher o baralho.
+
+- [x] **Escolher os baralhos no modo solo**: a mesma lista de "Criar sala"
+  (`EscolhaDeBaralhos`), com a confirmação do +18
+- [ ] Carinhas vivas: flutuam, os olhos seguem o mouse (ou o último toque) e de vez em quando
+  uma dá um cascudo na vizinha
+- [ ] Carinhas que reagem ao jogo: pensando, enviou, juiz pensativo, pulo de quem ganha;
+  impaciência quando o juiz demora; coroa em quem lidera
+- [ ] Reações rápidas: tocar na própria carinha e mandar uma reação que todos veem
+- [ ] Cartas com vida: inclinam em 3D sob o mouse (ou o dedo) e a enviada voa para a mesa
+- [ ] Música de fundo por fase, com volume e opção de desligar; desafinada na madrugada
+
 ## Fase 4 — plataformas
 
 - [ ] **Projeto iOS completo**: falta o `Runner.xcodeproj` (recriar com

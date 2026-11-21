@@ -159,7 +159,7 @@ mostra o avatar deixa espaço em cima.
 | tela | o que tem |
 |---|---|
 | Capa | "Como jogar" e som em cima; a carta preta e a branca que formam o nome do jogo, com três carinhas espiando entre elas; "Carinhas fofas. Cartas horríveis."; "Criar sala" e "Entrar na sala" embaixo |
-| Jogar sozinho ([`solo_screen.dart`](../lib/screens/solo_screen.dart)) | os sete bots com carinha e nome, para conhecer a mesa; nome, quantos bots (2 a 4) e pontos; "Começar" abre a partida já com você de juiz, e o título vira "Jogo solo" |
+| Jogar sozinho ([`solo_screen.dart`](../lib/screens/solo_screen.dart)) | os sete bots com carinha e nome, para conhecer a mesa; nome, quantos bots (2 a 4), pontos e os baralhos (a mesma lista de "Criar sala"); "Começar" abre a partida já com você de juiz, e o título vira "Jogo solo" |
 | Tutorial ([`tutorial_screen.dart`](../lib/screens/tutorial_screen.dart)) | três telas (chame a galera, complete a frase, o juiz escolhe) com as cartas de verdade num exemplo; abre sozinho na primeira visita e pelo "Como jogar" ou pelo "?" |
 | Sala de espera | código num painel com "Copiar convite" e copiar código; "Chama a galera" e quantas pessoas faltam ("a mesa já está com fome"); a carinha e o nome de quem entrou, "Sortear outra carinha" e os lugares vazios com olhinhos no escuro; o botão diz quantos faltam |
 | Jogo | placar de avatares; aviso de quem é a vez; carta preta com a frase montada; mão em leque e botão fixo embaixo |

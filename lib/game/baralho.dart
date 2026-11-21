@@ -95,6 +95,14 @@ class Baralho {
   }
 }
 
+/// Os pacotes de [todos] cujo id está em [ids], juntos num baralho só, na
+/// ordem do catálogo.
+Baralho juntarEscolhidos(List<Baralho> todos, Set<String> ids) =>
+    Baralho.juntar([
+      for (final b in todos)
+        if (ids.contains(b.id)) b
+    ]);
+
 /// De que pacote veio a carta, pelo prefixo do id (`familia-w3` → `familia`).
 /// Cartas de salas criadas antes dos pacotes (`w3`) vêm do básico.
 String pacoteDaCarta(GameCard carta) {
