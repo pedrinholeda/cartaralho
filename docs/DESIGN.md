@@ -152,6 +152,18 @@ uma carinha vai até a vizinha, dá um cascudo e volta; a vizinha é empurrada, 
 tonta (olhos em X e uma estrelinha). Na sala de espera, o cascudo não atravessa a quebra de
 linha. Com "reduzir movimento", tudo fica parado.
 
+**Carinhas que reagem** (`Humor`, calculado por `humorNoPlacar` no placar):
+
+| fase | quem | carinha |
+|---|---|---|
+| escolhendo | quem ainda não enviou | balão de "…" e olhos para o lado, pensando |
+| escolhendo, juiz decidindo | quem já enviou | uma cartinha branca na mão |
+| escolhendo, juiz decidindo | o juiz | olhos para cima |
+| juiz decidindo há mais de 20 s | os outros | treme e solta um "!" amarelo |
+| resultado, fim | quem ganhou | pulinhos |
+
+Quem lidera sozinho a partida (`liderDaSala`) usa a coroa derretendo em cima da cabeça.
+
 [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
 
 - `Entrada`: a carta sobe e aparece, uma vez, na primeira vez que é montada (uma `key` por

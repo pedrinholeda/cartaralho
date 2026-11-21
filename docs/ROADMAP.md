@@ -180,8 +180,9 @@ deixava escolher o baralho.
 - [x] **Carinhas vivas**: flutuam num ritmo próprio, piscam, os olhos seguem o mouse (ou o
   último toque) e, no placar, na sala de espera e na capa, de vez em quando uma dá um cascudo
   na vizinha, que fica tonta. Tudo para com "reduzir movimento"
-- [ ] Carinhas que reagem ao jogo: pensando, enviou, juiz pensativo, pulo de quem ganha;
-  impaciência quando o juiz demora; coroa em quem lidera
+- [x] **Carinhas que reagem ao jogo**: balão de "…" em quem escolhe, cartinha na mão de quem
+  enviou, juiz de olhos para cima, pulinhos de quem ganha a rodada, impaciência ("!" e
+  tremedeira) quando o juiz passa de 20 s, e coroa derretendo em quem lidera sozinho
 - [ ] Reações rápidas: tocar na própria carinha e mandar uma reação que todos veem
 - [ ] Cartas com vida: inclinam em 3D sob o mouse (ou o dedo) e a enviada voa para a mesa
 - [ ] Música de fundo por fase, com volume e opção de desligar; desafinada na madrugada
