@@ -177,8 +177,9 @@ deixava escolher o baralho.
 
 - [x] **Escolher os baralhos no modo solo**: a mesma lista de "Criar sala"
   (`EscolhaDeBaralhos`), com a confirmação do +18
-- [ ] Carinhas vivas: flutuam, os olhos seguem o mouse (ou o último toque) e de vez em quando
-  uma dá um cascudo na vizinha
+- [x] **Carinhas vivas**: flutuam num ritmo próprio, piscam, os olhos seguem o mouse (ou o
+  último toque) e, no placar, na sala de espera e na capa, de vez em quando uma dá um cascudo
+  na vizinha, que fica tonta. Tudo para com "reduzir movimento"
 - [ ] Carinhas que reagem ao jogo: pensando, enviou, juiz pensativo, pulo de quem ganha;
   impaciência quando o juiz demora; coroa em quem lidera
 - [ ] Reações rápidas: tocar na própria carinha e mandar uma reação que todos veem

@@ -96,6 +96,15 @@ class PintorDeCarinha extends CustomPainter {
   /// Na madrugada: cor desbotada e olhos fundos, seja qual for a carinha.
   final bool assombrada;
 
+  /// Para onde a carinha olha, de -1 a 1 em cada eixo (o ponteiro).
+  final Offset olhar;
+
+  /// No meio de uma piscada: olhos fechados.
+  final bool piscando;
+
+  /// Acabou de levar um cascudo: olhos em X e uma estrelinha.
+  final bool tonta;
+
   const PintorDeCarinha({
     required this.carinha,
     required this.fundo,
@@ -103,6 +112,9 @@ class PintorDeCarinha extends CustomPainter {
     required this.bochecha,
     required this.branco,
     this.assombrada = false,
+    this.olhar = Offset.zero,
+    this.piscando = false,
+    this.tonta = false,
   });
 
   /// A cor do avatar quase sem cor e um pouco mais escura.
@@ -147,17 +159,26 @@ class PintorDeCarinha extends CustomPainter {
           p);
     }
 
-    if (assombrada) {
+    // Os olhos andam um pouco na direção do ponteiro.
+    canvas.save();
+    canvas.translate(olhar.dx * .04, olhar.dy * .03);
+    if (tonta) {
+      _olhosTontos(canvas, traco);
+    } else if (piscando) {
+      _olhosFechados(canvas, traco);
+    } else if (assombrada) {
       _olhosFundos(canvas, cheio);
     } else {
       _olhos(canvas, traco, cheio);
     }
+    canvas.restore();
     _boca(canvas, traco, cheio);
     _enfeite(canvas, traco, cheio);
     canvas.restore();
     // Chapéu, topete, fone e aba do boné saem da cabeça: ficam fora do recorte
     // do círculo, e o avatar deixa espaço em volta para eles.
     _enfeiteDeFora(canvas, cheio);
+    if (tonta) _estrelinha(canvas, const Offset(.86, .04), .11);
     canvas.restore();
   }
 
@@ -213,6 +234,30 @@ class PintorDeCarinha extends CustomPainter {
       default:
         break;
     }
+  }
+
+  void _olhosFechados(Canvas c, Paint traco) {
+    for (final x in [.34, .66]) {
+      c.drawLine(Offset(x - .07, .47), Offset(x + .07, .47), traco);
+    }
+  }
+
+  void _olhosTontos(Canvas c, Paint traco) {
+    for (final x in [.34, .66]) {
+      c.drawLine(Offset(x - .06, .41), Offset(x + .06, .53), traco);
+      c.drawLine(Offset(x + .06, .41), Offset(x - .06, .53), traco);
+    }
+  }
+
+  void _estrelinha(Canvas c, Offset centro, double raio) {
+    final p = Path();
+    for (var i = 0; i < 8; i++) {
+      final r = i.isEven ? raio : raio * .4;
+      final a = -math.pi / 2 + i * math.pi / 4;
+      final ponto = centro + Offset(math.cos(a) * r, math.sin(a) * r);
+      i == 0 ? p.moveTo(ponto.dx, ponto.dy) : p.lineTo(ponto.dx, ponto.dy);
+    }
+    c.drawPath(p..close(), Paint()..color = branco);
   }
 
   /// Dois buracos escuros com um pontinho de luz; cada carinha olha um pouco
@@ -420,5 +465,8 @@ class PintorDeCarinha extends CustomPainter {
       old.tinta != tinta ||
       old.bochecha != bochecha ||
       old.branco != branco ||
-      old.assombrada != assombrada;
+      old.assombrada != assombrada ||
+      old.olhar != olhar ||
+      old.piscando != piscando ||
+      old.tonta != tonta;
 }

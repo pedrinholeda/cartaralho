@@ -144,6 +144,14 @@ carinha" troca, com um pulinho. Chapéu, topete, fone e aba do boné saem do cí
 mostra o avatar deixa espaço em cima.
 - `AvisoDaVez`: a pílula de "Juiz da rodada: Ana" ou "Sua vez de julgar".
 
+**Carinhas vivas** ([`lib/ui/olhar.dart`](../lib/ui/olhar.dart)): todo avatar flutua num
+ritmo que sai da semente (cada um no seu), pisca de vez em quando e olha para o ponteiro, que
+`RastreadorDeOlhar`, em volta do app, anota (o mouse no computador, o último toque no
+celular). Dentro de um `GrupoDeCarinhas` (placar, sala de espera, capa), de 18 a 35 segundos
+uma carinha vai até a vizinha, dá um cascudo e volta; a vizinha é empurrada, balança e fica
+tonta (olhos em X e uma estrelinha). Na sala de espera, o cascudo não atravessa a quebra de
+linha. Com "reduzir movimento", tudo fica parado.
+
 [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart):
 
 - `Entrada`: a carta sobe e aparece, uma vez, na primeira vez que é montada (uma `key` por

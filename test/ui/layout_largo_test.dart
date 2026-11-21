@@ -26,7 +26,8 @@ void main() {
       judgeId: 'a',
       vertical: true,
     )));
-    await tester.pumpAndSettle();
+    // As carinhas flutuam sem parar: espera a entrada e segue.
+    await tester.pump(const Duration(seconds: 1));
     final nome = tester.widget<Text>(find.text('Coach Quântico'));
     expect(nome.maxLines, 1);
     // Cabe inteiro: a linha não foi cortada com reticências.
