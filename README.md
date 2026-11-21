@@ -37,6 +37,9 @@ Sem ninguém por perto? **Jogar sozinho contra bots**, na capa: você e 2 a 4 bo
 o seu gosto (a Tia do Zap adora as cartas do grupo da família; o Coach Quântico, as da
 firma). A partida roda no próprio aparelho, sem sala nem código.
 
+Só em duas pessoas? Na sala de espera, o anfitrião chama o **Zé Aleatório**: ele completa a
+mesa e joga uma carta qualquer por rodada (e às vezes ganha).
+
 ## O que faz
 
 **Salas em tempo real**

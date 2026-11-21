@@ -17,7 +17,9 @@ import '../ui/jogadores.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 import 'tutorial_screen.dart';
+import '../game/bots.dart';
 import '../widgets/black_card_widget.dart';
+import '../widgets/maestro_dos_bots.dart';
 import '../widgets/judge_widget.dart';
 import '../widgets/player_list_widget.dart';
 import '../widgets/round_result_widget.dart';
@@ -69,98 +71,103 @@ class GameScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: Center(
-        child: gameRoom.when(
-          data: (room) {
-            if (room == null) {
-              return const _Aviso('Essa sala não existe mais.');
-            }
-            final aviso = _avisoDaVez(room, currentPlayer, isJudge);
-            final topo = [
-              const SizedBox(height: 4),
-              if (room.phase != GamePhase.waitingForPlayers)
-                PlayerListWidget(
-                  players: room.players,
-                  judgeId: room.currentJudgeId,
-                ),
-              if (aviso != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    Medidas.margem,
-                    4,
-                    Medidas.margem,
-                    8,
+      body: MaestroDosBots(
+        roomId: roomId,
+        anfitriao: isHost && !MesaLocal.eh(roomId),
+        child: Center(
+          child: gameRoom.when(
+            data: (room) {
+              if (room == null) {
+                return const _Aviso('Essa sala não existe mais.');
+              }
+              final aviso = _avisoDaVez(room, currentPlayer, isJudge);
+              final topo = [
+                const SizedBox(height: 4),
+                if (room.phase != GamePhase.waitingForPlayers)
+                  PlayerListWidget(
+                    players: room.players,
+                    judgeId: room.currentJudgeId,
                   ),
-                  child: Align(alignment: Alignment.centerLeft, child: aviso),
+                if (aviso != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Medidas.margem,
+                      4,
+                      Medidas.margem,
+                      8,
+                    ),
+                    child: Align(alignment: Alignment.centerLeft, child: aviso),
+                  ),
+                if (room.currentBlackCard != null &&
+                    room.phase != GamePhase.waitingForPlayers)
+                  BlackCardWidget(
+                    card: room.currentBlackCard!,
+                    respostas:
+                        _respostasNaCarta(ref, room, currentPlayer, isJudge),
+                    esperando: room.phase == GamePhase.playersSubmitting &&
+                        currentPlayer != null &&
+                        !isJudge &&
+                        !room.submittedCards.containsKey(currentPlayer.id),
+                  ),
+              ];
+              // Cada fase (e cada rodada) entra com um fade curto, para o
+              // jogador perceber que a tela mudou.
+              final conteudo = AnimatedSwitcher(
+                duration: movimentoReduzido(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 250),
+                // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
+                layoutBuilder: (atual, anteriores) =>
+                    atual ?? const SizedBox.shrink(),
+                child: KeyedSubtree(
+                  key: ValueKey(
+                    '${room.phase.name}-${room.currentBlackCard?.id}',
+                  ),
+                  child: _conteudo(
+                    context,
+                    ref,
+                    room,
+                    currentPlayer,
+                    isHost,
+                    isJudge,
+                    gamePhase,
+                  ),
                 ),
-              if (room.currentBlackCard != null &&
-                  room.phase != GamePhase.waitingForPlayers)
-                BlackCardWidget(
-                  card: room.currentBlackCard!,
-                  respostas:
-                      _respostasNaCarta(ref, room, currentPlayer, isJudge),
-                  esperando: room.phase == GamePhase.playersSubmitting &&
-                      currentPlayer != null &&
-                      !isJudge &&
-                      !room.submittedCards.containsKey(currentPlayer.id),
-                ),
-            ];
-            // Cada fase (e cada rodada) entra com um fade curto, para o
-            // jogador perceber que a tela mudou.
-            final conteudo = AnimatedSwitcher(
-              duration: movimentoReduzido(context)
-                  ? Duration.zero
-                  : const Duration(milliseconds: 250),
-              // Só a tela nova aparece: sobrepor a antiga embaralha os textos.
-              layoutBuilder: (atual, anteriores) =>
-                  atual ?? const SizedBox.shrink(),
-              child: KeyedSubtree(
-                key: ValueKey(
-                  '${room.phase.name}-${room.currentBlackCard?.id}',
-                ),
-                child: _conteudo(
-                  context,
-                  ref,
-                  room,
-                  currentPlayer,
-                  isHost,
-                  isJudge,
-                  gamePhase,
-                ),
-              ),
-            );
+              );
 
-            return LayoutBuilder(
-              builder: (context, espaco) {
-                // Tela larga: carta preta e placar à esquerda, a jogada à
-                // direita. Celular: tudo numa coluna só.
-                if (espaco.maxWidth >= Medidas.larguraDuasColunas) {
+              return LayoutBuilder(
+                builder: (context, espaco) {
+                  // Tela larga: carta preta e placar à esquerda, a jogada à
+                  // direita. Celular: tudo numa coluna só.
+                  if (espaco.maxWidth >= Medidas.larguraDuasColunas) {
+                    return ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1120),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 400,
+                            child: Column(children: topo),
+                          ),
+                          Expanded(child: conteudo),
+                        ],
+                      ),
+                    );
+                  }
                   return ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1120),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 400,
-                          child: Column(children: topo),
-                        ),
-                        Expanded(child: conteudo),
-                      ],
+                    constraints:
+                        const BoxConstraints(maxWidth: Medidas.larguraMaxima),
+                    child: Column(
+                      children: [...topo, Expanded(child: conteudo)],
                     ),
                   );
-                }
-                return ConstrainedBox(
-                  constraints:
-                      const BoxConstraints(maxWidth: Medidas.larguraMaxima),
-                  child: Column(
-                    children: [...topo, Expanded(child: conteudo)],
-                  ),
-                );
-              },
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _Aviso('Não deu para abrir a sala: $error'),
+                },
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) =>
+                _Aviso('Não deu para abrir a sala: $error'),
+          ),
         ),
       ),
     );
@@ -290,6 +297,51 @@ class _SalaDeEspera extends StatelessWidget {
     required this.meuId,
   });
 
+  List<Widget> _botaoDoZe(BuildContext context, int faltam) {
+    final temZe = room.players.any((p) => p.id == zeAleatorio.id);
+    final pessoas = room.players.where((p) => !ehBot(p.id)).length;
+    Future<void> tentar(Future<void> Function(String) acao) async {
+      try {
+        await acao(room.roomId);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('$e')));
+        }
+      }
+    }
+
+    if (!temZe && faltam == 1) {
+      return [
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: () => tentar(FirebaseService.chamarZe),
+          icon: const IconeFofo(Desenho.dado, tamanho: 22),
+          label: const Text('Chamar o Zé Aleatório'),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Só vocês dois? O Zé completa a mesa e joga uma carta qualquer '
+          'por rodada. Às vezes ganha.',
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: Cores.de(context).tintaSuave),
+        ),
+      ];
+    }
+    if (temZe && pessoas >= minimoDeJogadores) {
+      return [
+        const SizedBox(height: 12),
+        OutlinedButton(
+          onPressed: () => tentar(FirebaseService.dispensarZe),
+          child: const Text('Dispensar o Zé Aleatório'),
+        ),
+      ];
+    }
+    return const [];
+  }
+
   Future<void> _sortearCarinha(BuildContext context) async {
     try {
       await FirebaseService.sortearOutraCarinha(room.roomId);
@@ -415,6 +467,9 @@ class _SalaDeEspera extends StatelessWidget {
             'Até ${room.maxPoints} pontos, ${room.handSize} cartas na mão',
             style: textos.bodyMedium?.copyWith(color: cores.tintaSuave),
           ),
+          // Com duas pessoas, o anfitrião pode chamar o Zé Aleatório para
+          // completar a mesa; chegou a terceira, pode dispensar.
+          if (isHost) ..._botaoDoZe(context, faltam),
           const Spacer(),
           if (isHost)
             ElevatedButton(

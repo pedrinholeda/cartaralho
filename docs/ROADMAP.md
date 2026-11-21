@@ -154,8 +154,9 @@ com a MIT, e o humor tem que ser daqui.
   (`MesaLocal`), pelas mesmas regras, sem Firestore; ainda pede o login anônimo da capa
 - [x] Voltar ao menu não quebra mais os providers da sala (o código virava nulo e
   `roomId!` lançava)
-- [ ] Zé Aleatório: com 2 pessoas na sala, um jogador imaginário completa o mínimo e joga
-  uma carta sorteada por rodada
+- [x] **Zé Aleatório**: com 2 pessoas na sala, o anfitrião chama o Zé, que completa o mínimo
+  e joga e julga no sorteio. O aparelho do anfitrião faz as jogadas dele (`MaestroDosBots`);
+  se o anfitrião sair, o Zé para
 
 ## Fase 4 — plataformas
 

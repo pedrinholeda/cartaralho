@@ -45,7 +45,8 @@ android/ ios/ macos/ web/  projetos de plataforma
   dentro; sorteio recebe um `Random` opcional, para o teste fixar a semente.
 - Partida solo tem código `SOLO-...` e não toca no Firestore: o `FirebaseService` desvia
   para a `MesaLocal`. Jogada nova funciona nas duas sem mudar nada, porque as duas rodam
-  as mesmas regras. Bot tem id `bot-...` (`ehBot`).
+  as mesmas regras. Bot tem id `bot-...` (`ehBot`). Numa sala online, quem faz o bot jogar
+  é o aparelho do anfitrião (`MaestroDosBots`).
 - Quem é o juiz vem de `GameRoom.currentJudgeId` (`room.isJudge(id)`), não de um campo
   do jogador.
 - Cor só pelo tema: `Cores.de(context).mesa`, `.acao`, `.carta`... Nada de

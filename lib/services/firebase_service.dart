@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../game/baralho.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
+import '../game/bots.dart' as bots;
 import '../game/regras.dart' as regras;
+import 'dart:math';
 import 'mesa_local.dart';
 
 class FirebaseService {
@@ -99,6 +101,28 @@ class FirebaseService {
     await _alterarSala(
       roomId,
       (sala) => regras.sortearOutraCarinha(sala, user.uid),
+    );
+  }
+
+  static Future<void> chamarZe(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => bots.chamarZe(sala, user.uid));
+  }
+
+  static Future<void> dispensarZe(String roomId) async {
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => bots.dispensarZe(sala, user.uid));
+  }
+
+  static final _sorteDosBots = Random();
+
+  /// A próxima jogada de algum bot da sala online, feita pelo aparelho do
+  /// anfitrião. Na transação, a sala é lida de novo: se já não é a vez de um
+  /// bot (alguém jogou antes), nada muda.
+  static Future<void> jogadaDosBots(String roomId) async {
+    await _alterarSala(
+      roomId,
+      (sala) => bots.passoDosBots(sala, _sorteDosBots) ?? sala,
     );
   }
 
