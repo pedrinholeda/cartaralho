@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../apoio.dart';
 
-final _todos = Baralho.juntar([for (final id in pacotes) pacoteDoArquivo(id)]);
+final _todos = baralhoDoSolo([for (final id in pacotes) pacoteDoArquivo(id)]);
 final _voce = Player(id: 'eu', name: 'Você');
 
 GameRoom _solo({int adversarios = 3, int seed = 1, int maxPoints = 5}) =>
@@ -184,7 +184,11 @@ void main() {
   });
 
   test('o bot só joga carta em branco sem saída, e escreve algo', () {
-    final s = _solo();
+    // Uma carta preta que pede uma só branca.
+    final s = _solo().copyWith(
+      currentBlackCard:
+          GameCard(id: 'basico-b1', text: 'Frase ____.', type: CardType.black),
+    );
     final bot = s.players[1].id;
     final livres = [
       for (var i = 1; i <= 5; i++)
@@ -202,6 +206,13 @@ void main() {
           s.copyWith(hands: {...s.hands, bot: misto}), Random(seed))!;
       expect(d.submittedCards[bot]!.single.emBranco, isFalse);
     }
+  });
+
+  test('o modo solo deixa o pacote +18 de fora', () {
+    expect(_todos.adulto, isFalse);
+    expect(
+        _todos.brancas.any((c) => pacoteDaCarta(c) == 'sem-filtro'), isFalse);
+    expect(_todos.brancas.any((c) => pacoteDaCarta(c) == 'leve'), isTrue);
   });
 
   group('Zé Aleatório', () {

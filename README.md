@@ -52,8 +52,9 @@ mesa e joga uma carta qualquer por rodada (e às vezes ganha).
 - Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
 - Fofo por fora, ácido por dentro: ícones com olhinhos, cartas sem dó, e alguns sustos
   escondidos (jogue de madrugada, ou demore para escolher a carta).
-- Sete baralhos para misturar: Básico, Brasilidades, Grupo da família, Firma, Rolê,
-  Internet e Amor e desamor, com mais de 600 cartas ao todo.
+- Nove baralhos para misturar: Básico, Brasilidades, Grupo da família, Firma, Rolê,
+  Internet, Amor e desamor, Para toda a família (sem palavrão, para jogar com criança) e
+  Sem filtro (+18, só entra se o anfitrião marcar e confirmar), com mais de 800 cartas.
 - Lista de jogadores com os pontos e quem é o juiz da vez.
 - Cinco cartas brancas na mão, completadas a cada rodada.
 - Uma vez por partida, cada jogador pode trocar a mão inteira.

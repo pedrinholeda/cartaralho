@@ -137,4 +137,23 @@ void main() {
     final antiga = GameCard(id: 'w3', text: 'meu ex', type: CardType.white);
     expect(pacoteDaCarta(antiga), 'basico');
   });
+
+  group('pacote +18', () {
+    test('só o Sem filtro é adulto, e ele não vem marcado', () {
+      final adultos = [
+        for (final id in pacotes)
+          if (pacoteDoArquivo(id).adulto) id,
+      ];
+      expect(adultos, ['sem-filtro']);
+      expect(pacotesPadrao, isNot(contains('sem-filtro')));
+      expect(pacotesPadrao.toSet(), {...pacotes}..remove('sem-filtro'));
+    });
+
+    test('juntar com o +18 marca o baralho como adulto', () {
+      final junto = Baralho.juntar(
+          [pacoteDoArquivo('leve'), pacoteDoArquivo('sem-filtro')]);
+      expect(junto.adulto, isTrue);
+      expect(Baralho.juntar([pacoteDoArquivo('leve')]).adulto, isFalse);
+    });
+  });
 }

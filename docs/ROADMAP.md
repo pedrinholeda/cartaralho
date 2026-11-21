@@ -138,8 +138,10 @@ com a MIT, e o humor tem que ser daqui.
 - [x] **Baralhos temáticos**: seis pacotes novos (Brasilidades, Grupo da família, Firma,
   Rolê, Internet, Amor e desamor), 25 pretas e 62 brancas cada, escolhidos ao criar a sala;
   todos vêm marcados. Teste confere cada pacote e que nenhum texto se repete entre eles
-- [ ] Pacote Família, sem palavrão, para jogar com criança e com a vó, e pacote Sem filtro
-  (+18), que só entra quando alguém marca, com aviso
+- [x] **Pacotes Para toda a família e Sem filtro (+18)**: o primeiro sem palavrão nem
+  baixaria; o segundo com sexo e bebida, fora dos marcados por padrão, com confirmação ao
+  marcar ("Todo mundo topa?") e fora do modo solo. Humor adulto, mas sem preconceito e sem
+  nada que envolva falta de consentimento
 - [x] **Carta em branco**: o monte de toda sala ganha cartas em branco (uma para cada 12
   brancas, ao menos 4); quem tira uma escreve a resposta (até 60 caracteres) e ela vai para
   a mesa com o texto; depois da rodada volta vazia. Os bots só jogam a em branco sem saída

@@ -23,6 +23,38 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
   int _mao = regras.tamanhoDaMao;
   final _escolhidos = {...pacotesPadrao};
 
+  /// Marca ou desmarca um pacote. O +18 só entra depois de confirmar.
+  Future<void> _trocarPacote(Baralho pacote) async {
+    if (_escolhidos.contains(pacote.id)) {
+      setState(() => _escolhidos.remove(pacote.id));
+      return;
+    }
+    if (pacote.adulto) {
+      final confirmou = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(pacote.nome),
+          content: const Text(
+            'Cartas sobre sexo e bebida, para maiores de 18. '
+            'Todo mundo na sala topa?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Melhor não'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Todo mundo topa'),
+            ),
+          ],
+        ),
+      );
+      if (confirmou != true || !mounted) return;
+    }
+    setState(() => _escolhidos.add(pacote.id));
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -130,9 +162,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                 const SizedBox(height: 24),
                 _Baralhos(
                   escolhidos: _escolhidos,
-                  aoTrocar: (id) => setState(() {
-                    if (!_escolhidos.remove(id)) _escolhidos.add(id);
-                  }),
+                  aoTrocar: _trocarPacote,
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
@@ -159,7 +189,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
 /// Os pacotes de cartas, para marcar quais entram na partida.
 class _Baralhos extends ConsumerWidget {
   final Set<String> escolhidos;
-  final ValueChanged<String> aoTrocar;
+  final ValueChanged<Baralho> aoTrocar;
 
   const _Baralhos({required this.escolhidos, required this.aoTrocar});
 
@@ -190,7 +220,7 @@ class _Baralhos extends ConsumerWidget {
                   child: _Pacote(
                     baralho: b,
                     marcado: escolhidos.contains(b.id),
-                    aoTocar: () => aoTrocar(b.id),
+                    aoTocar: () => aoTrocar(b),
                   ),
                 ),
               Text(
