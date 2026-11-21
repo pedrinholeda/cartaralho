@@ -2,7 +2,7 @@ name: cartaralho
 description: "Cartaralho - Flutter version with Firebase integration"
 publish_to: "none"
 
-version: 0.9.0+9
+version: 0.10.0+10
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
