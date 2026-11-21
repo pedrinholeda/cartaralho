@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../game/baralho.dart';
 import '../game/bots.dart';
 import '../game/regras.dart' as regras;
 import '../models/player.dart';
@@ -61,7 +60,7 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
         salaSolo(
           roomId: roomId,
           voce: Player(id: eu.uid, name: nome),
-          baralho: Baralho.juntar(await ref.read(baralhosProvider.future)),
+          baralho: baralhoDoSolo(await ref.read(baralhosProvider.future)),
           adversarios: _adversarios,
           maxPoints: _pontos,
           random: rng,

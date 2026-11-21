@@ -70,7 +70,8 @@ android/ ios/ macos/ web/  projetos de plataforma
 
 ## Editando as cartas
 
-1. Cada pacote é um `assets/baralhos/<id>.json` (`nome`, `descricao`, `pretas`, `brancas`).
+1. Cada pacote é um `assets/baralhos/<id>.json` (`nome`, `descricao`, `pretas`, `brancas`,
+   e `"adulto": true` no +18, que pede confirmação e fica fora do modo solo).
    `pretas` têm de uma a três lacunas `____`, sem preposição que contrai antes dela (`de`,
    `em`, `por`, `a`) e sem letra colada nela; `brancas` começam com minúscula (salvo nome
    próprio) e não terminam em ponto.

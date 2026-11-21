@@ -115,6 +115,13 @@ GameRoom? passoDosBots(GameRoom sala, Random rng) {
   }
 }
 
+/// O baralho do modo solo: todos os pacotes, menos os +18 (lá ninguém
+/// confirmou nada).
+Baralho baralhoDoSolo(List<Baralho> todos) => Baralho.juntar([
+      for (final b in todos)
+        if (!b.adulto) b
+    ]);
+
 /// Uma partida solo já começada: você, que é o anfitrião e o primeiro juiz, e
 /// [adversarios] bots sorteados.
 GameRoom salaSolo({
