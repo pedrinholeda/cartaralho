@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../game/baralho.dart';
 import '../game/bots.dart';
 import '../game/regras.dart' as regras;
 import '../models/player.dart';
@@ -14,6 +15,7 @@ import '../ui/icones.dart';
 import '../ui/jogadores.dart';
 import '../ui/opcoes.dart';
 import '../ui/tema.dart';
+import '../widgets/escolha_de_baralhos.dart';
 
 /// Jogar sozinho contra bots. A partida roda neste aparelho (`MesaLocal`),
 /// com todos os baralhos, e começa direto, com você de juiz.
@@ -29,6 +31,7 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
   int _adversarios = 3;
   int _pontos = 5;
   bool _abrindo = false;
+  final _escolhidos = {...pacotesPadrao};
 
   @override
   void dispose() {
@@ -41,6 +44,12 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
     if (nome.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Digite seu nome')),
+      );
+      return;
+    }
+    if (_escolhidos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Escolha ao menos um baralho')),
       );
       return;
     }
@@ -60,7 +69,10 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
         salaSolo(
           roomId: roomId,
           voce: Player(id: eu.uid, name: nome),
-          baralho: baralhoDoSolo(await ref.read(baralhosProvider.future)),
+          baralho: juntarEscolhidos(
+            await ref.read(baralhosProvider.future),
+            _escolhidos,
+          ),
           adversarios: _adversarios,
           maxPoints: _pontos,
           random: rng,
@@ -100,7 +112,8 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
                 Text(
                   'Você contra os bots. Cada um tem o seu gosto: a Tia do Zap '
                   'adora as cartas do grupo da família, o Coach Quântico, as '
-                  'da firma. Quando for juiz, pense nisso.',
+                  'da firma. Sem o baralho preferido na mesa, eles jogam na '
+                  'sorte.',
                   style: textos.bodyLarge?.copyWith(color: cores.tintaSuave),
                 ),
                 const SizedBox(height: 20),
@@ -160,6 +173,16 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
                   opcoes: regras.opcoesDePontos,
                   valor: _pontos,
                   aoEscolher: (v) => setState(() => _pontos = v),
+                ),
+                const SizedBox(height: 24),
+                EscolhaDeBaralhos(
+                  escolhidos: _escolhidos,
+                  perguntaDoAdulto: 'Você topa?',
+                  aoMudar: (novos) => setState(() {
+                    _escolhidos
+                      ..clear()
+                      ..addAll(novos);
+                  }),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(

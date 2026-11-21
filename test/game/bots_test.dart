@@ -10,7 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../apoio.dart';
 
-final _todos = baralhoDoSolo([for (final id in pacotes) pacoteDoArquivo(id)]);
+final _todos = juntarEscolhidos(
+    [for (final id in pacotes) pacoteDoArquivo(id)], pacotesPadrao.toSet());
 final _voce = Player(id: 'eu', name: 'Você');
 
 GameRoom _solo({int adversarios = 3, int seed = 1, int maxPoints = 5}) =>
@@ -208,7 +209,7 @@ void main() {
     }
   });
 
-  test('o modo solo deixa o pacote +18 de fora', () {
+  test('o baralho padrão (o que vem marcado) deixa o +18 de fora', () {
     expect(_todos.adulto, isFalse);
     expect(
         _todos.brancas.any((c) => pacoteDaCarta(c) == 'sem-filtro'), isFalse);
