@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/pedrinholeda/cartaralho/compare/v0.10.0...v0.11.0) (2026-11-21)
+
+
+### Novidades
+
+* **jogo:** escolher os baralhos no modo solo ([33950ca](https://github.com/pedrinholeda/cartaralho/commit/33950cae250050434b177eddf242ce8a909e5121))
+
+
+### Documentação
+
+* **firebase:** publicação automática ligada ([254f3d5](https://github.com/pedrinholeda/cartaralho/commit/254f3d566ae74e343e2eaa94c83b0975d748125a))
+
 ## [0.10.0](https://github.com/pedrinholeda/cartaralho/compare/v0.9.0...v0.10.0) (2026-11-21)
 
 
