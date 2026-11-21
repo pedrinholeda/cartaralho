@@ -13,10 +13,12 @@ import '../providers/game_provider.dart';
 import '../services/firebase_service.dart';
 import '../services/mesa_local.dart';
 import '../ui/animacoes.dart';
+import '../ui/assombro.dart';
 import '../ui/cartas.dart';
 import '../ui/icones.dart';
 import '../ui/jogadores.dart';
 import '../ui/olhar.dart';
+import '../ui/musica.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 import 'tutorial_screen.dart';
@@ -49,6 +51,20 @@ class GameScreen extends ConsumerWidget {
       if (sala == null) return;
       final som = somDaMudanca(antes?.valueOrNull, sala);
       if (som != null) ref.read(sonsProvider).tocar(som);
+    });
+
+    // A música de fundo acompanha a fase (e a madrugada), e obedece ao painel
+    // de som na hora. A sala sempre vai de "carregando" para "com dados" ao
+    // abrir, e essa primeira mudança já põe a música.
+    Faixa? faixaDaVez() => faixaDaFase(
+          ref.read(gameRoomProvider(roomId)).valueOrNull?.phase,
+          madrugada: ehMadrugada(agora()),
+        );
+    ref.listen(gameRoomProvider(roomId), (_, __) {
+      ref.read(musicaProvider).tocar(faixaDaVez());
+    });
+    ref.listen(configDaMusicaProvider, (_, __) {
+      ref.read(musicaProvider).aplicar(faixaDaVez());
     });
 
     return Scaffold(

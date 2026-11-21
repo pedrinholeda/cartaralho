@@ -254,6 +254,20 @@ no zero, para não estalar. `node tool/medir_sons.mjs` mede, e
 | `rodada` | -14 dBFS |
 | `vitoria` | -11 dBFS |
 
+**Música de fundo** ([`lib/ui/musica.dart`](../lib/ui/musica.dart)): três loops em
+`assets/musicas/`, gerados por [`tool/gerar_musicas.mjs`](../tool/gerar_musicas.mjs) (síntese
+própria, sem licença a conferir), bem abaixo dos efeitos (-24 a -26 dBFS):
+
+| faixa | quando | como soa |
+|---|---|---|
+| `escolha` | sala de espera, escolhendo, resultado | lo-fi fofinho em dó maior: piano elétrico, baixo, caixinha de música, bumbo e chocalho, 84 bpm |
+| `juiz` | o juiz decidindo | lá menor, mais tenso, com tique-taque de relógio, 96 bpm |
+| `madrugada` | todas as fases, das 3h às 5h | a `escolha` mais lenta, meio tom abaixo e desafinando devagar |
+
+No fim de jogo a música para e fica só a fanfarra. O botão de som abre o painel com
+"Efeitos", "Música de fundo" e "Volume da música" (começa em 35%); tudo fica guardado no
+aparelho.
+
 O botão de som fica na capa e na barra de cima da tela de jogo; a escolha é lembrada entre
 partidas (`shared_preferences`, localStorage na web). Na web o navegador só deixa tocar
 depois do primeiro toque na página, e todo som vem depois de "Criar sala" ou "Entrar na

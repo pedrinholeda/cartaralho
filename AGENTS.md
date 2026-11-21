@@ -22,6 +22,7 @@ test/                   testes (flutter_test), espelhando lib/
 assets/baralhos/        as cartas do jogo, um JSON por pacote
 assets/sons/            efeitos sonoros (.wav), gerados por tool/gerar_sons.mjs; o volume de
                         cada um está em test/ui/sons_arquivos_test.dart
+assets/musicas/         músicas de fundo em loop (.wav), geradas por tool/gerar_musicas.mjs
 tool/                   scripts de apoio (Node), fora do app
 docs/                   documentação longa, roadmap e imagens
 android/ ios/ macos/ web/  projetos de plataforma
@@ -96,6 +97,8 @@ flutter build web
 dart run flutter_launcher_icons   # regera os ícones depois de trocar o logo
 node tool/gerar_sons.mjs          # regera os sons depois de mexer no script
 node tool/medir_sons.mjs          # mede volume, pico e pontas dos sons (sem ouvir)
+node tool/gerar_musicas.mjs       # regera as músicas de fundo (assets/musicas/)
+node tool/medir_sons.mjs assets/musicas   # mede as músicas
 ```
 
 ## Faça / Não faça

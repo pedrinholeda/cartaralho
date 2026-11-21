@@ -114,11 +114,13 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/ui/icones.dart`](../lib/ui/icones.dart) | `IconeFofo` e `PintorDeIcone`: os ícones do jogo desenhados no traço das carinhas, no lugar dos ícones do Material. |
 | [`lib/ui/dicas.dart`](../lib/ui/dicas.dart) | As dicas da primeira partida: quais já foram vistas neste aparelho (`dicasProvider`, guardado no `shared_preferences`) e o balão (`BalaoDeDica`). |
 | [`lib/ui/olhar.dart`](../lib/ui/olhar.dart) | As carinhas vivas: onde está o ponteiro (`ondeOlhar`, anotado pelo `RastreadorDeOlhar` em volta do app) e o `GrupoDeCarinhas`, que sorteia os cascudos entre vizinhas. O `AvatarDeJogador` flutua, pisca, olha e faz a sua parte no cascudo. |
+| [`lib/ui/musica.dart`](../lib/ui/musica.dart) | A música de fundo: que faixa toca em cada fase (`faixaDaFase`), a configuração guardada (`configDaMusicaProvider`), o tocador em loop (`Musica`) e o botão e painel de som (`BotaoDeSom`, `PainelDeSom`). |
 | [`lib/ui/assombro.dart`](../lib/ui/assombro.dart) | Os momentos creepy: `ehMadrugada`, `esperaDaLacuna` e a hora em `agora()`, que os testes trocam. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |
 | [`tool/gerar_sons.mjs`](../tool/gerar_sons.mjs) | Gera os `.wav` de `assets/sons/` por síntese, cada um no seu volume combinado, com limitador suave e as pontas no zero. Rode com `node tool/gerar_sons.mjs`. |
-| [`tool/medir_sons.mjs`](../tool/medir_sons.mjs) | Mede os `.wav`: duração, pico, volume médio da parte que soa, desvio do zero e as pontas. Rode com `node tool/medir_sons.mjs`. |
+| [`tool/medir_sons.mjs`](../tool/medir_sons.mjs) | Mede os `.wav`: duração, pico, volume médio da parte que soa, desvio do zero e as pontas. Rode com `node tool/medir_sons.mjs` (ou `node tool/medir_sons.mjs assets/musicas`). |
+| [`tool/gerar_musicas.mjs`](../tool/gerar_musicas.mjs) | Gera as três músicas de fundo de `assets/musicas/` em loop (o que passa do fim volta no começo, então a emenda não corta). |
 | [`lib/widgets/`](../lib/widgets) | Lista de jogadores com pontos, carta preta, mão de cartas brancas, escolha do juiz, a mesa que os outros veem enquanto ele escolhe e o resultado da rodada. |
 
 ### Decisões que não são óbvias
