@@ -212,6 +212,17 @@ Cinco efeitos curtos, em `assets/sons/`, gerados por [`tool/gerar_sons.mjs`](../
 | `rodada` | saiu o resultado da rodada | três notas subindo (dó, mi, sol) |
 | `vitoria` | alguém venceu o jogo | fanfarra curta terminando num acorde |
 
+Cada som tem um volume combinado (média da parte que soa): os que tocam toda hora são mais
+discretos, a vitória é a mais alta. O pico nunca passa de -1 dBFS e todo som começa e termina
+no zero, para não estalar. `node tool/medir_sons.mjs` mede, e
+[`test/ui/sons_arquivos_test.dart`](../test/ui/sons_arquivos_test.dart) confere.
+
+| som | volume |
+|---|---|
+| `distribuir`, `enviar`, `virar` | -16 dBFS |
+| `rodada` | -14 dBFS |
+| `vitoria` | -11 dBFS |
+
 O botão de som fica na capa e na barra de cima da tela de jogo; a escolha é lembrada entre
 partidas (`shared_preferences`, localStorage na web). Na web o navegador só deixa tocar
 depois do primeiro toque na página, e todo som vem depois de "Criar sala" ou "Entrar na

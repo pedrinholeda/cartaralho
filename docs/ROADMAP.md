@@ -127,7 +127,11 @@ explicando o jogo. Entre três direções desenhadas, a escolhida foi a Noite de
 - [x] **Dicas na primeira partida**: um balão amarelo sobre a mão ("toque numa carta"), outro
   sobre o botão de enviar quando a carta está escolhida e um para o juiz; cada um aparece uma
   vez por aparelho e some quando a pessoa faz o que ele pede ou toca em "Entendi"
-- [ ] Ouvir e ajustar os sons (ninguém ouviu ainda)
+- [x] **Sons medidos e ajustados**: `tool/medir_sons.mjs` mede volume, pico e pontas sem
+  precisar ouvir. Os sons frequentes ficaram mais discretos (-16 dBFS), a rodada no meio
+  (-14) e a vitória, que estava a mais baixa, mais alta (-11); as notas terminam com fade e
+  todo som começa e acaba no zero. Um teste confere os arquivos
+- [ ] Ouvir os sons num celular de verdade (o ajuste foi por medida; ninguém ouviu ainda)
 - [ ] Revisar o layout de duas colunas em tela larga com o visual novo
 
 ## Fase 3c — mais cartas e jogo para poucos
