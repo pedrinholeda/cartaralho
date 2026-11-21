@@ -1,11 +1,11 @@
-// Mede os efeitos sonoros de assets/sons/ sem precisar ouvir: duração, pico,
+// Mede os efeitos sonoros de assets/sons/ (ou outra pasta, como assets/musicas) sem precisar ouvir: duração, pico,
 // volume médio da parte que soa (RMS, em dBFS), desvio do zero e as pontas
 // (uma ponta longe do zero estala). Rode com
 //   node tool/medir_sons.mjs
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const pasta = 'assets/sons';
+const pasta = process.argv[2] ?? 'assets/sons';
 const db = (x) => (x > 0 ? 20 * Math.log10(x) : -Infinity);
 
 for (const nome of readdirSync(pasta).filter((n) => n.endsWith('.wav')).sort()) {
@@ -13,7 +13,7 @@ for (const nome of readdirSync(pasta).filter((n) => n.endsWith('.wav')).sort()) 
   const taxa = buf.readUInt32LE(24);
   const n = (buf.length - 44) / 2;
   const a = Float64Array.from({ length: n }, (_, i) => buf.readInt16LE(44 + i * 2) / 32768);
-  const pico = Math.max(...a.map(Math.abs));
+  const pico = a.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
   // Parte que soa: amostras acima de 1% do pico, em janelas de 10 ms.
   const janela = Math.round(taxa / 100);
   let soma = 0;

@@ -38,6 +38,7 @@ flutter:
   assets:
     - assets/baralhos/
     - assets/sons/
+    - assets/musicas/
 
 # Ícones do app gerados a partir do logo escolhido (docs/marca/logo-carta-escura.png).
 # Depois de trocar o logo: dart run flutter_launcher_icons
