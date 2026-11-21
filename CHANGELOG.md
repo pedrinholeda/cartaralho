@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.10.0](https://github.com/pedrinholeda/cartaralho/compare/v0.9.0...v0.10.0) (2026-11-21)
+
+
+### Novidades
+
+* **baralho:** pacotes Para toda a família e Sem filtro (+18) ([be22a9f](https://github.com/pedrinholeda/cartaralho/commit/be22a9f495aadccd1c805524ee002a6c2780f56a))
+* **jogo:** carta em branco para escrever a própria resposta ([df23b26](https://github.com/pedrinholeda/cartaralho/commit/df23b26f9005167c31a97f921ff2bcc91871f0c2))
+* **sala:** confirmar o pacote +18 e deixá-lo fora do modo solo ([add3ea1](https://github.com/pedrinholeda/cartaralho/commit/add3ea193e76d26eb32276d2f8f94e1450ff1820))
+* **sala:** Zé Aleatório para jogar em duas pessoas ([af6c737](https://github.com/pedrinholeda/cartaralho/commit/af6c737f4390a3de58beeb8413045257d01c1d7b))
+* **ui:** dicas na primeira partida ([4736a8a](https://github.com/pedrinholeda/cartaralho/commit/4736a8aa516c1de74d897c490cba9031764b5ace))
+* **ui:** duas colunas no computador com placar em lista ([6997c0b](https://github.com/pedrinholeda/cartaralho/commit/6997c0b05fac7d9671c5c7939df6590de48b4a45))
+
+
+### Correções
+
+* **sons:** volume combinado por som e pontas sem estalo ([227f1a8](https://github.com/pedrinholeda/cartaralho/commit/227f1a8492c12d4b3b65cc3ef622cdb4693a82d7))
+
 ## [0.9.0](https://github.com/pedrinholeda/cartaralho/compare/v0.8.0...v0.9.0) (2026-11-20)
 
 
