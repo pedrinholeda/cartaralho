@@ -6,6 +6,7 @@ import '../models/game_room.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
+import '../ui/dicas.dart';
 import '../ui/tema.dart';
 
 /// O juiz lê as frases da mesa, na ordem sorteada, e escolhe a melhor.
@@ -42,6 +43,15 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                 .titleLarge
                 ?.copyWith(color: cores.tintaNaMesa),
           ),
+          if (deveMostrar(ref.watch(dicasProvider), Dica.juiz)) ...[
+            const SizedBox(height: 10),
+            BalaoDeDica(
+              texto: 'Ninguém sabe de quem é cada frase. Toque na que mais '
+                  'te fez rir e confirme embaixo.',
+              aoFechar: () =>
+                  ref.read(dicasProvider.notifier).marcar(Dica.juiz),
+            ),
+          ],
           const SizedBox(height: 12),
           Expanded(
             child: ListView.separated(
@@ -59,7 +69,10 @@ class _JudgeWidgetState extends ConsumerState<JudgeWidget> {
                         ? cartas.map((c) => c.text).join(' / ')
                         : fraseCompleta(preta, cartas),
                     selecionada: _selectedWinner == playerId,
-                    aoTocar: () => setState(() => _selectedWinner = playerId),
+                    aoTocar: () {
+                      ref.read(dicasProvider.notifier).marcar(Dica.juiz);
+                      setState(() => _selectedWinner = playerId);
+                    },
                   ),
                 );
               },

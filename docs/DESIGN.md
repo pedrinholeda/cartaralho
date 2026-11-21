@@ -72,6 +72,20 @@ carinha se leem sobre a cor do avatar. Foi esse teste que trocou o vermelho mais
 Medidas em `Medidas`: espaço de 8, margem de 20, raio de carta 16, de painel 22 e de botão
 18, largura máxima do conteúdo 560.
 
+## Dicas da primeira partida
+
+[`lib/ui/dicas.dart`](../lib/ui/dicas.dart): `BalaoDeDica`, um balão amarelo (a cor de "é
+você") com uma setinha para o que ele aponta e o "Entendi" para fechar; pula de leve, menos
+com "reduzir movimento". Três dicas, cada uma uma vez por aparelho (`shared_preferences`):
+
+| dica | onde | some quando |
+|---|---|---|
+| mão | acima da mão, antes de escolher | toca numa carta |
+| enviar | acima do botão, com a carta escolhida | envia |
+| juiz | acima das frases, na hora de julgar | toca numa frase |
+
+O balão entra no fluxo da tela (não cobre carta nem botão) e é lido pelo leitor de tela.
+
 ## Ícones
 
 [`lib/ui/icones.dart`](../lib/ui/icones.dart): `IconeFofo(Desenho.xxx)` desenha os ícones

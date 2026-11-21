@@ -124,7 +124,9 @@ explicando o jogo. Entre três direções desenhadas, a escolhida foi a Noite de
   mínimo
 - [x] **Tutorial** de três telas, na primeira visita e pelo "Como jogar" na capa e "?" no jogo
 - [x] Vibração leve ao escolher e enviar carta (no celular)
-- [ ] Dicas na primeira partida, apontando a mão e o botão de enviar
+- [x] **Dicas na primeira partida**: um balão amarelo sobre a mão ("toque numa carta"), outro
+  sobre o botão de enviar quando a carta está escolhida e um para o juiz; cada um aparece uma
+  vez por aparelho e some quando a pessoa faz o que ele pede ou toca em "Entendi"
 - [ ] Ouvir e ajustar os sons (ninguém ouviu ainda)
 - [ ] Revisar o layout de duas colunas em tela larga com o visual novo
 

@@ -11,6 +11,7 @@ import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/icones.dart';
 import '../ui/cartas.dart';
+import '../ui/dicas.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 
@@ -44,6 +45,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       ref.read(escolhidasProvider(chaveDaRodada(widget.room)).notifier);
 
   Future<void> _tocar(GameCard carta) async {
+    ref.read(dicasProvider.notifier).marcar(Dica.mao);
     final atual = [..._escolha.state];
     if (atual.any((c) => c.id == carta.id)) {
       atual.removeWhere((c) => c.id == carta.id);
@@ -122,6 +124,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       );
       HapticFeedback.mediumImpact();
       ref.read(sonsProvider).tocar(Som.enviar);
+      ref.read(dicasProvider.notifier).marcar(Dica.enviar);
     } catch (e) {
       _avisar('Não deu para enviar: $e');
     } finally {
@@ -190,6 +193,10 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
     final pronto = escolhidas.length == pede;
     final podeTrocar =
         !widget.room.handSwapsUsed.contains(widget.currentPlayer.id);
+    final dicas = ref.watch(dicasProvider);
+    final dicaDaMao = escolhidas.isEmpty && deveMostrar(dicas, Dica.mao);
+    final dicaDeEnviar =
+        pronto && !_isSubmitting && deveMostrar(dicas, Dica.enviar);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -219,6 +226,17 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
             ],
           ),
         ),
+        if (dicaDaMao)
+          Padding(
+            padding:
+                const EdgeInsets.fromLTRB(Medidas.margem, 0, Medidas.margem, 6),
+            child: BalaoDeDica(
+              texto: pede == 1
+                  ? 'Toque numa carta para ver a frase pronta lá em cima.'
+                  : 'Toque nas cartas na ordem das lacunas. Arraste para ver as outras.',
+              aoFechar: () => ref.read(dicasProvider.notifier).marcar(Dica.mao),
+            ),
+          ),
         MaoEmLeque(
           quantidade: mao.length,
           construir: (context, index) {
@@ -245,6 +263,17 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
             );
           },
         ),
+        if (dicaDeEnviar)
+          Padding(
+            padding:
+                const EdgeInsets.fromLTRB(Medidas.margem, 6, Medidas.margem, 0),
+            child: BalaoDeDica(
+              texto:
+                  'Gostou da frase? Envie. Dá para trocar antes, é só tocar em outra.',
+              aoFechar: () =>
+                  ref.read(dicasProvider.notifier).marcar(Dica.enviar),
+            ),
+          ),
         Padding(
           padding:
               const EdgeInsets.fromLTRB(Medidas.margem, 4, Medidas.margem, 20),
