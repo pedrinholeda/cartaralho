@@ -104,6 +104,11 @@ class FirebaseService {
     );
   }
 
+  static Future<void> reagir(String roomId, String reacao) async {
+    final user = _usuarioLogado();
+    await _alterarSala(roomId, (sala) => regras.reagir(sala, user.uid, reacao));
+  }
+
   static Future<void> chamarZe(String roomId) async {
     final user = _usuarioLogado();
     await _alterarSala(roomId, (sala) => bots.chamarZe(sala, user.uid));

@@ -152,6 +152,12 @@ uma carinha vai até a vizinha, dá um cascudo e volta; a vizinha é empurrada, 
 tonta (olhos em X e uma estrelinha). Na sala de espera, o cascudo não atravessa a quebra de
 linha. Com "reduzir movimento", tudo fica parado.
 
+**Reações rápidas** ([`reacoes_widget.dart`](../lib/widgets/reacoes_widget.dart)): tocar na
+própria carinha no placar abre, embaixo, cinco reações desenhadas no traço dos ícones:
+risada (amarela), choro, caveira ("Morri"), coração (vermelho) e chocado. A escolhida sobe da
+carinha e some em 1,8 s, na tela de todo mundo. Só a reação nova sobe; a que já estava quando
+a tela abriu, não.
+
 **Carinhas que reagem** (`Humor`, calculado por `humorNoPlacar` no placar):
 
 | fase | quem | carinha |

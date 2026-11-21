@@ -279,6 +279,26 @@ GameRoom entrarNaSala(GameRoom sala, Player jogador) {
   return sala.copyWith(players: [...sala.players, jogador]);
 }
 
+/// As reações rápidas, desenhadas em `lib/ui/icones.dart`.
+const reacoes = ['risada', 'choro', 'caveira', 'coracao', 'chocado'];
+
+/// O jogador manda uma reação, em qualquer fase: todos veem ela subir da
+/// carinha dele.
+GameRoom reagir(GameRoom sala, String jogadorId, String reacao) {
+  if (!reacoes.contains(reacao)) {
+    throw JogadaInvalida('Reação desconhecida: $reacao');
+  }
+  if (!sala.players.any((p) => p.id == jogadorId)) {
+    throw JogadaInvalida('Você não está nesta sala');
+  }
+  return sala.copyWith(players: [
+    for (final p in sala.players)
+      p.id == jogadorId
+          ? p.copyWith(reacao: reacao, reacaoVez: p.reacaoVez + 1)
+          : p,
+  ]);
+}
+
 /// Troca a carinha do jogador pela próxima do sorteio. Vale só na sala de
 /// espera: na partida, a carinha é como o grupo reconhece cada um.
 GameRoom sortearOutraCarinha(GameRoom sala, String jogadorId) {

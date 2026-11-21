@@ -92,6 +92,7 @@ class GameScreen extends ConsumerWidget {
                         judgeId: room.currentJudgeId,
                         vertical: largo,
                         sala: room,
+                        meuId: currentPlayer?.id,
                       ),
                     if (aviso != null)
                       Padding(

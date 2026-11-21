@@ -49,6 +49,7 @@ mesa e joga uma carta qualquer por rodada (e às vezes ganha).
 **Partida**
 - Cartas em branco no monte: quem tira uma escreve a própria resposta.
 - Modo solo contra bots com personalidade, que jogam e julgam pelo próprio gosto.
+- Reações rápidas: toque na sua carinha e mande uma risada, um choro ou uma caveira para a mesa.
 - Cada jogador ganha uma carinha engraçada, sorteada; na sala de espera dá para sortear outra.
 - Fofo por fora, ácido por dentro: ícones com olhinhos, cartas sem dó, e alguns sustos
   escondidos (jogue de madrugada, ou demore para escolher a carta).

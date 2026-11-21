@@ -26,6 +26,16 @@ void main() {
       expect(p.avatar, 0);
     });
 
+    test('a reação vai e volta do Firestore, e sala antiga não tem', () {
+      final p = Player(id: 'u1', name: 'Ana', reacao: 'caveira', reacaoVez: 3);
+      final lido = Player.fromJson(p.toJson());
+      expect(lido.reacao, 'caveira');
+      expect(lido.reacaoVez, 3);
+      final antigo = Player.fromJson({'id': 'u1', 'name': 'Ana'});
+      expect(antigo.reacao, isNull);
+      expect(antigo.reacaoVez, 0);
+    });
+
     test('a carinha sorteada vai e volta do Firestore', () {
       final p = Player(id: 'u1', name: 'Ana', avatar: 4);
       expect(Player.fromJson(p.toJson()).avatar, 4);
