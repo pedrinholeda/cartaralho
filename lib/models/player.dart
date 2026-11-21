@@ -8,12 +8,19 @@ class Player {
   /// carinha ele tem (`Carinha.de`).
   final int avatar;
 
+  /// A última reação que o jogador mandou (`reacoes`) e quantas já mandou: a
+  /// conta muda a cada uma, para os aparelhos saberem que é nova.
+  final String? reacao;
+  final int reacaoVez;
+
   Player({
     required this.id,
     required this.name,
     this.points = 0,
     this.isHost = false,
     this.avatar = 0,
+    this.reacao,
+    this.reacaoVez = 0,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
@@ -23,6 +30,8 @@ class Player {
       points: json['points'] as int? ?? 0,
       isHost: json['isHost'] as bool? ?? false,
       avatar: json['avatar'] as int? ?? 0,
+      reacao: json['reacao'] as String?,
+      reacaoVez: json['reacaoVez'] as int? ?? 0,
     );
   }
 
@@ -33,6 +42,8 @@ class Player {
       'points': points,
       'isHost': isHost,
       'avatar': avatar,
+      if (reacao != null) 'reacao': reacao,
+      'reacaoVez': reacaoVez,
     };
   }
 
@@ -42,6 +53,8 @@ class Player {
     int? points,
     bool? isHost,
     int? avatar,
+    String? reacao,
+    int? reacaoVez,
   }) {
     return Player(
       id: id ?? this.id,
@@ -49,6 +62,8 @@ class Player {
       points: points ?? this.points,
       isHost: isHost ?? this.isHost,
       avatar: avatar ?? this.avatar,
+      reacao: reacao ?? this.reacao,
+      reacaoVez: reacaoVez ?? this.reacaoVez,
     );
   }
 }

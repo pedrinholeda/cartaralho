@@ -19,6 +19,11 @@ enum Desenho {
   coroa,
   pessoa,
   chave,
+  risada,
+  choro,
+  caveira,
+  coracao,
+  chocado,
 }
 
 /// Um [Desenho] no tamanho e na cor pedidos. Sem cor, usa a do `IconTheme`,
@@ -276,6 +281,63 @@ class PintorDeIcone extends CustomPainter {
         ponto(12.5, 14, 1.3);
         ponto(19.5, 14, 1.3);
         sorriso(12.5, 19, 19.5, 22);
+      case Desenho.risada:
+        canvas.drawCircle(const Offset(16, 16), 12, t);
+        // Olhos fechados de tanto rir e a boca aberta.
+        sorriso(9.5, 13, 14, 10.5);
+        sorriso(18, 13, 22.5, 10.5);
+        canvas.drawPath(
+            Path()
+              ..moveTo(9.5, 17.5)
+              ..quadraticBezierTo(16, 27, 22.5, 17.5)
+              ..close(),
+            f);
+      case Desenho.choro:
+        canvas.drawCircle(const Offset(16, 16), 12, t);
+        canvas.drawLine(const Offset(9.5, 13), const Offset(13.5, 13), t);
+        canvas.drawLine(const Offset(18.5, 13), const Offset(22.5, 13), t);
+        // Lágrimas caindo e a boca para baixo.
+        ponto(11, 17.5, 1.4);
+        ponto(21, 17.5, 1.4);
+        canvas.drawPath(
+            Path()
+              ..moveTo(12, 23)
+              ..quadraticBezierTo(16, 19, 20, 23),
+            t);
+      case Desenho.caveira:
+        canvas.drawPath(
+            Path()
+              ..moveTo(8, 15)
+              ..arcToPoint(const Offset(24, 15),
+                  radius: const Radius.circular(8))
+              ..lineTo(24, 19)
+              ..lineTo(21, 21)
+              ..lineTo(21, 26)
+              ..lineTo(11, 26)
+              ..lineTo(11, 21)
+              ..lineTo(8, 19)
+              ..close(),
+            t);
+        ponto(12.5, 15.5, 2.3);
+        ponto(19.5, 15.5, 2.3);
+        canvas.drawLine(const Offset(14.5, 26), const Offset(14.5, 23), t);
+        canvas.drawLine(const Offset(17.5, 26), const Offset(17.5, 23), t);
+      case Desenho.coracao:
+        canvas.drawPath(
+            Path()
+              ..moveTo(16, 26)
+              ..cubicTo(2, 17, 7, 4, 16, 11)
+              ..cubicTo(25, 4, 30, 17, 16, 26)
+              ..close(),
+            f);
+      case Desenho.chocado:
+        canvas.drawCircle(const Offset(16, 16), 12, t);
+        canvas.drawCircle(const Offset(12, 13), 2.4, t);
+        canvas.drawCircle(const Offset(20, 13), 2.4, t);
+        canvas.drawOval(
+            Rect.fromCenter(
+                center: const Offset(16, 21.5), width: 5, height: 6.5),
+            f);
       case Desenho.chave:
         canvas.drawCircle(const Offset(10, 16), 5.5, t);
         ponto(10, 16, 1.2);

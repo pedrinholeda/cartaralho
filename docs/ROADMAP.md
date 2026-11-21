@@ -183,7 +183,9 @@ deixava escolher o baralho.
 - [x] **Carinhas que reagem ao jogo**: balão de "…" em quem escolhe, cartinha na mão de quem
   enviou, juiz de olhos para cima, pulinhos de quem ganha a rodada, impaciência ("!" e
   tremedeira) quando o juiz passa de 20 s, e coroa derretendo em quem lidera sozinho
-- [ ] Reações rápidas: tocar na própria carinha e mandar uma reação que todos veem
+- [x] **Reações rápidas**: tocar na própria carinha no placar abre cinco reações desenhadas
+  (risada, choro, caveira, coração, chocado); a escolhida sobe da carinha na tela de todos.
+  Passa pela regra `reagir`, então vale também no modo solo; uma por segundo, no máximo
 - [ ] Cartas com vida: inclinam em 3D sob o mouse (ou o dedo) e a enviada voa para a mesa
 - [ ] Música de fundo por fase, com volume e opção de desligar; desafinada na madrugada
 

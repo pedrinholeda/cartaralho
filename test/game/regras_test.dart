@@ -398,6 +398,25 @@ void main() {
     });
   });
 
+  group('reagir', () {
+    test('qualquer um manda, em qualquer fase, e a conta sobe', () {
+      var s = reagir(salaDeEspera(), 'p1', 'risada');
+      expect(s.players[1].reacao, 'risada');
+      expect(s.players[1].reacaoVez, 1);
+      s = reagir(iniciarJogo(s, 'p0', random: Random(1)), 'p1', 'choro');
+      expect(s.players[1].reacao, 'choro');
+      expect(s.players[1].reacaoVez, 2);
+      expect(s.players[0].reacaoVez, 0);
+    });
+
+    test('reação desconhecida ou de fora da sala é recusada', () {
+      expect(() => reagir(salaDeEspera(), 'p1', 'tapa'),
+          throwsA(isA<JogadaInvalida>()));
+      expect(() => reagir(salaDeEspera(), 'intruso', 'risada'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
   group('sortearOutraCarinha', () {
     test('passa para a próxima carinha só de quem pediu', () {
       final s = sortearOutraCarinha(salaDeEspera(), 'p1');

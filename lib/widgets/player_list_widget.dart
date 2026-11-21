@@ -9,6 +9,7 @@ import '../ui/animacoes.dart';
 import '../ui/jogadores.dart';
 import '../ui/olhar.dart';
 import '../ui/tema.dart';
+import 'reacoes_widget.dart';
 
 /// Placar: um avatar por jogador, com o nome e os pontos embaixo. O juiz da
 /// rodada tem o anel amarelo e o martelo.
@@ -56,6 +57,9 @@ class PlayerListWidget extends StatefulWidget {
   /// A sala, para cada carinha reagir à partida. Sem ela, todas ficam normais.
   final GameRoom? sala;
 
+  /// Quem está no aparelho: tocar na própria carinha manda uma reação.
+  final String? meuId;
+
   /// No computador: uma linha por jogador, com o nome inteiro.
   final bool vertical;
 
@@ -65,6 +69,7 @@ class PlayerListWidget extends StatefulWidget {
     required this.judgeId,
     this.vertical = false,
     this.sala,
+    this.meuId,
   });
 
   @override
@@ -143,15 +148,21 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Row(
                       children: [
-                        AvatarDeJogador(
-                          nome: players[i].name,
-                          indice: i,
-                          juiz: players[i].id == judgeId,
-                          semente: players[i].id,
-                          variacao: players[i].avatar,
+                        ComReacao(
+                          jogador: players[i],
+                          roomId: widget.sala?.roomId,
+                          meu: players[i].id == widget.meuId,
                           tamanho: 38,
-                          humor: _humor(players[i].id),
-                          lider: players[i].id == liderDaSala(players),
+                          child: AvatarDeJogador(
+                            nome: players[i].name,
+                            indice: i,
+                            juiz: players[i].id == judgeId,
+                            semente: players[i].id,
+                            variacao: players[i].avatar,
+                            tamanho: 38,
+                            humor: _humor(players[i].id),
+                            lider: players[i].id == liderDaSala(players),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -196,6 +207,8 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
         height: 102,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
+          // A reação e a coroa passam da borda de cima sem ser cortadas.
+          clipBehavior: Clip.none,
           // Em cima, espaço para o chapéu e o topete das carinhas.
           padding:
               const EdgeInsets.fromLTRB(Medidas.margem, 10, Medidas.margem, 0),
@@ -213,20 +226,27 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
               deslocamento: 12,
               child: Semantics(
                 label: '${player.name}, $pontos'
-                    '${juiz ? ', juiz da rodada' : ''}',
-                excludeSemantics: true,
+                    '${juiz ? ', juiz da rodada' : ''}'
+                    '${player.id == widget.meuId ? '. Toque para mandar uma reação' : ''}',
+                excludeSemantics: player.id != widget.meuId,
                 child: SizedBox(
                   width: 60,
                   child: Column(
                     children: [
-                      AvatarDeJogador(
-                        nome: player.name,
-                        indice: index,
-                        juiz: juiz,
-                        semente: player.id,
-                        variacao: player.avatar,
-                        humor: _humor(player.id),
-                        lider: player.id == liderDaSala(players),
+                      ComReacao(
+                        jogador: player,
+                        roomId: widget.sala?.roomId,
+                        meu: player.id == widget.meuId,
+                        tamanho: 44,
+                        child: AvatarDeJogador(
+                          nome: player.name,
+                          indice: index,
+                          juiz: juiz,
+                          semente: player.id,
+                          variacao: player.avatar,
+                          humor: _humor(player.id),
+                          lider: player.id == liderDaSala(players),
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
