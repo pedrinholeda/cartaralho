@@ -13,10 +13,22 @@ const pacotes = [
   'role',
   'internet',
   'amor',
+  'leve',
+  'sem-filtro',
 ];
 
-/// Os pacotes que já vêm marcados ao criar a sala: todos.
-const pacotesPadrao = pacotes;
+/// Os pacotes que já vêm marcados ao criar a sala: todos menos o +18, que só
+/// entra se o anfitrião marcar e confirmar.
+const pacotesPadrao = [
+  'basico',
+  'brasilidades',
+  'familia',
+  'firma',
+  'role',
+  'internet',
+  'amor',
+  'leve',
+];
 
 String arquivoDoPacote(String id) => 'assets/baralhos/$id.json';
 
@@ -26,6 +38,9 @@ class Baralho {
   final String id;
   final String nome;
   final String descricao;
+
+  /// Pacote para maiores de 18: pede confirmação e fica fora do modo solo.
+  final bool adulto;
   final List<GameCard> pretas;
   final List<GameCard> brancas;
 
@@ -33,6 +48,7 @@ class Baralho {
     required this.id,
     required this.nome,
     this.descricao = '',
+    this.adulto = false,
     required this.pretas,
     required this.brancas,
   });
@@ -51,6 +67,7 @@ class Baralho {
       id: id,
       nome: json['nome'] as String,
       descricao: json['descricao'] as String? ?? '',
+      adulto: json['adulto'] as bool? ?? false,
       pretas: [
         for (var i = 0; i < pretas.length; i++)
           GameCard(id: '$id-b${i + 1}', text: pretas[i], type: CardType.black),
@@ -71,6 +88,7 @@ class Baralho {
     return Baralho(
       id: escolhidos.map((b) => b.id).join('+'),
       nome: escolhidos.map((b) => b.nome).join(', '),
+      adulto: escolhidos.any((b) => b.adulto),
       pretas: [for (final b in escolhidos) ...b.pretas],
       brancas: [for (final b in escolhidos) ...b.brancas],
     );
