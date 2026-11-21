@@ -218,9 +218,9 @@ class CartaBranca extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        TextoQueCabe(
           texto,
-          style: emBranco
+          estilo: emBranco
               ? _textoDeCarta(tinta.withValues(alpha: .55), 14).copyWith(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w600,
@@ -687,4 +687,42 @@ class _VooDasCartasState extends State<VooDasCartas>
       },
     );
   }
+}
+
+/// O tamanho de letra em que a palavra mais longa de [texto] cabe inteira na
+/// [largura]: o mesmo do [estilo] quando cabe, menor quando não (até 10).
+/// Sem isso, "cancelamento" numa carta estreita quebrava no meio.
+double tamanhoQueCabe(String texto, TextStyle estilo, double largura) {
+  final tamanho = estilo.fontSize ?? 14;
+  if (!largura.isFinite || largura <= 0) return tamanho;
+  var maior = 0.0;
+  for (final palavra in texto.split(RegExp(r'\s+'))) {
+    if (palavra.isEmpty) continue;
+    final medida = TextPainter(
+      text: TextSpan(text: palavra, style: estilo),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+    maior = max(maior, medida.width);
+  }
+  if (maior <= largura) return tamanho;
+  return max(10.0, (tamanho * largura / maior).floorToDouble());
+}
+
+/// Texto de carta que diminui a letra quando uma palavra não cabe na linha.
+class TextoQueCabe extends StatelessWidget {
+  final String texto;
+  final TextStyle estilo;
+
+  const TextoQueCabe(this.texto, {super.key, required this.estilo});
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, espaco) => Text(
+          texto,
+          style: estilo.copyWith(
+            fontSize: tamanhoQueCabe(texto, estilo, espaco.maxWidth),
+          ),
+        ),
+      );
 }
