@@ -14,6 +14,7 @@ const pacotes = [
   'internet',
   'amor',
   'leve',
+  'em-alta',
   'sem-filtro',
 ];
 
@@ -28,6 +29,7 @@ const pacotesPadrao = [
   'internet',
   'amor',
   'leve',
+  'em-alta',
 ];
 
 String arquivoDoPacote(String id) => 'assets/baralhos/$id.json';

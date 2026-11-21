@@ -193,6 +193,12 @@ deixava escolher o baralho.
   desafinada na madrugada; para no fim de jogo. O botão de som abre o painel com efeitos,
   música e volume da música, guardados no aparelho. Ninguém ouviu ainda
 
+- [x] **Baralho Em alta e Básico revisado**: pacote novo com o que bombou em 2025 e 2026
+  (bebê reborn, morango do amor, Labubu, tigrinho, brainrot, canetinha emagrecedora, IA
+  para tudo); o Básico perdeu as cartas com pessoas reais. As cartas do Cards Against
+  Humanity não foram traduzidas: a licença delas (CC BY-NC-SA) não combina com a MIT, e o
+  humor tem que ser daqui. O Em alta envelhece rápido: rever uma vez por ano
+
 ## Fase 4 — plataformas
 
 - [ ] **Projeto iOS completo**: falta o `Runner.xcodeproj` (recriar com
