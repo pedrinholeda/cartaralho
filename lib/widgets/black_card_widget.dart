@@ -67,8 +67,19 @@ class _BlackCardWidgetState extends State<BlackCardWidget> {
     super.dispose();
   }
 
+  /// Anota o retângulo da carta preta na tela, para o voo da carta enviada.
+  void _anotarLugar() {
+    if (!mounted) return;
+    final caixa = context.findRenderObject();
+    if (caixa is RenderBox && caixa.hasSize && caixa.attached) {
+      retanguloDaCartaPreta.value =
+          caixa.localToGlobal(Offset.zero) & caixa.size;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _anotarLugar());
     final card = widget.card;
     return Padding(
       padding: const EdgeInsets.fromLTRB(

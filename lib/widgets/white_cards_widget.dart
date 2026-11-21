@@ -36,6 +36,15 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
   bool _isSubmitting = false;
   bool _trocando = false;
 
+  /// Uma chave por carta da mão, para saber onde ela está quando voar.
+  final _chaves = <String, GlobalKey>{};
+
+  Rect? _lugar(String cartaId) {
+    final caixa = _chaves[cartaId]?.currentContext?.findRenderObject();
+    if (caixa is! RenderBox || !caixa.hasSize || !caixa.attached) return null;
+    return caixa.localToGlobal(Offset.zero) & caixa.size;
+  }
+
   List<GameCard> get _mao =>
       widget.room.hands[widget.currentPlayer.id] ?? const [];
 
@@ -112,6 +121,18 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
   }
 
   Future<void> _enviar(List<GameCard> escolhidas) async {
+    // As escolhidas voam até a carta preta, enquanto o envio vai.
+    final destino = retanguloDaCartaPreta.value;
+    if (destino != null) {
+      voarCartas(
+        context,
+        [
+          for (final c in escolhidas)
+            if (_lugar(c.id) case final lugar?) (lugar, c.text),
+        ],
+        destino,
+      );
+    }
     setState(() => _isSubmitting = true);
     try {
       await FirebaseService.submitWhiteCards(
@@ -254,6 +275,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
               key: ValueKey(carta.id),
               atraso: Duration(milliseconds: 60 * index),
               child: CartaBranca(
+                key: _chaves.putIfAbsent(carta.id, GlobalKey.new),
                 texto: texto,
                 emBranco: carta.emBranco && posicao < 0,
                 selecionada: posicao >= 0,
