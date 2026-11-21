@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0](https://github.com/pedrinholeda/cartaralho/compare/v0.10.0...v0.11.0) (2026-11-21)
+
+
+### Novidades
+
+* **jogo:** escolher os baralhos no modo solo ([33950ca](https://github.com/pedrinholeda/cartaralho/commit/33950cae250050434b177eddf242ce8a909e5121))
+* **jogo:** reações rápidas que todos veem ([1e5cce2](https://github.com/pedrinholeda/cartaralho/commit/1e5cce28b25c58d8705ce00134f2428e7b399bc4))
+* **sons:** música por fase e painel de som com volume ([0e30a5b](https://github.com/pedrinholeda/cartaralho/commit/0e30a5b26cc9896a75cc22e0fec7d73c7e6635d6))
+* **sons:** músicas de fundo sintetizadas em loop ([ecfd90b](https://github.com/pedrinholeda/cartaralho/commit/ecfd90bcd296ef6878f2c08888fff5ff4bcdbf33))
+* **ui:** carinhas que reagem ao jogo, com coroa e impaciência ([ff4fc00](https://github.com/pedrinholeda/cartaralho/commit/ff4fc009e8321113652a3225a06a98f9af9d8e26))
+* **ui:** carinhas vivas que flutuam, olham e dão cascudo ([088a2a7](https://github.com/pedrinholeda/cartaralho/commit/088a2a7380c5bcd1d488f5f0f622bbf1c94f841c))
+* **ui:** cartas que inclinam sob o ponteiro e voam até a mesa ([7f50a0a](https://github.com/pedrinholeda/cartaralho/commit/7f50a0adaff8509b93167eeb2b10c0814198ab48))
+
+
+### Documentação
+
+* **firebase:** publicação automática ligada ([254f3d5](https://github.com/pedrinholeda/cartaralho/commit/254f3d566ae74e343e2eaa94c83b0975d748125a))
+
 ## [0.10.0](https://github.com/pedrinholeda/cartaralho/compare/v0.9.0...v0.10.0) (2026-11-21)
 
 
