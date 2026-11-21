@@ -11,6 +11,13 @@ class GameCard {
     required this.type,
   });
 
+  /// Carta em branco: quem joga escreve a resposta. O id começa com `livre-`;
+  /// no monte e na mão o texto é vazio, e na mesa é o que a pessoa escreveu.
+  bool get emBranco => id.startsWith('livre-');
+
+  /// A mesma carta com outro texto (a resposta escrita, ou vazia de novo).
+  GameCard comTexto(String novo) => GameCard(id: id, text: novo, type: type);
+
   /// Quantas cartas brancas uma carta preta pede: uma por lacuna (`____`), e
   /// uma quando ela é uma pergunta sem lacuna.
   int get pick {

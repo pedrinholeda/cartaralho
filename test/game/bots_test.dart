@@ -32,8 +32,10 @@ GameRoom? _jogadaDaPessoa(GameRoom s) {
         return null;
       }
       final pede = s.currentBlackCard!.pick;
-      return enviarCarta(
-          s, 'eu', [for (final c in s.hands['eu']!.take(pede)) c.id]);
+      return enviarCarta(s, 'eu', [
+        for (final c in s.hands['eu']!.where((c) => !c.emBranco).take(pede))
+          c.id
+      ]);
     case GamePhase.judgeChoosing:
       if (s.currentJudgeId != 'eu') return null;
       return escolherVencedor(s, 'eu', s.submittedCards.keys.first);
@@ -181,6 +183,27 @@ void main() {
     });
   });
 
+  test('o bot só joga carta em branco sem saída, e escreve algo', () {
+    final s = _solo();
+    final bot = s.players[1].id;
+    final livres = [
+      for (var i = 1; i <= 5; i++)
+        GameCard(id: 'livre-$i', text: '', type: CardType.white),
+    ];
+    final depois =
+        passoDosBots(s.copyWith(hands: {...s.hands, bot: livres}), Random(1))!;
+    final enviada = depois.submittedCards[bot]!.single;
+    expect(enviada.emBranco, isTrue);
+    expect(enviada.text, isNotEmpty);
+    // Com cartas normais na mão, a em branco fica.
+    final misto = [livres.first, ...s.hands[bot]!.skip(1)];
+    for (var seed = 0; seed < 50; seed++) {
+      final d = passoDosBots(
+          s.copyWith(hands: {...s.hands, bot: misto}), Random(seed))!;
+      expect(d.submittedCards[bot]!.single.emBranco, isFalse);
+    }
+  });
+
   group('Zé Aleatório', () {
     GameRoom dupla() => entrarNaSala(
           novaSala(
@@ -250,8 +273,10 @@ GameRoom _jogadaDeQuem(GameRoom s) {
       final quem = s.players.firstWhere((p) =>
           !ehBot(p.id) && p.id != juiz && !s.submittedCards.containsKey(p.id));
       final pede = s.currentBlackCard!.pick;
-      return enviarCarta(
-          s, quem.id, [for (final c in s.hands[quem.id]!.take(pede)) c.id]);
+      return enviarCarta(s, quem.id, [
+        for (final c in s.hands[quem.id]!.where((c) => !c.emBranco).take(pede))
+          c.id
+      ]);
     case GamePhase.judgeChoosing:
       return escolherVencedor(s, juiz, s.submittedCards.keys.first);
     default:

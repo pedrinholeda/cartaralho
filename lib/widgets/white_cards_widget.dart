@@ -43,11 +43,21 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
   StateController<List<GameCard>> get _escolha =>
       ref.read(escolhidasProvider(chaveDaRodada(widget.room)).notifier);
 
-  void _tocar(GameCard carta) {
+  Future<void> _tocar(GameCard carta) async {
     final atual = [..._escolha.state];
     if (atual.any((c) => c.id == carta.id)) {
       atual.removeWhere((c) => c.id == carta.id);
-    } else if (_pede == 1) {
+      _escolha.state = atual;
+      return;
+    }
+    if (_pede > 1 && atual.length >= _pede) return;
+    if (carta.emBranco) {
+      // A carta em branco entra na escolha já com o texto escrito.
+      final escrito = await _escrever();
+      if (escrito == null || !mounted) return;
+      carta = carta.comTexto(escrito);
+    }
+    if (_pede == 1) {
       atual
         ..clear()
         ..add(carta);
@@ -57,12 +67,58 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
     _escolha.state = atual;
   }
 
+  /// Pede o texto da carta em branco. Nulo quando a pessoa desiste.
+  Future<String?> _escrever() async {
+    final campo = TextEditingController();
+    final escrito = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        void usar() {
+          try {
+            Navigator.of(context).pop(textoLivre(campo.text));
+          } on JogadaInvalida catch (e) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.mensagem)));
+          }
+        }
+
+        return AlertDialog(
+          title: const Text('Carta em branco'),
+          content: TextField(
+            controller: campo,
+            autofocus: true,
+            maxLength: maximoDoTextoLivre,
+            textCapitalization: TextCapitalization.none,
+            decoration: const InputDecoration(
+              labelText: 'Sua resposta',
+              hintText: 'o que só você teria coragem de escrever',
+            ),
+            onSubmitted: (_) => usar(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(onPressed: usar, child: const Text('Usar')),
+          ],
+        );
+      },
+    );
+    campo.dispose();
+    return escrito;
+  }
+
   Future<void> _enviar(List<GameCard> escolhidas) async {
     setState(() => _isSubmitting = true);
     try {
       await FirebaseService.submitWhiteCards(
         widget.room.roomId,
         [for (final c in escolhidas) c.id],
+        textos: {
+          for (final c in escolhidas)
+            if (c.emBranco) c.id: c.text,
+        },
       );
       HapticFeedback.mediumImpact();
       ref.read(sonsProvider).tocar(Som.enviar);
@@ -168,12 +224,20 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
           construir: (context, index) {
             final carta = mao[index];
             final posicao = escolhidas.indexWhere((c) => c.id == carta.id);
+            // A em branco mostra o que foi escrito, ou o convite para
+            // escrever.
+            final texto = !carta.emBranco
+                ? carta.text
+                : posicao >= 0
+                    ? escolhidas[posicao].text
+                    : 'carta em branco: toque para escrever';
             // Uma key por carta: as que chegam na mão animam, as que ficam não.
             return Entrada(
               key: ValueKey(carta.id),
               atraso: Duration(milliseconds: 60 * index),
               child: CartaBranca(
-                texto: carta.text,
+                texto: texto,
+                emBranco: carta.emBranco && posicao < 0,
                 selecionada: posicao >= 0,
                 ordem: posicao >= 0 && pede > 1 ? posicao + 1 : null,
                 aoTocar: () => _tocar(carta),

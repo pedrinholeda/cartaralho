@@ -145,12 +145,13 @@ class FirebaseService {
 
   static Future<void> submitWhiteCards(
     String roomId,
-    List<String> cardIds,
-  ) async {
+    List<String> cardIds, {
+    Map<String, String> textos = const {},
+  }) async {
     final user = _usuarioLogado();
     await _alterarSala(
       roomId,
-      (sala) => regras.enviarCarta(sala, user.uid, cardIds),
+      (sala) => regras.enviarCarta(sala, user.uid, cardIds, textos: textos),
     );
   }
 

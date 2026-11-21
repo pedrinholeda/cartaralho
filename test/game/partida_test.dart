@@ -44,7 +44,10 @@ void main() {
       expect(sala.maxPoints, 7);
       expect(sala.handSize, 7);
       expect(sala.players.single.isHost, isTrue);
-      expect(sala.whiteCards, hasLength(baralho.brancas.length));
+      expect(
+          sala.whiteCards,
+          hasLength(baralho.brancas.length +
+              cartasEmBranco(baralho.brancas.length).length));
       expect(sala.blackCards, hasLength(baralho.pretas.length));
     });
 
@@ -67,7 +70,10 @@ void main() {
       }
       for (final p in s.players.where((p) => p.id != s.currentJudgeId)) {
         s = enviarCarta(s, p.id, [
-          for (final c in s.hands[p.id]!.take(s.currentBlackCard!.pick)) c.id,
+          for (final c in s.hands[p.id]!
+              .where((c) => !c.emBranco)
+              .take(s.currentBlackCard!.pick))
+            c.id,
         ]);
       }
       final juiz = s.currentJudgeId!;
@@ -119,7 +125,9 @@ void main() {
 
     test('não troca depois de enviar a carta da rodada', () {
       final enviou = enviarCarta(sala, 'p1', [
-        for (final c in sala.hands['p1']!.take(sala.currentBlackCard!.pick))
+        for (final c in sala.hands['p1']!
+            .where((c) => !c.emBranco)
+            .take(sala.currentBlackCard!.pick))
           c.id,
       ]);
       expect(() => trocarMao(enviou, 'p1'), throwsA(isA<JogadaInvalida>()));
@@ -138,7 +146,10 @@ void main() {
       while (s.phase != GamePhase.gameComplete) {
         for (final p in s.players.where((p) => p.id != s.currentJudgeId)) {
           s = enviarCarta(s, p.id, [
-            for (final c in s.hands[p.id]!.take(s.currentBlackCard!.pick)) c.id,
+            for (final c in s.hands[p.id]!
+                .where((c) => !c.emBranco)
+                .take(s.currentBlackCard!.pick))
+              c.id,
           ]);
         }
         final juiz = s.currentJudgeId!;
@@ -162,8 +173,14 @@ void main() {
 
     test('todas as cartas voltam ao baralho', () {
       final denovo = jogarDeNovo(fim, 'p0');
-      expect(denovo.whiteCards.map((c) => c.id).toSet(),
-          baralho.brancas.map((c) => c.id).toSet());
+      expect(denovo.whiteCards.map((c) => c.id).toSet(), {
+        ...baralho.brancas.map((c) => c.id),
+        ...cartasEmBranco(baralho.brancas.length).map((c) => c.id),
+      });
+      // E as cartas em branco voltam vazias.
+      expect(
+          denovo.whiteCards.where((c) => c.emBranco).every((c) => c.text == ''),
+          isTrue);
       expect(denovo.blackCards.map((c) => c.id).toSet(),
           baralho.pretas.map((c) => c.id).toSet());
     });

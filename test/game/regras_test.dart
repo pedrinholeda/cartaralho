@@ -353,6 +353,51 @@ void main() {
     });
   });
 
+  group('carta em branco', () {
+    // Sala em que a mão do p1 tem uma carta em branco.
+    GameRoom comBranca() {
+      final s = iniciarJogo(salaDeEspera(), 'p0', random: Random(1));
+      final livre = GameCard(id: 'livre-1', text: '', type: CardType.white);
+      return s.copyWith(hands: {
+        ...s.hands,
+        'p1': [livre, ...s.hands['p1']!.skip(1)],
+      });
+    }
+
+    test('vai para a mesa com o texto escrito', () {
+      final s = enviarCarta(comBranca(), 'p1', ['livre-1'],
+          textos: {'livre-1': '  o boleto do meu ex.  '});
+      expect(s.submittedCards['p1']!.single.text, 'o boleto do meu ex');
+      expect(s.submittedCards['p1']!.single.emBranco, isTrue);
+    });
+
+    test('sem texto, ou com texto demais, é recusada', () {
+      expect(() => enviarCarta(comBranca(), 'p1', ['livre-1']),
+          throwsA(isA<JogadaInvalida>()));
+      expect(
+          () => enviarCarta(comBranca(), 'p1', ['livre-1'],
+              textos: {'livre-1': 'a' * (maximoDoTextoLivre + 1)}),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('volta vazia para o monte depois da rodada', () {
+      var s = enviarCarta(comBranca(), 'p1', ['livre-1'],
+          textos: {'livre-1': 'qualquer coisa'});
+      s = enviarCarta(s, 'p2', [s.hands['p2']!.first.id]);
+      s = proximaRodada(escolherVencedor(s, 'p0', 'p1'), 'p0');
+      final todas = [...s.whiteCards, ...s.hands.values.expand((m) => m)];
+      final livre = todas.singleWhere((c) => c.id == 'livre-1');
+      expect(livre.text, isEmpty);
+    });
+
+    test('toda sala nova ganha cartas em branco no monte', () {
+      expect(cartasEmBranco(30), hasLength(4));
+      expect(cartasEmBranco(454), hasLength(37));
+      expect(cartasEmBranco(454).every((c) => c.emBranco && c.text.isEmpty),
+          isTrue);
+    });
+  });
+
   group('sortearOutraCarinha', () {
     test('passa para a próxima carinha só de quem pediu', () {
       final s = sortearOutraCarinha(salaDeEspera(), 'p1');

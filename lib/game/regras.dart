@@ -13,6 +13,34 @@ import '../models/player.dart';
 /// Quantas cartas brancas cada jogador tem na mão, se a sala não disser outra coisa.
 const tamanhoDaMao = 5;
 
+/// Quantos caracteres cabem numa carta em branco.
+const maximoDoTextoLivre = 60;
+
+/// As cartas em branco que entram no monte: uma para cada 12 brancas, e ao
+/// menos 4, para aparecerem de vez em quando em qualquer baralho.
+List<GameCard> cartasEmBranco(int brancas) => [
+      for (var i = 1; i <= max(4, brancas ~/ 12); i++)
+        GameCard(id: 'livre-$i', text: '', type: CardType.white),
+    ];
+
+/// Uma carta usada voltando ao monte: a em branco volta vazia.
+GameCard _devolvida(GameCard c) => c.emBranco ? c.comTexto('') : c;
+
+/// O texto escrito numa carta em branco, conferido: sem espaço nas pontas,
+/// sem ponto final, não vazio e dentro do limite.
+String textoLivre(String? escrito) {
+  var t = (escrito ?? '').trim();
+  while (t.endsWith('.')) {
+    t = t.substring(0, t.length - 1).trimRight();
+  }
+  if (t.isEmpty) throw JogadaInvalida('Escreva algo na carta em branco');
+  if (t.length > maximoDoTextoLivre) {
+    throw JogadaInvalida(
+        'A carta em branco cabe até $maximoDoTextoLivre caracteres');
+  }
+  return t;
+}
+
 /// Opções oferecidas ao criar a sala.
 const opcoesDePontos = [3, 5, 7, 10];
 const opcoesDeMao = [5, 7];
@@ -84,6 +112,7 @@ GameRoom enviarCarta(
   GameRoom sala,
   String jogadorId,
   List<String> cartaIds, {
+  Map<String, String> textos = const {},
   Random? random,
 }) {
   if (sala.phase != GamePhase.playersSubmitting) {
@@ -111,7 +140,7 @@ GameRoom enviarCarta(
     for (final id in cartaIds)
       mao.where((c) => c.id == id).firstOrNull ??
           (throw JogadaInvalida('Essa carta não está na sua mão')),
-  ];
+  ].map((c) => c.emBranco ? c.comTexto(textoLivre(textos[c.id])) : c).toList();
 
   final enviadas = {...sala.submittedCards, jogadorId: cartas};
   final maos = {
@@ -186,7 +215,7 @@ GameRoom proximaRodada(GameRoom sala, String quemPediu) {
   // As cartas usadas voltam para o fim do baralho, para ele nunca acabar.
   final brancas = [
     ...sala.whiteCards,
-    ...sala.submittedCards.values.expand((cs) => cs),
+    ...sala.submittedCards.values.expand((cs) => cs).map(_devolvida),
   ];
   final maos = <String, List<GameCard>>{};
   for (final p in sala.players) {
@@ -296,7 +325,10 @@ GameRoom novaSala({
     roomId: roomId,
     players: [anfitriao.copyWith(isHost: true, points: 0)],
     blackCards: baralho.pretas,
-    whiteCards: baralho.brancas,
+    whiteCards: [
+      ...baralho.brancas,
+      ...cartasEmBranco(baralho.brancas.length),
+    ],
     currentJudgeId: anfitriao.id,
     maxPoints: maxPoints,
     handSize: handSize,
@@ -352,7 +384,7 @@ GameRoom jogarDeNovo(GameRoom sala, String quemPediu) {
     whiteCards: [
       ...sala.whiteCards,
       ...sala.hands.values.expand((m) => m),
-      ...sala.submittedCards.values.expand((cs) => cs),
+      ...sala.submittedCards.values.expand((cs) => cs).map(_devolvida),
     ],
     currentJudgeId: sala.players.first.id,
     maxPoints: sala.maxPoints,
