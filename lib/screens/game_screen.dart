@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +16,7 @@ import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
 import '../ui/icones.dart';
 import '../ui/jogadores.dart';
+import '../ui/olhar.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 import 'tutorial_screen.dart';
@@ -445,20 +448,29 @@ class _SalaDeEspera extends StatelessWidget {
           Text('Na mesa', style: textos.titleMedium),
           // Espaço para o chapéu e o topete que saem da cabeça.
           const SizedBox(height: 24),
-          Wrap(
-            spacing: 14,
-            runSpacing: 26,
-            children: [
-              for (var i = 0; i < room.players.length; i++)
-                _JogadorNaEspera(
-                  jogador: room.players[i],
-                  indice: i,
-                  eu: room.players[i].id == meuId,
-                  aoSortear: () => _sortearCarinha(context),
-                ),
-              // Os lugares que ainda faltam para dar o mínimo.
-              for (var i = 0; i < faltam; i++) const _LugarVazio(),
-            ],
+          // Até 4 por linha num celular: o cascudo nunca atravessa a quebra.
+          LayoutBuilder(
+            builder: (context, espaco) => GrupoDeCarinhas(
+              quantidade: room.players.length,
+              eixo: Axis.horizontal,
+              passo: 86,
+              porLinha: max(1, (espaco.maxWidth + 14) ~/ 86),
+              child: Wrap(
+                spacing: 14,
+                runSpacing: 26,
+                children: [
+                  for (var i = 0; i < room.players.length; i++)
+                    _JogadorNaEspera(
+                      jogador: room.players[i],
+                      indice: i,
+                      eu: room.players[i].id == meuId,
+                      aoSortear: () => _sortearCarinha(context),
+                    ),
+                  // Os lugares que ainda faltam para dar o mínimo.
+                  for (var i = 0; i < faltam; i++) const _LugarVazio(),
+                ],
+              ),
+            ),
           ),
           if (meuId != null && room.players.any((p) => p.id == meuId)) ...[
             const SizedBox(height: 6),

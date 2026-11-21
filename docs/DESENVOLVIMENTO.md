@@ -113,6 +113,7 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/ui/carinhas.dart`](../lib/ui/carinhas.dart) | As carinhas: `Carinha.de(id, variacao)` sorteia olhos, boca, enfeite e bochechas de forma estável (`misturar`, a mesma conta no celular e na web) e `PintorDeCarinha` desenha. |
 | [`lib/ui/icones.dart`](../lib/ui/icones.dart) | `IconeFofo` e `PintorDeIcone`: os ícones do jogo desenhados no traço das carinhas, no lugar dos ícones do Material. |
 | [`lib/ui/dicas.dart`](../lib/ui/dicas.dart) | As dicas da primeira partida: quais já foram vistas neste aparelho (`dicasProvider`, guardado no `shared_preferences`) e o balão (`BalaoDeDica`). |
+| [`lib/ui/olhar.dart`](../lib/ui/olhar.dart) | As carinhas vivas: onde está o ponteiro (`ondeOlhar`, anotado pelo `RastreadorDeOlhar` em volta do app) e o `GrupoDeCarinhas`, que sorteia os cascudos entre vizinhas. O `AvatarDeJogador` flutua, pisca, olha e faz a sua parte no cascudo. |
 | [`lib/ui/assombro.dart`](../lib/ui/assombro.dart) | Os momentos creepy: `ehMadrugada`, `esperaDaLacuna` e a hora em `agora()`, que os testes trocam. |
 | [`lib/ui/animacoes.dart`](../lib/ui/animacoes.dart) | `Entrada`, `Virada` e `Confete`, todas respeitando "reduzir movimento". |
 | [`lib/ui/sons.dart`](../lib/ui/sons.dart) | Que som cada mudança de fase toca (`somDaMudanca`, função pura), o tocador e o botão de mudo, lembrado entre partidas. |

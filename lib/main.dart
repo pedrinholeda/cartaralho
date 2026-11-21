@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
+import 'ui/olhar.dart';
 import 'ui/tema.dart';
 
 void main() async {
@@ -37,6 +38,9 @@ class CartaralhoApp extends StatelessWidget {
       title: 'Cartaralho',
       theme: tema,
       home: const HomeScreen(),
+      // Anota onde o ponteiro anda, para as carinhas olharem para lá.
+      builder: (context, filho) =>
+          RastreadorDeOlhar(child: filho ?? const SizedBox.shrink()),
       debugShowCheckedModeBanner: false,
     );
   }

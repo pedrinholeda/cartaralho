@@ -114,6 +114,6 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     // No meio da troca as duas carinhas estão na tela.
     expect(find.byType(CustomPaint), findsAtLeastNWidgets(2));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
   });
 }

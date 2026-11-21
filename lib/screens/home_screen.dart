@@ -12,6 +12,7 @@ import 'game_screen.dart';
 import '../ui/cartas.dart';
 import '../ui/icones.dart';
 import '../ui/jogadores.dart';
+import '../ui/olhar.dart';
 import '../ui/sons.dart';
 import '../ui/tema.dart';
 
@@ -206,14 +207,19 @@ class _CartasDaCapa extends StatelessWidget {
               top: 86,
               child: Transform.rotate(
                 angle: 0.05,
-                child: const Row(
-                  children: [
-                    AvatarDeJogador(nome: 'Ana', indice: 0, tamanho: 52),
-                    SizedBox(width: 4),
-                    AvatarDeJogador(nome: 'Bia', indice: 1, tamanho: 52),
-                    SizedBox(width: 4),
-                    AvatarDeJogador(nome: 'Caio', indice: 2, tamanho: 52),
-                  ],
+                child: const GrupoDeCarinhas(
+                  quantidade: 3,
+                  eixo: Axis.horizontal,
+                  passo: 62,
+                  child: Row(
+                    children: [
+                      AvatarDeJogador(nome: 'Ana', indice: 0, tamanho: 52),
+                      SizedBox(width: 4),
+                      AvatarDeJogador(nome: 'Bia', indice: 1, tamanho: 52),
+                      SizedBox(width: 4),
+                      AvatarDeJogador(nome: 'Caio', indice: 2, tamanho: 52),
+                    ],
+                  ),
                 ),
               ),
             ),
