@@ -8,6 +8,7 @@ import '../services/firebase_service.dart';
 import 'create_room_screen.dart';
 import 'join_room_screen.dart';
 import '../widgets/abre_convite.dart';
+import '../widgets/retoma_sala.dart';
 import 'solo_screen.dart';
 import 'tutorial_screen.dart';
 import 'game_screen.dart';
@@ -68,6 +69,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final roomId = ref.watch(roomIdProvider);
+    // A sala atual fica guardada no aparelho, para voltar a ela depois de um
+    // refresh (RetomaSala); sair dela apaga.
+    ref.listen(roomIdProvider, (_, nova) => SalaGuardada.guardar(nova));
 
     // Com uma sala escolhida, a tela é a do jogo.
     if (roomId != null) {
@@ -79,85 +83,88 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final textos = Theme.of(context).textTheme;
 
-    return AbreConvite(
-      codigo: _convite,
-      child: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints:
-                  const BoxConstraints(maxWidth: Medidas.larguraMaxima),
-              child: Padding(
-                padding: const EdgeInsets.all(Medidas.margem),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
+    return RetomaSala(
+      ativo: _convite == null,
+      child: AbreConvite(
+        codigo: _convite,
+        child: Scaffold(
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxWidth: Medidas.larguraMaxima),
+                child: Padding(
+                  padding: const EdgeInsets.all(Medidas.margem),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          TextButton.icon(
+                            onPressed: () => abrirTutorial(context),
+                            icon: const IconeFofo(Desenho.ajuda, tamanho: 24),
+                            label: const Text('Como jogar'),
+                          ),
+                          const Spacer(),
+                          const BotaoDeSom(),
+                        ],
+                      ),
+                      const Spacer(),
+                      const _CartasDaCapa(),
+                      const SizedBox(height: 36),
+                      Text(
+                        'Carinhas fofas. Cartas horríveis. '
+                        'Cada um joga no seu celular.',
+                        style: textos.titleMedium?.copyWith(
+                          color: Cores.de(context).tintaSuave,
+                          fontWeight: FontWeight.w500,
+                          height: 1.45,
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                      if (authState.isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else if (authState.hasError) ...[
+                        Text('Erro ao conectar', style: textos.titleMedium),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () => FirebaseService.signInAnonymously(),
+                          child: const Text('Tentar novamente'),
+                        ),
+                      ] else ...[
+                        ElevatedButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CreateRoomScreen(),
+                            ),
+                          ),
+                          child: const Text('Criar sala'),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const JoinRoomScreen(),
+                            ),
+                          ),
+                          child: const Text('Entrar na sala'),
+                        ),
+                        const SizedBox(height: 4),
                         TextButton.icon(
-                          onPressed: () => abrirTutorial(context),
-                          icon: const IconeFofo(Desenho.ajuda, tamanho: 24),
-                          label: const Text('Como jogar'),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SoloScreen(),
+                            ),
+                          ),
+                          icon: const IconeFofo(Desenho.pessoa, tamanho: 22),
+                          label: const Text('Jogar sozinho contra bots'),
                         ),
-                        const Spacer(),
-                        const BotaoDeSom(),
                       ],
-                    ),
-                    const Spacer(),
-                    const _CartasDaCapa(),
-                    const SizedBox(height: 36),
-                    Text(
-                      'Carinhas fofas. Cartas horríveis. '
-                      'Cada um joga no seu celular.',
-                      style: textos.titleMedium?.copyWith(
-                        color: Cores.de(context).tintaSuave,
-                        fontWeight: FontWeight.w500,
-                        height: 1.45,
-                      ),
-                    ),
-                    const Spacer(flex: 2),
-                    if (authState.isLoading)
-                      const Center(child: CircularProgressIndicator())
-                    else if (authState.hasError) ...[
-                      Text('Erro ao conectar', style: textos.titleMedium),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () => FirebaseService.signInAnonymously(),
-                        child: const Text('Tentar novamente'),
-                      ),
-                    ] else ...[
-                      ElevatedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CreateRoomScreen(),
-                          ),
-                        ),
-                        child: const Text('Criar sala'),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const JoinRoomScreen(),
-                          ),
-                        ),
-                        child: const Text('Entrar na sala'),
-                      ),
-                      const SizedBox(height: 4),
-                      TextButton.icon(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SoloScreen(),
-                          ),
-                        ),
-                        icon: const IconeFofo(Desenho.pessoa, tamanho: 22),
-                        label: const Text('Jogar sozinho contra bots'),
-                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
