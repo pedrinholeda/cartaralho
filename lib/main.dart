@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
+import 'services/erros.dart';
 import 'ui/olhar.dart';
 import 'ui/tema.dart';
 
@@ -10,7 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    print('Inicializando Firebase...');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).timeout(
@@ -20,9 +20,8 @@ void main() async {
             'Timeout: Firebase demorou mais de 30 segundos para inicializar');
       },
     );
-    print('Firebase inicializado com sucesso');
   } catch (e) {
-    print('Erro ao inicializar Firebase: $e');
+    registrar('Firebase não iniciou: $e');
     // Continuar mesmo com erro para não travar o app
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../ui/icones.dart';
 import '../ui/tema.dart';
@@ -55,7 +56,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro: $e')),
+          SnackBar(content: Text(mensagemDoErro(e))),
         );
       }
     } finally {

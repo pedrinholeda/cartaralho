@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../game/regras.dart';
 import '../models/game_room.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/cartas.dart';
@@ -36,7 +37,7 @@ class _RoundResultWidgetState extends State<RoundResultWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Não deu para avançar: $e')),
+          SnackBar(content: Text(mensagemDoErro(e))),
         );
       }
     } finally {

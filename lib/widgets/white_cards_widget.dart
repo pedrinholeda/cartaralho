@@ -7,6 +7,7 @@ import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/icones.dart';
@@ -147,7 +148,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       ref.read(sonsProvider).tocar(Som.enviar);
       ref.read(dicasProvider.notifier).marcar(Dica.enviar);
     } catch (e) {
-      _avisar('Não deu para enviar: $e');
+      _avisar(mensagemDoErro(e));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -159,7 +160,7 @@ class _WhiteCardsWidgetState extends ConsumerState<WhiteCardsWidget> {
       await FirebaseService.swapHand(widget.room.roomId);
       _escolha.state = const [];
     } catch (e) {
-      _avisar('Não deu para trocar a mão: $e');
+      _avisar(mensagemDoErro(e));
     } finally {
       if (mounted) setState(() => _trocando = false);
     }

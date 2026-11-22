@@ -4,6 +4,7 @@ import '../game/baralho.dart';
 import '../game/regras.dart' as regras;
 import '../providers/baralhos_provider.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../ui/icones.dart';
 import '../ui/opcoes.dart';
@@ -65,7 +66,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro: $e')),
+          SnackBar(content: Text(mensagemDoErro(e))),
         );
       }
     } finally {

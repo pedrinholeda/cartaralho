@@ -9,6 +9,7 @@ import '../game/regras.dart' as regras;
 import '../models/player.dart';
 import '../providers/baralhos_provider.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../services/mesa_local.dart';
 import '../ui/icones.dart';
@@ -84,7 +85,7 @@ class _SoloScreenState extends ConsumerState<SoloScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Não deu para começar: $e')),
+          SnackBar(content: Text(mensagemDoErro(e))),
         );
       }
     } finally {
