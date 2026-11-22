@@ -25,6 +25,7 @@ import '../ui/tema.dart';
 import 'tutorial_screen.dart';
 import '../game/bots.dart';
 import '../widgets/black_card_widget.dart';
+import '../widgets/coluna_que_rola.dart';
 import '../widgets/maestro_dos_bots.dart';
 import '../widgets/judge_widget.dart';
 import '../widgets/player_list_widget.dart';
@@ -185,11 +186,9 @@ class GameScreen extends ConsumerWidget {
                   return ConstrainedBox(
                     constraints:
                         const BoxConstraints(maxWidth: Medidas.larguraMaxima),
-                    child: Column(
-                      children: [
-                        ...topoDe(largo: false),
-                        Expanded(child: conteudo),
-                      ],
+                    child: ColunaQueRola(
+                      topo: topoDe(largo: false),
+                      conteudo: conteudo,
                     ),
                   );
                 },
