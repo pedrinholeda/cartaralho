@@ -163,6 +163,9 @@ risada (amarela), choro, caveira ("Morri"), coração (vermelho) e chocado. A es
 carinha e some em 1,8 s, na tela de todo mundo. Só a reação nova sobe; a que já estava quando
 a tela abriu, não.
 
+**Tirar da sala**: para o anfitrião, tocar na carinha de outro jogador no placar pergunta
+"Tirar Caio da sala?". É para quando alguém sumiu e a rodada travou esperando.
+
 **Carinhas que reagem** (`Humor`, calculado por `humorNoPlacar` no placar):
 
 | fase | quem | carinha |

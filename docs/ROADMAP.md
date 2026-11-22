@@ -199,6 +199,10 @@ deixava escolher o baralho.
   Humanity não foram traduzidas: a licença delas (CC BY-NC-SA) não combina com a MIT, e o
   humor tem que ser daqui. O Em alta envelhece rápido: rever uma vez por ano
 
+- [x] **Anfitrião tira quem sumiu**: tocar na carinha de outro jogador no placar e confirmar
+  (`tirarDaSala`, que faz o mesmo que sair). Quem foi tirado volta para a capa com um aviso.
+  Detectar sozinho quem fechou a aba ficou de fora: no celular o navegador congela o site
+  quando a pessoa troca de app, e ela seria tirada sem ter saído
 - [x] **Correções do teste no celular**: o link de convite abre a sala de primeira; a tela
   de jogo rola quando falta espaço (o botão do juiz não some mais); recarregar a página no
   meio da partida volta para a sala
@@ -218,7 +222,7 @@ deixava escolher o baralho.
 
 - [ ] **Trazer as regras publicadas para o repositório**: o `firestore.rules` diz que
   qualquer usuário logado grava tudo, mas as regras publicadas no projeto são outras (achado
-  ao testar o TTL). O arquivo precisa voltar a ser a fonte da verdade antes de mexer nelas
+  ao testar o TTL; elas também só deixam quem está na sala lê-la). O arquivo precisa voltar a ser a fonte da verdade antes de mexer nelas
 - [ ] **Regras do Firestore de verdade**: hoje qualquer usuário logado grava qualquer
   sala; restringir a membros e validar a mudança de fase
 - [ ] **Mão escondida dos outros jogadores**: enquanto tudo vive num documento, todos podem

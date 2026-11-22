@@ -120,6 +120,10 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
     super.dispose();
   }
 
+  bool get _souAnfitriao =>
+      widget.meuId != null &&
+      players.any((p) => p.id == widget.meuId && p.isHost);
+
   Humor _humor(String id) =>
       humorNoPlacar(widget.sala, id, juizDemorando: _juizDemorando);
 
@@ -152,6 +156,7 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
                           jogador: players[i],
                           roomId: widget.sala?.roomId,
                           meu: players[i].id == widget.meuId,
+                          podeTirar: _souAnfitriao,
                           tamanho: 38,
                           child: AvatarDeJogador(
                             nome: players[i].name,
@@ -237,6 +242,7 @@ class _PlayerListWidgetState extends State<PlayerListWidget> {
                         jogador: player,
                         roomId: widget.sala?.roomId,
                         meu: player.id == widget.meuId,
+                        podeTirar: _souAnfitriao,
                         tamanho: 44,
                         child: AvatarDeJogador(
                           nome: player.name,

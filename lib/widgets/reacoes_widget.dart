@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../game/regras.dart';
 import '../models/player.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../ui/animacoes.dart';
 import '../ui/icones.dart';
@@ -33,6 +34,10 @@ class ComReacao extends StatefulWidget {
   final String? roomId;
   final bool meu;
   final double tamanho;
+
+  /// Quem está no aparelho é o anfitrião: tocar na carinha de outro jogador
+  /// oferece tirá-lo da sala.
+  final bool podeTirar;
   final Widget child;
 
   const ComReacao({
@@ -41,6 +46,7 @@ class ComReacao extends StatefulWidget {
     required this.roomId,
     required this.meu,
     required this.tamanho,
+    this.podeTirar = false,
     required this.child,
   });
 
@@ -113,6 +119,41 @@ class _ComReacaoState extends State<ComReacao>
     } catch (_) {}
   }
 
+  Future<void> _tirar() async {
+    final roomId = widget.roomId;
+    if (roomId == null) return;
+    final nome = widget.jogador.name;
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Tirar $nome da sala?'),
+        content: const Text(
+          'Para quando alguém sumiu e a rodada travou esperando. As cartas '
+          'dessa pessoa voltam para o monte.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Tirar da sala'),
+          ),
+        ],
+      ),
+    );
+    if (confirmou != true) return;
+    try {
+      await FirebaseService.tirarDaSala(roomId, widget.jogador.id);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(mensagemDoErro(e))));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cores = Cores.de(context);
@@ -145,6 +186,16 @@ class _ComReacaoState extends State<ComReacao>
           ),
       ],
     );
+    if (!widget.meu && widget.podeTirar) {
+      conteudo = Tooltip(
+        message: 'Tirar ${widget.jogador.name} da sala',
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _tirar,
+          child: conteudo,
+        ),
+      );
+    }
     if (widget.meu) {
       conteudo = Tooltip(
         message: 'Mandar uma reação',

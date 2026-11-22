@@ -479,6 +479,24 @@ void main() {
     });
   });
 
+  group('tirarDaSala', () {
+    test('o anfitrião tira quem sumiu, como se ele tivesse saído', () {
+      final antes =
+          iniciarJogo(salaDeEspera(jogadores: 4), 'p0', random: Random(1));
+      final depois = tirarDaSala(antes, 'p0', 'p3');
+      expect(depois.players.map((p) => p.id), ['p0', 'p1', 'p2']);
+      expect(depois.hands.containsKey('p3'), isFalse);
+    });
+
+    test('só o anfitrião, nunca a si mesmo, e só quem está na sala', () {
+      final s = salaDeEspera(jogadores: 4);
+      expect(() => tirarDaSala(s, 'p1', 'p2'), throwsA(isA<JogadaInvalida>()));
+      expect(() => tirarDaSala(s, 'p0', 'p0'), throwsA(isA<JogadaInvalida>()));
+      expect(() => tirarDaSala(s, 'p0', 'fantasma'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+  });
+
   group('reagir', () {
     test('qualquer um manda, em qualquer fase, e a conta sobe', () {
       var s = reagir(salaDeEspera(), 'p1', 'risada');

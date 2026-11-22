@@ -31,4 +31,16 @@ void main() {
     expect(m, 'Algo deu errado. Tente de novo.');
     expect(m, isNot(contains('Exception')));
   });
+
+  test('sem permissão para ler a sala é sinal de que saiu dela', () {
+    expect(
+        perdeuASala(FirebaseException(
+            plugin: 'cloud_firestore', code: 'permission-denied')),
+        isTrue);
+    expect(
+        perdeuASala(
+            FirebaseException(plugin: 'cloud_firestore', code: 'unavailable')),
+        isFalse);
+    expect(perdeuASala(null), isFalse);
+  });
 }
