@@ -9,6 +9,7 @@ import 'dart:async';
 import 'dart:math';
 import 'erros.dart';
 import 'mesa_local.dart';
+import 'validade.dart';
 
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,7 +50,7 @@ class FirebaseService {
         if (!sala.players.any((p) => p.id == user.uid)) return;
         final depois = regras.sairDaSala(sala, user.uid);
         if (regras.temGenteNaSala(depois)) {
-          tx.set(ref, depois.toJson());
+          tx.set(ref, salaComValidade(depois, DateTime.now()));
         } else {
           tx.delete(ref);
         }
@@ -96,7 +97,7 @@ class FirebaseService {
             maxPoints: maxPoints,
             handSize: handSize,
           );
-          tx.set(ref, gameRoom.toJson());
+          tx.set(ref, salaComValidade(gameRoom, DateTime.now()));
           return true;
         });
         if (criou) return roomId;
@@ -235,7 +236,11 @@ class FirebaseService {
         return;
       }
       try {
-        tx.set(ref, regra(GameRoom.fromJson(doc.data()!)).toJson());
+        tx.set(
+          ref,
+          salaComValidade(
+              regra(GameRoom.fromJson(doc.data()!)), DateTime.now()),
+        );
       } on regras.JogadaInvalida catch (e) {
         recusa = e;
       }

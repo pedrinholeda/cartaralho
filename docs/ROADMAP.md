@@ -227,7 +227,9 @@ deixava escolher o baralho.
   Future"); agora a recusa é guardada e lançada depois da transação
 - [x] **Logger**: `registrar()` no lugar de `print`, só em modo de desenvolvimento; o
   `avoid_print` voltou a valer na análise
-- [ ] Apagar salas antigas (TTL do Firestore)
+- [ ] **Apagar salas antigas** (TTL do Firestore): o app grava `expiraEm` (24 h) em toda
+  escrita e a política está em `firestore.indexes.json`. Bloqueado: as regras publicadas no
+  projeto não são as do `firestore.rules` e recusam o campo novo nas atualizações (403)
 - [ ] Testes de widget das telas principais
 - [ ] Teste de ponta a ponta no CI: uma partida com três jogadores contra o emulador do
   Firestore
