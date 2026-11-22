@@ -212,6 +212,9 @@ deixava escolher o baralho.
 
 ## Fase 5 — segurança e robustez
 
+- [ ] **Trazer as regras publicadas para o repositório**: o `firestore.rules` diz que
+  qualquer usuário logado grava tudo, mas as regras publicadas no projeto são outras (achado
+  ao testar o TTL). O arquivo precisa voltar a ser a fonte da verdade antes de mexer nelas
 - [ ] **Regras do Firestore de verdade**: hoje qualquer usuário logado grava qualquer
   sala; restringir a membros e validar a mudança de fase
 - [ ] **Mão escondida dos outros jogadores**: enquanto tudo vive num documento, todos podem
@@ -227,7 +230,12 @@ deixava escolher o baralho.
   Future"); agora a recusa é guardada e lançada depois da transação
 - [x] **Logger**: `registrar()` no lugar de `print`, só em modo de desenvolvimento; o
   `avoid_print` voltou a valer na análise
-- [ ] Apagar salas antigas (TTL do Firestore)
+- [ ] **Apagar salas antigas** (TTL do Firestore): pronto no PR em rascunho
+  [#58](https://github.com/pedrinholeda/cartaralho/pull/58) (o app grava `expiraEm`, 24 h,
+  e a política fica em `firestore.indexes.json`). Travado porque as regras publicadas no
+  projeto não são as do `firestore.rules` e recusam o campo novo ao atualizar (403). Para
+  destravar: copiar as regras publicadas (console do Firebase → Firestore → Regras) para o
+  `firestore.rules`, liberar `expiraEm` e publicar regras e índices juntos
 - [ ] Testes de widget das telas principais
 - [ ] Teste de ponta a ponta no CI: uma partida com três jogadores contra o emulador do
   Firestore
