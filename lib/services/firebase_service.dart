@@ -152,6 +152,22 @@ class FirebaseService {
     );
   }
 
+  /// Se quem está logado ainda faz parte da sala (para voltar a ela depois
+  /// de um refresh). Qualquer falha conta como "não".
+  static Future<bool> estouNaSala(String roomId) async {
+    final user = _auth.currentUser;
+    if (user == null || MesaLocal.eh(roomId)) return false;
+    try {
+      final doc = await _firestore.collection('rooms').doc(roomId).get();
+      if (!doc.exists) return false;
+      return GameRoom.fromJson(doc.data()!)
+          .players
+          .any((p) => p.id == user.uid);
+    } catch (_) {
+      return false;
+    }
+  }
+
   static Stream<GameRoom?> watchRoom(String roomId) {
     if (MesaLocal.eh(roomId)) return MesaLocal.observar(roomId);
     return _firestore

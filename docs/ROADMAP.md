@@ -199,6 +199,10 @@ deixava escolher o baralho.
   Humanity não foram traduzidas: a licença delas (CC BY-NC-SA) não combina com a MIT, e o
   humor tem que ser daqui. O Em alta envelhece rápido: rever uma vez por ano
 
+- [x] **Correções do teste no celular**: o link de convite abre a sala de primeira; a tela
+  de jogo rola quando falta espaço (o botão do juiz não some mais); recarregar a página no
+  meio da partida volta para a sala
+
 ## Fase 4 — plataformas
 
 - [ ] **Projeto iOS completo**: falta o `Runner.xcodeproj` (recriar com
