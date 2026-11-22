@@ -29,14 +29,34 @@ class FirebaseService {
     }
   }
 
-  /// Sai da sala. Da partida solo, só fecha a mesa; de uma sala online,
-  /// faz logout (o próximo login é outro jogador).
+  /// Sai da sala. Da partida solo, só fecha a mesa; de uma sala online, tira
+  /// o jogador de verdade (`sairDaSala`) e, se não sobrar ninguém além de
+  /// bots, apaga a sala. O login continua: voltar a uma sala é o mesmo
+  /// jogador.
   static Future<void> sair(String roomId) async {
     if (MesaLocal.eh(roomId)) {
       MesaLocal.fechar(roomId);
       return;
     }
-    await signOut();
+    final user = _auth.currentUser;
+    if (user == null) return;
+    final ref = _firestore.collection('rooms').doc(roomId);
+    try {
+      await _firestore.runTransaction((tx) async {
+        final doc = await tx.get(ref);
+        if (!doc.exists) return;
+        final sala = GameRoom.fromJson(doc.data()!);
+        if (!sala.players.any((p) => p.id == user.uid)) return;
+        final depois = regras.sairDaSala(sala, user.uid);
+        if (regras.temGenteNaSala(depois)) {
+          tx.set(ref, depois.toJson());
+        } else {
+          tx.delete(ref);
+        }
+      });
+    } catch (_) {
+      // Sem rede, a saída não chega: a sala segue até alguém sair dela.
+    }
   }
 
   static Future<void> signOut() async {

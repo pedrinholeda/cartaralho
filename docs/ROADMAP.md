@@ -216,8 +216,11 @@ deixava escolher o baralho.
   sala; restringir a membros e validar a mudança de fase
 - [ ] **Mão escondida dos outros jogadores**: enquanto tudo vive num documento, todos podem
   ler as mãos; mover para uma subcoleção por jogador
-- [ ] **Sair da sala**: o botão de sair faz logout (o jogador vira outro `uid`) e não tira
-  o jogador da sala
+- [x] **Sair da sala de verdade**: o botão de sair tira o jogador da sala (`sairDaSala`) em
+  vez de fazer logout. As cartas dele voltam ao monte; o anfitrião passa para a próxima
+  pessoa; se o juiz sai no meio da rodada, o juiz passa adiante e as cartas da mesa voltam
+  às mãos; com menos de três, todos voltam para a espera; sem ninguém (só bots), a sala é
+  apagada. Quem fecha a aba sem sair ainda fica na sala (precisaria de presença)
 - [ ] Mensagens de erro legíveis (hoje aparece `Erro: Exception: Erro ao ...: Exception:`)
 - [ ] Log com `debugPrint` ou um logger no lugar de `print`
 - [ ] Apagar salas antigas (TTL do Firestore)

@@ -642,7 +642,7 @@ class _FimDeJogo extends ConsumerWidget {
               OutlinedButton(
                 onPressed: () {
                   ref.read(roomIdProvider.notifier).state = null;
-                  if (MesaLocal.eh(room.roomId)) MesaLocal.fechar(room.roomId);
+                  FirebaseService.sair(room.roomId);
                 },
                 child: const Text('Voltar ao menu'),
               ),
