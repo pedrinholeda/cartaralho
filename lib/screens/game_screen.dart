@@ -10,6 +10,7 @@ import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import '../services/mesa_local.dart';
 import '../ui/animacoes.dart';
@@ -336,7 +337,7 @@ class _SalaDeEspera extends StatelessWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('$e')));
+              .showSnackBar(SnackBar(content: Text(mensagemDoErro(e))));
         }
       }
     }
@@ -378,7 +379,7 @@ class _SalaDeEspera extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Não deu para trocar a carinha: $e')),
+          SnackBar(content: Text(mensagemDoErro(e))),
         );
       }
     }
@@ -520,7 +521,7 @@ class _SalaDeEspera extends StatelessWidget {
                       } catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Não deu para iniciar: $e')),
+                            SnackBar(content: Text(mensagemDoErro(e))),
                           );
                         }
                       }
@@ -625,7 +626,7 @@ class _FimDeJogo extends ConsumerWidget {
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Não deu para recomeçar: $e')),
+                          SnackBar(content: Text(mensagemDoErro(e))),
                         );
                       }
                     }

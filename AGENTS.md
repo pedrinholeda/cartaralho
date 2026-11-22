@@ -65,7 +65,7 @@ android/ ios/ macos/ web/  projetos de plataforma
 1. Escreva a regra em `lib/game/regras.dart`, validando fase e jogador com `JogadaInvalida`.
 2. Teste em `test/game/regras_test.dart`: o caminho certo e cada recusa.
 3. No `FirebaseService`, um método que chama `_alterarSala(roomId, (sala) => regra(...))`.
-4. Na tela, chame o método e mostre o erro num `SnackBar`.
+4. Na tela, chame o método e mostre `mensagemDoErro(e)` num `SnackBar` (nunca o `$e` cru).
 5. Campo novo na sala? `fromJson` com padrão, `toJson`, `copyWith` e o teste em
    `test/models/`.
 6. Atualize `docs/DESENVOLVIMENTO.md` e rode `flutter analyze` e `flutter test`.

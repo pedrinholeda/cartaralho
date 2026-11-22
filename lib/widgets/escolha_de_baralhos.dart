@@ -67,7 +67,10 @@ class EscolhaDeBaralhos extends ConsumerWidget {
           loading: () => [
             const Center(child: CircularProgressIndicator()),
           ],
-          error: (e, _) => [Text('Não deu para carregar os baralhos: $e')],
+          error: (e, _) => [
+            const Text(
+                'Não deu para carregar os baralhos. Recarregue a página.')
+          ],
           data: (lista) {
             final marcados = lista.where((b) => escolhidos.contains(b.id));
             final cartas = marcados.fold<int>(

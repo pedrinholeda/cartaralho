@@ -221,8 +221,12 @@ deixava escolher o baralho.
   pessoa; se o juiz sai no meio da rodada, o juiz passa adiante e as cartas da mesa voltam
   às mãos; com menos de três, todos voltam para a espera; sem ninguém (só bots), a sala é
   apagada. Quem fecha a aba sem sair ainda fica na sala (precisaria de presença)
-- [ ] Mensagens de erro legíveis (hoje aparece `Erro: Exception: Erro ao ...: Exception:`)
-- [ ] Log com `debugPrint` ou um logger no lugar de `print`
+- [x] **Mensagens de erro legíveis**: toda tela mostra `mensagemDoErro(e)` (a recusa da regra
+  como está, rede e Firebase como frase curta, o resto como "tente de novo"). Na web, o erro
+  lançado dentro da transação chegava embrulhado ("Dart exception thrown from converted
+  Future"); agora a recusa é guardada e lançada depois da transação
+- [x] **Logger**: `registrar()` no lugar de `print`, só em modo de desenvolvimento; o
+  `avoid_print` voltou a valer na análise
 - [ ] Apagar salas antigas (TTL do Firestore)
 - [ ] Testes de widget das telas principais
 - [ ] Teste de ponta a ponta no CI: uma partida com três jogadores contra o emulador do

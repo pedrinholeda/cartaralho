@@ -17,9 +17,9 @@ analyzer:
 
 linter:
   rules:
-    # print vai para o console do navegador e do logcat, e é o único log que o
-    # app tem hoje. Trocar por um logger está no roadmap.
-    avoid_print: false
+    # Log é com registrar() (lib/services/erros.dart), que só escreve em modo
+    # de desenvolvimento. print iria para o console de qualquer jogador.
+    avoid_print: true
     avoid_unnecessary_containers: true
     avoid_web_libraries_in_flutter: true
     prefer_const_constructors: true

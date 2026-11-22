@@ -5,7 +5,9 @@ import '../models/game_room.dart';
 import '../models/player.dart';
 import '../game/bots.dart' as bots;
 import '../game/regras.dart' as regras;
+import 'dart:async';
 import 'dart:math';
+import 'erros.dart';
 import 'mesa_local.dart';
 
 class FirebaseService {
@@ -14,18 +16,16 @@ class FirebaseService {
   // Authentication
   static Future<User?> signInAnonymously() async {
     try {
-      print('Iniciando login anônimo...');
       final userCredential = await _auth.signInAnonymously().timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          throw Exception('Timeout: Login anônimo demorou mais de 30 segundos');
+          throw TimeoutException('login anônimo');
         },
       );
-      print('Login anônimo bem-sucedido: ${userCredential.user?.uid}');
       return userCredential.user;
     } catch (e) {
-      print('Erro detalhado no login anônimo: $e');
-      throw Exception('Erro ao fazer login anônimo: $e');
+      registrar('login anônimo falhou: $e');
+      rethrow;
     }
   }
 
@@ -74,7 +74,7 @@ class FirebaseService {
   }) async {
     try {
       final user = _auth.currentUser;
-      if (user == null) throw Exception('Usuário não autenticado');
+      if (user == null) throw ErroDoJogo('Ainda conectando. Tente de novo.');
 
       final player = Player(
         id: user.uid,
@@ -101,9 +101,10 @@ class FirebaseService {
         });
         if (criou) return roomId;
       }
-      throw Exception('Não foi possível gerar um código de sala livre');
+      throw ErroDoJogo('Não deu para gerar um código de sala. Tente de novo.');
     } catch (e) {
-      throw Exception('Erro ao criar sala: $e');
+      registrar('criar sala falhou: $e');
+      rethrow;
     }
   }
 
@@ -208,7 +209,7 @@ class FirebaseService {
 
   static User _usuarioLogado() {
     final user = _auth.currentUser;
-    if (user == null) throw Exception('Usuário não autenticado');
+    if (user == null) throw ErroDoJogo('Ainda conectando. Tente de novo.');
     return user;
   }
 
@@ -222,10 +223,23 @@ class FirebaseService {
     // Partida solo: a sala está neste aparelho, e a regra roda na hora.
     if (MesaLocal.eh(roomId)) return MesaLocal.alterar(roomId, regra);
     final ref = _firestore.collection('rooms').doc(roomId);
+    // Na web, um erro lançado de dentro da transação chega embrulhado e a
+    // mensagem se perde ("Dart exception thrown from converted Future"). Por
+    // isso a recusa é guardada aqui e lançada depois que a transação termina.
+    Object? recusa;
     await _firestore.runTransaction((tx) async {
+      recusa = null;
       final doc = await tx.get(ref);
-      if (!doc.exists) throw Exception('Sala não encontrada');
-      tx.set(ref, regra(GameRoom.fromJson(doc.data()!)).toJson());
+      if (!doc.exists) {
+        recusa = ErroDoJogo('Essa sala não existe mais. Confira o código.');
+        return;
+      }
+      try {
+        tx.set(ref, regra(GameRoom.fromJson(doc.data()!)).toJson());
+      } on regras.JogadaInvalida catch (e) {
+        recusa = e;
+      }
     });
+    if (recusa != null) throw recusa!;
   }
 }

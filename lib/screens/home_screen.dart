@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../game/convite.dart';
 import '../providers/auth_provider.dart';
 import '../providers/game_provider.dart';
+import '../services/erros.dart';
 import '../services/firebase_service.dart';
 import 'create_room_screen.dart';
 import 'join_room_screen.dart';
@@ -48,19 +49,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     while (attempts < maxAttempts) {
       try {
-        print('Tentativa ${attempts + 1} de login anônimo...');
         await FirebaseService.signInAnonymously();
-        print('Login anônimo realizado com sucesso');
         return;
       } catch (e) {
         attempts++;
-        print('Erro no login anônimo (tentativa $attempts): $e');
+        registrar('login anônimo, tentativa $attempts: $e');
 
         if (attempts < maxAttempts) {
-          print('Aguardando 2 segundos antes da próxima tentativa...');
           await Future.delayed(const Duration(seconds: 2));
         } else {
-          print('Falha no login após $maxAttempts tentativas');
+          registrar('login anônimo desistiu depois de $maxAttempts tentativas');
         }
       }
     }
