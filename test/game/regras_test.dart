@@ -398,6 +398,87 @@ void main() {
     });
   });
 
+  group('sairDaSala', () {
+    int brancas(GameRoom s) =>
+        s.whiteCards.length +
+        s.hands.values.fold<int>(0, (n, m) => n + m.length) +
+        s.submittedCards.values.fold<int>(0, (n, cs) => n + cs.length);
+
+    test('na espera: sai da lista, e o anfitrião passa para o próximo', () {
+      // Numa sala de verdade o anfitrião começa como juiz (novaSala).
+      final s = sairDaSala(
+          salaDeEspera(jogadores: 4).copyWith(currentJudgeId: 'p0'), 'p0');
+      expect(s.players.map((p) => p.id), ['p1', 'p2', 'p3']);
+      expect(s.players.first.isHost, isTrue);
+      expect(s.currentJudgeId, 'p1');
+    });
+
+    test('quem não está na sala não sai', () {
+      expect(() => sairDaSala(salaDeEspera(), 'intruso'),
+          throwsA(isA<JogadaInvalida>()));
+    });
+
+    test('no meio da partida, as cartas de quem sai voltam ao monte', () {
+      final antes =
+          iniciarJogo(salaDeEspera(jogadores: 4), 'p0', random: Random(1));
+      final total = brancas(antes);
+      final depois = sairDaSala(antes, 'p2');
+      expect(depois.players, hasLength(3));
+      expect(depois.hands.containsKey('p2'), isFalse);
+      expect(brancas(depois), total);
+      expect(depois.phase, GamePhase.playersSubmitting);
+    });
+
+    test('se era o último que faltava enviar, a mesa vai para o juiz', () {
+      var s = iniciarJogo(salaDeEspera(jogadores: 4), 'p0', random: Random(1));
+      s = enviarCarta(s, 'p1', [s.hands['p1']!.first.id]);
+      s = enviarCarta(s, 'p2', [s.hands['p2']!.first.id]);
+      s = sairDaSala(s, 'p3', random: Random(2));
+      expect(s.phase, GamePhase.judgeChoosing);
+      expect(s.revealOrder.toSet(), {'p1', 'p2'});
+    });
+
+    test('o juiz saiu: o juiz passa adiante e as cartas voltam às mãos', () {
+      var s = iniciarJogo(salaDeEspera(jogadores: 4), 'p0', random: Random(1));
+      final total = brancas(s);
+      s = enviarCarta(s, 'p1', [s.hands['p1']!.first.id]);
+      s = sairDaSala(s, 'p0');
+      expect(s.currentJudgeId, 'p1');
+      expect(s.phase, GamePhase.playersSubmitting);
+      expect(s.submittedCards, isEmpty);
+      expect(s.hands['p1'], hasLength(tamanhoDaMao));
+      expect(brancas(s), total);
+    });
+
+    test('com menos de três, todos voltam para a espera, zerados', () {
+      var s = iniciarJogo(salaDeEspera(), 'p0', random: Random(1));
+      final total = brancas(s);
+      s = sairDaSala(s, 'p2');
+      expect(s.phase, GamePhase.waitingForPlayers);
+      expect(s.players.map((p) => p.id), ['p0', 'p1']);
+      expect(s.hands, isEmpty);
+      expect(s.whiteCards, hasLength(total));
+      expect(s.players.every((p) => p.points == 0), isTrue);
+    });
+
+    test('sobrou só bot: a sala fica sem gente (e o serviço a apaga)', () {
+      final s = sairDaSala(
+        GameRoom(
+          roomId: 'X',
+          players: [
+            Player(id: 'p0', name: 'Ana', isHost: true),
+            Player(id: 'bot-ze-aleatorio', name: 'Zé'),
+          ],
+          blackCards: const [],
+          whiteCards: const [],
+        ),
+        'p0',
+      );
+      expect(temGenteNaSala(s), isFalse);
+      expect(temGenteNaSala(salaDeEspera()), isTrue);
+    });
+  });
+
   group('reagir', () {
     test('qualquer um manda, em qualquer fase, e a conta sobe', () {
       var s = reagir(salaDeEspera(), 'p1', 'risada');

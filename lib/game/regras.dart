@@ -412,5 +412,123 @@ GameRoom jogarDeNovo(GameRoom sala, String quemPediu) {
   );
 }
 
+/// Gente de verdade, não bot (os bots têm id `bot-...`).
+bool _pessoa(Player p) => !p.id.startsWith('bot-');
+
+/// Se ainda há alguém de verdade na sala; sem ninguém, ela pode ser apagada.
+bool temGenteNaSala(GameRoom sala) => sala.players.any(_pessoa);
+
+/// O jogador sai da sala, em qualquer fase. As cartas dele voltam ao monte;
+/// se era o anfitrião, a próxima pessoa assume; se era o juiz no meio da
+/// rodada, o juiz passa adiante e a rodada recomeça com a mesma carta preta
+/// (as cartas da mesa voltam para as mãos). Se sobram menos de
+/// [minimoDeJogadores] no meio da partida, todo mundo volta para a sala de
+/// espera, com o placar zerado, para chamar mais gente ou o Zé.
+GameRoom sairDaSala(GameRoom sala, String jogadorId, {Random? random}) {
+  final saindo = sala.players.where((p) => p.id == jogadorId).firstOrNull;
+  if (saindo == null) throw JogadaInvalida('Você não está nesta sala');
+
+  var restantes = [
+    for (final p in sala.players)
+      if (p.id != jogadorId) p,
+  ];
+  if (saindo.isHost) {
+    final proximo = restantes.indexWhere(_pessoa);
+    if (proximo >= 0) {
+      restantes = [
+        for (var i = 0; i < restantes.length; i++)
+          i == proximo ? restantes[i].copyWith(isHost: true) : restantes[i],
+      ];
+    }
+  }
+  final devolvidas = [
+    ...?sala.hands[jogadorId],
+    ...?sala.submittedCards[jogadorId]?.map(_devolvida),
+  ];
+  final maos = {...sala.hands}..remove(jogadorId);
+  final enviadas = {...sala.submittedCards}..remove(jogadorId);
+  final juizSaiu = sala.currentJudgeId == jogadorId;
+  final juiz = juizSaiu && restantes.isNotEmpty
+      ? proximoJuiz(sala.players, jogadorId)
+      : sala.currentJudgeId;
+  final nova = sala.copyWith(
+    players: restantes,
+    hands: maos,
+    submittedCards: enviadas,
+    revealOrder: [
+      for (final id in sala.revealOrder)
+        if (id != jogadorId) id,
+    ],
+    whiteCards: [...sala.whiteCards, ...devolvidas],
+    handSwapsUsed: [
+      for (final id in sala.handSwapsUsed)
+        if (id != jogadorId) id,
+    ],
+    currentJudgeId: juiz,
+  );
+
+  final emJogo = switch (sala.phase) {
+    GamePhase.playersSubmitting ||
+    GamePhase.judgeChoosing ||
+    GamePhase.roundResult =>
+      true,
+    _ => false,
+  };
+  if (!emJogo || restantes.isEmpty) return nova;
+
+  // Gente de menos para continuar: volta para a espera.
+  if (restantes.length < minimoDeJogadores) {
+    return GameRoom(
+      roomId: sala.roomId,
+      players: [for (final p in restantes) p.copyWith(points: 0)],
+      blackCards: [
+        ...sala.blackCards,
+        if (sala.currentBlackCard != null) sala.currentBlackCard!,
+      ],
+      whiteCards: [
+        ...nova.whiteCards,
+        ...maos.values.expand((m) => m),
+        ...enviadas.values.expand((cs) => cs).map(_devolvida),
+      ],
+      currentJudgeId: restantes.first.id,
+      maxPoints: sala.maxPoints,
+      handSize: sala.handSize,
+    );
+  }
+
+  // O juiz saiu no meio da rodada: as cartas da mesa voltam para as mãos e a
+  // rodada recomeça com o juiz novo (que também pega a dele de volta).
+  if (juizSaiu &&
+      (sala.phase == GamePhase.playersSubmitting ||
+          sala.phase == GamePhase.judgeChoosing)) {
+    return nova.copyWith(
+      hands: {
+        for (final p in restantes)
+          p.id: [
+            ...?maos[p.id],
+            ...?enviadas[p.id]?.map(_devolvida),
+          ],
+      },
+      submittedCards: const {},
+      revealOrder: const [],
+      phase: GamePhase.playersSubmitting,
+    );
+  }
+
+  // Era o último que faltava enviar: a mesa vai para o juiz.
+  if (sala.phase == GamePhase.playersSubmitting) {
+    final faltam = restantes
+        .where((p) => p.id != juiz)
+        .any((p) => !enviadas.containsKey(p.id));
+    if (!faltam && enviadas.isNotEmpty) {
+      return nova.copyWith(
+        revealOrder: enviadas.keys.toList()..shuffle(random ?? Random()),
+        phase: GamePhase.judgeChoosing,
+      );
+    }
+  }
+  return nova;
+}
+
 String _maiuscula(String texto) =>
     texto.isEmpty ? texto : texto[0].toUpperCase() + texto.substring(1);
