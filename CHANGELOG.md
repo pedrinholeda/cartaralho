@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.12.0](https://github.com/pedrinholeda/cartaralho/compare/v0.11.0...v0.12.0) (2026-11-22)
+
+
+### Novidades
+
+* **baralho:** pacote Em alta com o que bombou agora ([2b3bcb2](https://github.com/pedrinholeda/cartaralho/commit/2b3bcb2520e6392d8a3dbbb90478d27f3216d288))
+* **sala:** sair da sala de verdade ([0da22bd](https://github.com/pedrinholeda/cartaralho/commit/0da22bd04e10fd9c28e3ba675f878fddc783e1c5))
+* **ui:** mensagens de erro legíveis e log só em desenvolvimento ([d905092](https://github.com/pedrinholeda/cartaralho/commit/d90509207ba3975f6b3379b561ae4ca7d159d88d))
+
+
+### Correções
+
+* **sala:** link de convite abre a sala no celular ([409a114](https://github.com/pedrinholeda/cartaralho/commit/409a114b2b798602a158345957ceb456e9627e65))
+* **sala:** voltar para a sala depois de recarregar a página ([91d46fa](https://github.com/pedrinholeda/cartaralho/commit/91d46fa4c6528d870461aef39f0c07f8f174b3d3))
+* **ui:** palavra longa não quebra mais no meio da carta ([da3ba84](https://github.com/pedrinholeda/cartaralho/commit/da3ba8462c2454b05620df9b2fa48284c6c3fac4))
+* **ui:** tela de jogo rola no celular quando falta espaço ([93f8fe5](https://github.com/pedrinholeda/cartaralho/commit/93f8fe53a124dc5b6b081781eb956ac413f7afaa))
+
+
+### Documentação
+
+* **roadmap:** TTL travado pelas regras publicadas ([8e0f68c](https://github.com/pedrinholeda/cartaralho/commit/8e0f68c8c309dcaa73ff88f84a00dd0f0b099b3c))
+
+
+### Refatoração
+
+* **baralho:** tirar pessoas reais do Básico ([93bcf17](https://github.com/pedrinholeda/cartaralho/commit/93bcf173c72ca11dd3937ccde614cecb67e77d87))
+
 ## [0.11.0](https://github.com/pedrinholeda/cartaralho/compare/v0.10.0...v0.11.0) (2026-11-21)
 
 
