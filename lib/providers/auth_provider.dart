@@ -13,3 +13,9 @@ final authProvider = StreamProvider<User?>((ref) {
 final authServiceProvider = Provider<FirebaseService>((ref) {
   return FirebaseService();
 });
+
+/// Se o login anônimo já terminou. Separado do [authProvider] para as telas
+/// (e os testes) não dependerem da classe `User` do Firebase.
+final logadoProvider = Provider<bool>(
+  (ref) => ref.watch(authProvider).valueOrNull != null,
+);
