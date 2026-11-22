@@ -141,10 +141,11 @@ O papel de cada arquivo está em [docs/DESENVOLVIMENTO.md](docs/DESENVOLVIMENTO.
 
 ## Status e roadmap
 
-Em desenvolvimento. Uma partida inteira roda na web, com as regras testadas; o build de
-Android e o de iOS ainda precisam de ajuste, e as jogadas ainda não são conferidas pelo
-servidor. O que
-vem agora está no [roadmap](docs/ROADMAP.md).
+Em desenvolvimento. O jogo roda na web (https://cartaralho.web.app), com as regras
+testadas. Para Android, cada [release](https://github.com/pedrinholeda/cartaralho/releases)
+traz o APK para instalar à mão (assinado com a chave de debug: ainda não está na Play
+Store). O iOS ainda precisa de ajuste, e as jogadas ainda não são conferidas pelo servidor.
+O que vem agora está no [roadmap](docs/ROADMAP.md).
 
 ## Contribuindo
 

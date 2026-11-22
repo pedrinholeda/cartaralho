@@ -94,6 +94,7 @@ flutter analyze
 dart format lib test
 flutter test
 flutter build web
+flutter build apk --release       # o CI monta e anexa nas releases (JDK 17)
 dart run flutter_launcher_icons   # regera os ícones depois de trocar o logo
 node tool/gerar_sons.mjs          # regera os sons depois de mexer no script
 node tool/medir_sons.mjs          # mede volume, pico e pontas dos sons (sem ouvir)
