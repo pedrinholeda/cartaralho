@@ -104,6 +104,7 @@ todos verem as cartas na mesma ordem e ninguém saber quem enviou qual.
 | [`lib/widgets/maestro_dos_bots.dart`](../lib/widgets/maestro_dos_bots.dart) | Numa sala online com o Zé, o aparelho do anfitrião espera a pausa e grava a jogada do bot (`FirebaseService.jogadaDosBots`, numa transação que lê a sala de novo). Os outros aparelhos só veem a sala mudar. |
 | [`lib/widgets/escolha_de_baralhos.dart`](../lib/widgets/escolha_de_baralhos.dart) | A lista de pacotes para marcar, com a confirmação do +18, usada em "Criar sala" e em "Jogar sozinho"; `juntarEscolhidos` (em `baralho.dart`) junta os marcados. |
 | [`lib/widgets/abre_convite.dart`](../lib/widgets/abre_convite.dart) | Em volta da capa: o link `?sala=` leva para "Entrar na sala" com o código, assim que o login estiver pronto. Confere o login também na hora de abrir (no celular ele costuma terminar antes da capa). |
+| [`lib/widgets/coluna_que_rola.dart`](../lib/widgets/coluna_que_rola.dart) | A tela de jogo no celular: o topo e a jogada embaixo; se o topo for alto demais, a jogada guarda 400 px e a tela inteira rola. |
 | [`lib/providers/auth_provider.dart`](../lib/providers/auth_provider.dart) | Stream do usuário logado. |
 | [`lib/providers/game_provider.dart`](../lib/providers/game_provider.dart) | Código da sala atual, stream da sala e o que deriva dela: jogador atual, se é anfitrião, se é juiz, fase. |
 | [`lib/screens/home_screen.dart`](../lib/screens/home_screen.dart) | Faz o login anônimo (três tentativas) e mostra criar/entrar; com uma sala escolhida, mostra a `GameScreen`. |
