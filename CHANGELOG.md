@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0](https://github.com/pedrinholeda/cartaralho/compare/v0.12.0...v0.13.0) (2026-11-22)
+
+
+### Novidades
+
+* **sala:** anfitrião tira da sala quem sumiu ([2e42e1a](https://github.com/pedrinholeda/cartaralho/commit/2e42e1a6047cae58a01db576df4205f57df6fb78))
+
+
+### Documentação
+
+* APK do Android nas releases ([532dd21](https://github.com/pedrinholeda/cartaralho/commit/532dd21217f076d2ad00ddd1db1840e72d508a49))
+
 ## [0.12.0](https://github.com/pedrinholeda/cartaralho/compare/v0.11.0...v0.12.0) (2026-11-22)
 
 
