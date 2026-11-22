@@ -211,11 +211,16 @@ deixava escolher o baralho.
 
 - [ ] **Projeto iOS completo**: falta o `Runner.xcodeproj` (recriar com
   `flutter create --platforms=ios .` e conferir num Mac)
-- [ ] **Gradle moderno**: `android/` usa `apply from: flutter.gradle` (formato antigo) e
-  Gradle 8.10, que não roda com JDK 25; o build de release assina com a chave de debug
+- [x] **Gradle moderno**: `android/` no modelo do Flutter 3.50 (`plugins {}` em Kotlin DSL,
+  AGP 9, Gradle 9), com o id `com.pedro.cartaralho` e o google-services. Os plugins
+  compilam contra o Android 36 por um remendo no `android/build.gradle.kts`, que sai quando
+  o Firebase for atualizado (Fase 6)
 - [x] **Publicar a web** no Firebase Hosting a cada merge na `main`: o workflow `deploy-web.yml`
   publica sozinho desde que o segredo `FIREBASE_SERVICE_ACCOUNT_CARTARALHO` foi criado
-- [ ] Build de Android no CI e na tag de release
+- [x] **APK no CI e nas releases**: o CI monta o APK num job próprio, e cada release ganha o
+  `cartaralho-vX.Y.Z.apk` anexado
+- [ ] Assinar o APK com uma chave própria (segredo no GitHub) e publicar na Play Store
+- [ ] Testar o APK num celular Android de verdade (o build passa, ninguém instalou ainda)
 - [ ] macOS: registrar o app no Firebase ou tirar a pasta `macos/`
 
 ## Fase 5 — segurança e robustez
