@@ -530,5 +530,22 @@ GameRoom sairDaSala(GameRoom sala, String jogadorId, {Random? random}) {
   return nova;
 }
 
+/// O anfitrião tira alguém da sala (quem sumiu e está travando a rodada). O
+/// resto é igual a sair: as cartas voltam ao monte, o juiz passa adiante e,
+/// com menos de três, todos voltam para a espera.
+GameRoom tirarDaSala(GameRoom sala, String quemPediu, String alvoId,
+    {Random? random}) {
+  if (!sala.players.any((p) => p.id == quemPediu && p.isHost)) {
+    throw JogadaInvalida('Só o anfitrião tira alguém da sala');
+  }
+  if (quemPediu == alvoId) {
+    throw JogadaInvalida('Para sair, use o botão de sair');
+  }
+  if (!sala.players.any((p) => p.id == alvoId)) {
+    throw JogadaInvalida('Essa pessoa já não está na sala');
+  }
+  return sairDaSala(sala, alvoId, random: random);
+}
+
 String _maiuscula(String texto) =>
     texto.isEmpty ? texto : texto[0].toUpperCase() + texto.substring(1);

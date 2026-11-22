@@ -9,6 +9,7 @@ import '../game/regras.dart';
 import '../models/card.dart';
 import '../models/game_room.dart';
 import '../models/player.dart';
+import '../providers/auth_provider.dart';
 import '../providers/game_provider.dart';
 import '../services/erros.dart';
 import '../services/firebase_service.dart';
@@ -49,10 +50,30 @@ class GameScreen extends ConsumerWidget {
 
     // Cada mudança de fase que todo mundo vê tem um som (lib/ui/sons.dart).
     ref.listen(gameRoomProvider(roomId), (antes, depois) {
+      // As regras do Firestore só deixam quem está na sala lê-la: quem foi
+      // tirado perde a leitura e recebe um erro, não a sala sem ele.
+      if (perdeuASala(depois.error) && antes?.valueOrNull != null) {
+        ref.read(roomIdProvider.notifier).state = null;
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('Você não está mais nesta sala.')),
+        );
+        return;
+      }
       final sala = depois.valueOrNull;
       if (sala == null) return;
       final som = somDaMudanca(antes?.valueOrNull, sala);
       if (som != null) ref.read(sonsProvider).tocar(som);
+      // Estava na sala e não está mais: o anfitrião tirou. Volta para a capa.
+      final eu = ref.read(authProvider).valueOrNull?.uid;
+      final estava = antes?.valueOrNull?.players.any((p) => p.id == eu);
+      if (eu != null &&
+          estava == true &&
+          !sala.players.any((p) => p.id == eu)) {
+        ref.read(roomIdProvider.notifier).state = null;
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('O anfitrião tirou você da sala.')),
+        );
+      }
     });
 
     // A música de fundo acompanha a fase (e a madrugada), e obedece ao painel

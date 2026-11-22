@@ -45,3 +45,8 @@ String mensagemDoErro(Object erro) {
   }
   return 'Algo deu errado. Tente de novo.';
 }
+
+/// Se o erro ao ler a sala quer dizer que o jogador não faz mais parte dela
+/// (as regras só deixam os jogadores lerem a sala).
+bool perdeuASala(Object? erro) =>
+    erro is FirebaseException && erro.code == 'permission-denied';
